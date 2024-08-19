@@ -44,43 +44,14 @@ El proyecto se compondrá de los siguientes módulos principales:
 
 1. Clonar el repositorio:
    ```bash
-   git clone [URL del repositorio]
+   git clone https://github.com/2024-2-PI1-G3/202402-proyecto-sopas
    ```
 
 2. Navegar al directorio del proyecto:
    ```bash
-   cd nombre-del-proyecto
+   cd 202402-proyecto-sopas
    ```
 
-3. Instalar dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Configurar la base de datos:
-   En el archivo `settings.py`, te asegurarás de configurar correctamente la base de datos:
-   ```python
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': 'nombre_de_tu_base_de_datos',
-           'USER': 'tu_usuario',
-           'PASSWORD': 'tu_contraseña',
-           'HOST': 'localhost',
-           'PORT': '5432',
-       }
-   }
-   ```
-
-5. Migrar la base de datos:
-   ```bash
-   python manage.py migrate
-   ```
-
-6. Iniciar la aplicación:
-   ```bash
-   python manage.py runserver
-   ```
 
 ## Uso
 
@@ -98,8 +69,7 @@ Las contribuciones serán bienvenidas. Para contribuir, por favor seguir estos p
 
 ## Licencia
 
-Este proyecto estará licenciado bajo la [nombre de la licencia].
-
+Este proyecto estará licenciado bajo la Universidad Icesi, eso esperamos xD.
 ## Contacto
 
 Si tiene alguna pregunta o comentario sobre el proyecto, podrá contactar a cualquiera de los integrantes del equipo a través de sus correos electrónicos.
