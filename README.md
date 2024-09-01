@@ -1,6 +1,6 @@
 
 
-# NewTask: Freelancer App - Proyecto Integrador de Ingeniería de Sistemas
+# NexTask: Marketplace and Freelancer App - Proyecto Integrador de Ingeniería de Sistemas
 
 ## Descripción del Proyecto
 
@@ -79,4 +79,3 @@ Si tiene alguna pregunta o comentario sobre el proyecto, podrá contactar a cual
 - **Óscar Stiven Muñoz Ramírez** - [oscarmunozramirez01@gmail.com](mailto:oscarmunozramirez01@gmail.com)
 - **Diego Armando Polanco Lozano** - [diegoarmandopolancolozano@gmail.com](mailto:diegoarmandopolancolozano@gmail.com)
 - **Luis Manuel Rojas Correa** - [luis.manuel.rojas71@gmail.com](mailto:luis.manuel.rojas71@gmail.com)
-s
