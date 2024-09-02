@@ -9,7 +9,7 @@ Este proyecto será una aplicación de freelancer que permitirá a los usuarios 
 ## Integrantes del Equipo SOPAS (Students Of Programing And Software)
 
 - **Ricardo Andrés Chamorro Martínez** - [chamorroricardo29@gmail.com](mailto:chamorroricardo29@gmail.com)
-- **Sebastián Erazo Ochoa** - [sbast6666@gmail.com](mailto:sbast6666@gmail.com)
+- **Sebastian Erazo Ochoa** - [sbast6666@gmail.com](mailto:sbast6666@gmail.com)
 - **Óscar Stiven Muñoz Ramírez** - [oscarmunozramirez01@gmail.com](mailto:oscarmunozramirez01@gmail.com)
 - **Diego Armando Polanco Lozano** - [diegoarmandopolancolozano@gmail.com](mailto:diegoarmandopolancolozano@gmail.com)
 - **Luis Manuel Rojas Correa** - [luis.manuel.rojas71@gmail.com](mailto:luis.manuel.rojas71@gmail.com)
