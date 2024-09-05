@@ -1,7 +1,6 @@
-# users/models.py
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django_countries.fields import CountryField
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
@@ -18,25 +17,18 @@ class Skill(models.Model):
 
 class FreelancerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    country = CountryField()  # Campo para seleccionar país
+    city = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=20, blank=True)  # Teléfono
+    address = models.CharField(max_length=255, blank=True)  # Dirección
     skills = models.ManyToManyField(Skill, blank=True)
-
-class AcademicRecord(models.Model):
-    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
-    institution = models.CharField(max_length=255)
-    degree = models.CharField(max_length=255)
-    field_of_study = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
-
-class WorkExperience(models.Model):
-    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=255)
-    job_title = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
-    description = models.TextField(blank=True)
 
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
     company_website = models.URLField(blank=True)
+    country = CountryField()  # Campo para seleccionar país
+    city = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=20, blank=True)  # Teléfono
+    address = models.CharField(max_length=255, blank=True)  # Dirección
+

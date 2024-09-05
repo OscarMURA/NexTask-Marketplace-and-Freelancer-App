@@ -1,21 +1,19 @@
-# users/forms.py
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Skill, FreelancerProfile, AcademicRecord, WorkExperience, ClientProfile
+from .models import User, ClientProfile, FreelancerProfile
+from django_countries.fields import CountryField
+from django_countries.widgets import CountrySelectWidget
 
+# Formulario para el registro de Freelancers
 class FreelancerSignUpForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    skills = forms.ModelMultipleChoiceField(
-        queryset=Skill.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    new_skill = forms.CharField(max_length=100, required=False, help_text="Add a new skill if not listed.")
+    country = CountryField().formfield(widget=CountrySelectWidget())  # Correcto uso de CountryField
+    city = forms.CharField(max_length=255, required=True)  # Añadido campo de ciudad
+    phone = forms.CharField(max_length=20, required=False)
+    address = forms.CharField(max_length=255, required=False)
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -23,32 +21,37 @@ class FreelancerSignUpForm(UserCreationForm):
         if commit:
             user.save()
             freelancer_profile = FreelancerProfile.objects.create(user=user)
-            skills = self.cleaned_data.get('skills')
-            new_skill_name = self.cleaned_data.get('new_skill')
-            if skills:
-                freelancer_profile.skills.set(skills)
-            if new_skill_name:
-                new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
-                freelancer_profile.skills.add(new_skill)
+            freelancer_profile.country = self.cleaned_data.get('country')  # Guardar país
+            freelancer_profile.city = self.cleaned_data.get('city')  # Guardar ciudad
+            freelancer_profile.phone = self.cleaned_data.get('phone')
+            freelancer_profile.address = self.cleaned_data.get('address')
+            freelancer_profile.save()
         return user
 
+# Formulario para el registro de Clientes
 class ClientSignUpForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    company_name = forms.CharField(max_length=255)
+    company_name = forms.CharField(max_length=255, required=True)
     company_website = forms.URLField(required=False)
+    country = CountryField().formfield(widget=CountrySelectWidget())  # Correcto uso de CountryField
+    city = forms.CharField(max_length=255, required=True)  # Añadido campo de ciudad
+    phone = forms.CharField(max_length=20, required=False)  # Añadido teléfono
+    address = forms.CharField(max_length=255, required=False)  # Añadida dirección
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.user_type = 'client'
         if commit:
             user.save()
-            client_profile = ClientProfile.objects.create(
-                user=user,
-                company_name=self.cleaned_data.get('company_name'),
-                company_website=self.cleaned_data.get('company_website')
-            )
+            client_profile = ClientProfile.objects.create(user=user)
+            client_profile.company_name = self.cleaned_data.get('company_name')
+            client_profile.company_website = self.cleaned_data.get('company_website')
+            client_profile.country = self.cleaned_data.get('country')  # Guardar país
+            client_profile.city = self.cleaned_data.get('city')  # Guardar ciudad
+            client_profile.phone = self.cleaned_data.get('phone')  # Guardar teléfono
+            client_profile.address = self.cleaned_data.get('address')  # Guardar dirección
+            client_profile.save()
         return user

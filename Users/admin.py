@@ -1,7 +1,5 @@
-# Users/admin.py
-
 from django.contrib import admin
-from .models import User, FreelancerProfile, ClientProfile, Skill, AcademicRecord, WorkExperience
+from .models import User, FreelancerProfile, ClientProfile, Skill
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -9,18 +7,16 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('user_type', 'is_staff', 'is_active')
     search_fields = ('username', 'email', 'first_name', 'last_name')
 
-# Puedes hacer algo similar con otros modelos si lo necesitas
 @admin.register(FreelancerProfile)
 class FreelancerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user',)
-    search_fields = ('user__username',)
+    list_display = ('user', 'country', 'city', 'phone', 'address')  # Añadido 'city'
+    search_fields = ('user__username', 'country', 'city')  # Añadido 'city'
+    list_filter = ('country', 'city')  # Opción para filtrar por país y ciudad
 
 @admin.register(ClientProfile)
 class ClientProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'company_name')
-    search_fields = ('user__username', 'company_name')
+    list_display = ('user', 'company_name', 'country', 'city')  # Añadido 'country' y 'city'
+    search_fields = ('user__username', 'company_name', 'country', 'city')  # Añadido 'country' y 'city'
+    list_filter = ('country', 'city')  # Opción para filtrar por país y ciudad
 
-# Registrar habilidades y otros modelos
 admin.site.register(Skill)
-admin.site.register(AcademicRecord)
-admin.site.register(WorkExperience)

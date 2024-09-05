@@ -1,7 +1,11 @@
-<!-- templates/users/freelancer_signup.html -->
+{% load static %}
+
 <h2>Register as Freelancer</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Sign Up</button>
 </form>
+
+<!-- Asegúrate de incluir el archivo CSS del widget de django-countries -->
+<link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
