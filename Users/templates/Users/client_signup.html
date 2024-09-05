@@ -1,0 +1,7 @@
+<!-- templates/users/client_signup.html -->
+<h2>Register as Client</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+</form>
