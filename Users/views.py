@@ -23,3 +23,11 @@ def client_signup(request):
     else:
         form = ClientSignUpForm()
     return render(request, 'Users/client_signup.html', {'form': form})
+
+from django.shortcuts import render
+
+def login(request):
+    if request.method == 'POST':
+        # Procesar el formulario de inicio de sesión
+        pass
+    return render(request, 'Users/login.html')
