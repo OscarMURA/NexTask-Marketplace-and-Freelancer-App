@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='freelancerprofile',
             name='country',
-            field=django_countries.fields.CountryField(default='Colombia', max_length=2),
+            field=django_countries.fields.CountryField(default='CO', max_length=2),
             preserve_default=False,
         ),
         migrations.AddField(
