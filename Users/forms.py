@@ -57,3 +57,4 @@ class ClientSignUpForm(UserCreationForm):
             client_profile.address = self.cleaned_data.get('address')  # Guardar dirección
             client_profile.save()
         return user
+
