@@ -34,7 +34,9 @@ class FreelancerSignUpForm(UserCreationForm):
 class ClientSignUpForm(UserCreationForm):
     company_name = forms.CharField(max_length=255, required=True)
     company_website = forms.URLField(required=False)
-    country = CountryField().formfield(widget=CountrySelectWidget())  # Correcto uso de CountryField
+    country = CountryField().formfield(
+    widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})
+)  # Correcto uso de CountryField
     city = forms.CharField(max_length=255, required=True)  # Añadido campo de ciudad
     phone = forms.CharField(max_length=20, required=False)  # Añadido teléfono
     address = forms.CharField(max_length=255, required=False)  # Añadida dirección

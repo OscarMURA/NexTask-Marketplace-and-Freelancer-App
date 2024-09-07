@@ -1,78 +1,17 @@
+{% extends 'Users/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Signup - Work Zone</title>
-    <!-- GLightBox -->
-    <link rel="stylesheet" href="{% static 'css/glightbox.min.css' %}" />
-    <!-- Aos -->
-    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-    <!-- Nice Select -->
-    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" />
-    <!-- Quill CSS -->
-    <link href="{% static 'css/quill.core.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/quill.snow.css' %}" rel="stylesheet" />
-    <!-- Bootstrap CSS -->
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
-    <!-- Font-awesome CSS -->
-    <link href="{% static 'css/font-awesome-all.min.css' %}" rel="stylesheet" />
-    <!-- Main CSS -->
-    <link href="{% static 'css/style.css' %}" rel="stylesheet" />
-    <!-- Responsive CSS -->
-    <link href="{% static 'css/resposive.css' %}" rel="stylesheet" />
-    <!-- Asegúrate de incluir el archivo CSS del widget de django-countries -->
-    <link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
-</head>
-<body>
-    <!-- Header and Navbar -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-              <a class="navbar-brand" href="#" style="margin-left: -35px;">
-                <img src="{% static 'img/others/logoApp.png' %}" alt="Logo" style="height: 80px; width: auto;">
-              </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex">
-                        <a href="/login" class="btn btn-primary">Login</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
 
-    <div class="signup-banner" style="position: relative; text-align: left; overflow: hidden; height: 300px; width: 100%;">
-        <img src="{% static 'img/others/freelancer.png' %}" alt="Signup Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-        <h1 style="color: white; position: absolute; top: 70%; left: 2%; transform: translateY(-50%); font-size: 55px; z-index: 2;">Sign up</h1>
-    </div>
-
+{% block content %}
     <!-- Signup Form -->
+    <div class="container">
     <section class="py-110 bg-offWhite">
         <div class="container">
             <div class="mb-5" style="margin-top: -60px;">
                 <div class="row justify-content-center">
                     <div class="col-auto">
                         <div class="d-flex align-items-center gap-3">
-                            <a href="" class="w-form-btn">Freelancer</a>
-                            <a href="" class="w-form-btn-outline">Buyer</a>
+                            <a href="{% url 'register_freelancer' %}" class="w-form-btn">Freelancer</a>
+                            <a href="{% url 'client_signup' %}" class="w-form-btn-outline">Client</a>
                         </div>
                     </div>
                 </div>
@@ -148,6 +87,25 @@
                                         <input type="password" class="form-control shadow-none" id="password2" name="password2" placeholder="Confirm Password" required />
                                     </div>
                                 </div>
+                                
+                                <!-- Botón de red social -->
+                                <div class="d-flex gap-3 justify-content-center align-items-center social-login">
+                                    <button class="social-login-item">
+                                        <svg
+                                          width="26"
+                                          height="26"
+                                          viewBox="0 0 26 26"
+                                          fill="none"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M13 14.95V11.05L25.8547 11.05C25.9504 11.6861 26 12.3372 26 13C26 20.1797 20.1797 26 13 26C5.8203 26 0 20.1797 0 13C0 5.8203 5.8203 0 13 0C16.5898 0 19.8398 1.45507 22.1924 3.80761L19.4347 6.56533C17.7879 4.91855 15.5129 3.9 13 3.9C7.97421 3.9 3.9 7.97421 3.9 13C3.9 18.0258 7.97421 22.1 13 22.1C17.3565 22.1 20.9979 19.0387 21.8906 14.95H13Z"
+                                            fill="currentColor"
+                                          />
+                                        </svg>
+                                    </button>
+                                </div>
+
                                 <div class="d-grid mt-4">
                                     <button class="w-btn-secondary-lg" type="submit" id="submit-btn">Create Account</button>
                                 </div>
@@ -162,14 +120,14 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="login-img">
-                            <img src="{% static 'img/others/singup.png' %}" class="img-fluid w-100" alt="Signup Image" />
+                            <img src="{% static 'img/others/1.png' %}" class="img-fluid w-100" alt="Signup Image" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
+    </div>
     <!-- Bootstrap JS and dependencies -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <!-- Main JS -->
@@ -182,7 +140,5 @@
             submitButton.disabled = true;  // Deshabilitar el botón después de hacer clic para evitar múltiples envíos
         });
     </script>
-</body>
-</html>
-<!-- Asegúrate de incluir el archivo CSS del widget de django-countries -->
-<link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
+{% endblock %}
+
