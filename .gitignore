@@ -5,6 +5,13 @@ env/
 # Archivos de configuración de IDE
 .idea/
 .vscode/
+
 # Archivos de configuración de Python
 *.pyc
-
+Messaging/__pycache__
+NextTask/__pycache__
+Notifications/__pycache__
+Payments/__pycache__
+Projects/__pycache__
+Reports/__pycache__
+Users/__pycache__
