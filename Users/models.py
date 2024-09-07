@@ -32,3 +32,24 @@ class ClientProfile(models.Model):
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
 
+# models.py
+class Education(models.Model):
+    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
+    entity_name = models.CharField(max_length=255)
+    degree = models.CharField(max_length=255)
+    major = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+class Certification(models.Model):
+    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
+    entity_name = models.CharField(max_length=255)
+    degree = models.CharField(max_length=255)
+    certification_id = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+class Portfolio(models.Model):
+    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
+    url = models.URLField(blank=True)
+    description = models.TextField(blank=True)

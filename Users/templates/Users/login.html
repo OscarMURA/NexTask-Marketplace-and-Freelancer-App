@@ -43,15 +43,26 @@
                   <p class="section-desc">Welcome to Work Zone</p>
                 </div>
 
+                <!-- Mostrar errores si existen -->
+                {% if messages %}
+                  <div class="alert alert-danger">
+                    <ul>
+                      {% for message in messages %}
+                        <li>{{ message }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+
                 <!-- Formulario de inicio de sesión -->
-                <form method="post">
+                <form method="post" action="{% url 'login' %}">
                   {% csrf_token %}
                   <div class="form-container d-flex flex-column gap-4">
                     
-                    <!-- Campo de Email -->
+                    <!-- Campo de Username -->
                     <div class="form-input">
-                      <label for="email" class="form-label">Email <span class="text-lime-300">*</span></label>
-                      <input type="email" id="email" name="email" placeholder="example@gmail.com" class="form-control shadow-none" required />
+                      <label for="username" class="form-label">Username <span class="text-lime-300">*</span></label>
+                      <input type="text" id="username" name="username" placeholder="Username" class="form-control shadow-none" required />
                     </div>
                     
                     <!-- Campo de Contraseña -->
@@ -79,7 +90,7 @@
 
                 <!-- Opción de registro -->
                 <div class="mt-4">
-                  <p class="text-center form-text">Don’t have an account? <a href="signup.html">Create Account</a></p>
+                  <p class="text-center form-text">Don’t have an account? <a href="{% url 'register_freelancer' %}">Create Account</a></p>
                 </div>
               </div>
 
