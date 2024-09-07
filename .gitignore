@@ -5,3 +5,6 @@ env/
 # Archivos de configuración de IDE
 .idea/
 .vscode/
+
+# Archivos de configuración de Python
+*.pyc
