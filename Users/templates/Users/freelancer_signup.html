@@ -30,7 +30,7 @@
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-              <a class="navbar-brand" href="#">
+              <a class="navbar-brand" href="#" style="margin-left: -35px;">
                 <img src="{% static 'img/others/logoApp.png' %}" alt="Logo" style="height: 80px; width: auto;">
               </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,10 +59,15 @@
         </nav>
     </header>
 
+    <div class="signup-banner" style="position: relative; text-align: left; overflow: hidden; height: 300px; width: 100%;">
+        <img src="{% static 'img/others/freelancer.png' %}" alt="Signup Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <h1 style="color: white; position: absolute; top: 70%; left: 2%; transform: translateY(-50%); font-size: 55px; z-index: 2;">Sign up</h1>
+    </div>
+
     <!-- Signup Form -->
     <section class="py-110 bg-offWhite">
         <div class="container">
-            <div class="mb-5">
+            <div class="mb-5" style="margin-top: -60px;">
                 <div class="row justify-content-center">
                     <div class="col-auto">
                         <div class="d-flex align-items-center gap-3">
@@ -139,8 +144,8 @@
                                         <input type="password" class="form-control shadow-none" id="password1" name="password1" placeholder="Password" required />
                                     </div>
                                     <div class="form-input col-lg-12">
-                                        <label for="password2" the form-label">Confirm Password <span class="text-lime-300">*</span></label>
-                                        <input type of="password" class="form-control shadow-none" id="password2" name="password2" placeholder="Confirm Password" required />
+                                        <label for="password2" class="form-label">Confirm Password <span class="text-lime-300">*</span></label>
+                                        <input type="password" class="form-control shadow-none" id="password2" name="password2" placeholder="Confirm Password" required />
                                     </div>
                                 </div>
                                 <div class="d-grid mt-4">
