@@ -6,7 +6,9 @@ from django_countries.widgets import CountrySelectWidget
 
 # Formulario para el registro de Freelancers
 class FreelancerSignUpForm(UserCreationForm):
-    country = CountryField().formfield(widget=CountrySelectWidget())  # Correcto uso de CountryField
+    country = CountryField().formfield(
+    widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})
+)
     city = forms.CharField(max_length=255, required=True)  # Añadido campo de ciudad
     phone = forms.CharField(max_length=20, required=False)
     address = forms.CharField(max_length=255, required=False)
@@ -55,3 +57,4 @@ class ClientSignUpForm(UserCreationForm):
             client_profile.address = self.cleaned_data.get('address')  # Guardar dirección
             client_profile.save()
         return user
+
