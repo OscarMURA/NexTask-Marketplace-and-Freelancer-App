@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Signup - NextTask</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/glightbox.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" />
+    <link href="{% static 'css/quill.core.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/quill.snow.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/font-awesome-all.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
+    <style>
+        .info-section {
+            padding: 40px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        .feature {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .feature h3 {
+            color: #1A1773;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header and Navbar -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="{% static 'img/others/logoApp.png' %}" alt="Logo" style="height: 80px; width: auto;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex">
+                        <a href="/login" class="btn btn-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Banner Section with Flexbox -->
+    <div style="background-color: #1A1773; display: flex; align-items: center; justify-content: space-between; padding: 20px; text-align: left; color: white;">
+        <div style="flex: 1; padding-right: 20px;">
+            <h1 style="font-size: 60px; font-weight: bold;">
+                Find Your Perfect <span style="color: #635FD9;">Freelancer</span> Quick<br>
+            </h1>
+            <h1 style="font-size: 60px; font-weight: bold;">and Easy</h1><br><br>
+            <div style="margin-top: 20px; font-size: 30px;"><b>We have</b></div>
+            <p style="font-size: 24px;">your next task!</p>
+        </div>
+        <img src="{% static 'img/others/freelancerHome.png' %}" alt="Freelancer Working" style="max-width: 55%; height: auto;">
+    </div>
+
+    <!-- New Information Section: Why Choose Us? -->
+    <div class="info-section">
+        <div class="container">
+            <h2>Why Choose Us?</h2>
+            <p>Discover why NextTask is the best platform for freelancers and clients to connect and succeed.</p>
+            <div class="row">
+                <div class="col-md-4 feature">
+                    <h3>Reliable Service</h3>
+                    <p>We offer 24/7 customer support to ensure you always have the help you need.</p>
+                </div>
+                <div class="col-md-4 feature">
+                    <h3>Wide Range of Categories</h3>
+                    <p>From design to development, we have projects to suit every skill set.</p>
+                </div>
+                <div class="col-md-4 feature">
+                    <h3>Secure Payments</h3>
+                    <p>Our payment system ensures that you get paid safely and promptly for every task.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Information Section: Our Mission -->
+    <div class="info-section">
+        <div class="container">
+            <h2>Our Mission</h2>
+            <p>Our mission is to empower freelancers worldwide by providing opportunities for economic growth through meaningful work.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 NextTask. All rights reserved.</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

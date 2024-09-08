@@ -32,3 +32,6 @@ def user_login(request):
         # Procesar el formulario de inicio de sesión
         pass
     return render(request, 'Users/login.html')
+
+def home(request):
+    return render(request, 'Users/home.html')
