@@ -57,6 +57,7 @@ MIDDLEWARE = [
 ]
 
 
+
 ROOT_URLCONF = 'NextTask.urls'
 
 TEMPLATES = [

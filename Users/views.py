@@ -1,15 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
 from .forms import FreelancerSignUpForm, ClientSignUpForm
-from .models import FreelancerProfile, ClientProfile
+from .models import FreelancerProfile, ClientProfile, User
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
-from .models import User
-from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages  # Para los mensajes de error y éxito
 
 
 @never_cache
@@ -37,32 +33,29 @@ def client_signup(request):
     return render(request, 'Users/client_signup.html', {'form': form})
 
 # Renombramos la función login a user_login
-@csrf_protect
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
-        user_type = request.POST.get('user_type')  # Obtenemos el tipo de usuario desde el formulario
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             
             if user is not None:
-                # Verificamos que el tipo de usuario coincida con el del usuario en la base de datos
-                if user.user_type != user_type:
-                    messages.error(request, "Selecciona el tipo de usuario correcto.")  # Mostramos mensaje de error
-                else:
-                    login(request, user)
-                    return redirect('welcome')  # Redirige a la página de bienvenida
+                login(request, user)
+                return redirect('welcome')  # Redirige a la página de bienvenida
             else:
-                messages.error(request, 'Usuario o contraseña incorrectos.')
+                
+                messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
         else:
-            messages.error(request, 'Por favor corrige los errores a continuación.')
-    
+            
+            messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
+
     else:
         form = AuthenticationForm()
 
     return render(request, 'Users/login.html', {'form': form})
 
+
 def welcome(request):
-    return HttpResponse('<h1>Bienvenido</h1>')
+    return render(request, 'Users/welcome.html')

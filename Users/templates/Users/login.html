@@ -10,27 +10,17 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
-    <!-- Main Start -->
     <main>
       <!-- Breadcrumb -->
       <section class="w-breadcrumb-area" style="background: url('{% static 'img/common/breadcrumb-bg.png' %}') no-repeat center center/cover;">
         <div class="container">
           <div class="row">
             <div class="col-auto">
-              <div class="position-relative z-2" data-aos="fade-up" data-aos-duration="1000" data-aos-easing="linear">
-                <h2 class="section-title-light mb-2">Sign In</h2>
-                <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb w-breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Login</li>
-                  </ol>
-                </nav>
-              </div>
+              <h2 class="section-title-light mb-2">Sign In</h2>
             </div>
           </div>
         </div>
       </section>
-      <!-- Breadcrumb End -->
 
       <!-- Login Form -->
       <section class="py-110 bg-offWhite">
@@ -71,42 +61,24 @@
                       <input type="password" id="password" name="password" placeholder="********" class="form-control shadow-none" required />
                     </div>
 
-                    <!-- Selección del tipo de usuario -->
-                    <div class="form-input">
-                      <label for="user_type" class="form-label">User Type <span class="text-lime-300">*</span></label>
-                      <select id="user_type" name="user_type" class="form-select shadow-none" required>
-                        <option value="freelancer">Freelancer</option>
-                        <option value="client">Client</option>
-                      </select>
-                    </div>
-
                     <!-- Botón de inicio de sesión -->
                     <div class="d-grid">
                       <button type="submit" class="w-btn-secondary-lg">Log In</button>
                     </div>
 
+                    <!-- Opción de registro -->
+                    <div class="mt-4">
+                      <p class="text-center form-text">Don’t have an account? <a href="{% url 'register_freelancer' %}">Create Account</a></p>
+                    </div>
+
                   </div>
                 </form>
-
-                <!-- Opción de registro -->
-                <div class="mt-4">
-                  <p class="text-center form-text">Don’t have an account? <a href="{% url 'register_freelancer' %}">Create Account</a></p>
-                </div>
-              </div>
-
-              <!-- Imagen lateral -->
-              <div class="col-lg-6">
-                <div class="login-img">
-                  <img src="{% static 'img/others/1.png' %}" class="img-fluid w-100" alt="Login Image" />
-                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <!-- Login Form End -->
     </main>
-    <!-- Main End -->
 
     <!-- Scripts -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
