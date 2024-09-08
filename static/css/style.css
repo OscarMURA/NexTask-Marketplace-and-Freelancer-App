@@ -3197,6 +3197,16 @@ Footer
 .footer-social-link:hover {
   color: var(--white);
 }
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1030; /* Asegúrate de que quede por encima del contenido */
+}
+body {
+  padding-top: 100px; /* Ajusta el valor según la altura de tu navbar */
+}
+
 /*******************
 Footer   End
 ********************/

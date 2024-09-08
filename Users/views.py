@@ -3,6 +3,7 @@ from django.contrib.auth import login as auth_login
 from .forms import FreelancerSignUpForm, ClientSignUpForm
 from .models import FreelancerProfile, ClientProfile
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
 
 def freelancer_signup(request):
     if request.method == 'POST':
@@ -27,8 +28,12 @@ def client_signup(request):
     return render(request, 'Users/client_signup.html', {'form': form})
 
 # Renombramos la función login a user_login
-def user_login(request):
+def login(request):
     if request.method == 'POST':
         # Procesar el formulario de inicio de sesión
         pass
     return render(request, 'Users/login.html')
+
+@login_required
+def home(request):
+    return render(request, 'Users/home.html')
