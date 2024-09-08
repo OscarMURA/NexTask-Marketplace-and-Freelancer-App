@@ -1,0 +1,44 @@
+{% extends 'Users/base.html' %}
+{% block content %}
+<div class="container">
+    <section class="py-110 bg-offWhite">
+        <div class="container">
+            <div class="bg-white rounded-3 p-3">
+                <h2 class="section-title mb-4">Work Experience</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-container">
+                        <div class="row gy-3">
+                            <div class="form-input col-lg-6">
+                                <label for="company_name" class="form-label">Company Name <span class="text-lime-300">*</span></label>
+                                <input type="text" class="form-control shadow-none" id="company_name" name="company_name" placeholder="Company Name" required>
+                            </div>
+                            <div class="form-input col-lg-6">
+                                <label for="position" class="form-label">Position <span class="text-lime-300">*</span></label>
+                                <input type="text" class="form-control shadow-none" id="position" name="position" placeholder="Job Title" required>
+                            </div>
+                            <div class="form-input col-lg-6">
+                                <label for="start_date" class="form-label">Start Date <span class="text-lime-300">*</span></label>
+                                <input type="date" class="form-control shadow-none" id="start_date" name="start_date" required>
+                            </div>
+                            <div class="form-input col-lg-6">
+                                <label for="end_date" class="form-label">End Date <span class="text-lime-300">*</span></label>
+                                <input type="date" class="form-control shadow-none" id="end_date" name="end_date" required>
+                            </div>
+                            <div class="form-input col-lg-12">
+                                <label for="short_description" class="form-label">Short Description</label>
+                                <textarea class="form-control shadow-none" id="short_description" name="short_description" placeholder="Provide a brief description of your work experience"></textarea>
+                            </div>
+                        </div>
+                        <!-- Botones de atrás, adelante y omitir -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="?skip=true" class="btn btn-warning">Skip</a>
+                            <button type="submit" class="btn btn-primary">Finish</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

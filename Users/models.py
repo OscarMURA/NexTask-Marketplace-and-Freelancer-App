@@ -32,24 +32,48 @@ class ClientProfile(models.Model):
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
 
-# models.py
+# Historial académico
 class Education(models.Model):
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
-    entity_name = models.CharField(max_length=255)
-    degree = models.CharField(max_length=255)
-    major = models.CharField(max_length=255)
+    institution_name = models.CharField(max_length=255)  # Nombre de la institución
+    degree = models.CharField(max_length=255)  # Título obtenido
+    major = models.CharField(max_length=255, blank=True)  # Especialización (opcional)
     start_date = models.DateField()
     end_date = models.DateField()
+    short_description = models.TextField(max_length=500, blank=True)  # Descripción corta
 
+    def __str__(self):
+        return f'{self.degree} - {self.institution_name}'
+
+# Historial laboral
+class WorkExperience(models.Model):
+    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=255)  # Nombre de la empresa
+    position = models.CharField(max_length=255)  # Cargo
+    start_date = models.DateField()
+    end_date = models.DateField()
+    short_description = models.TextField(max_length=500, blank=True)  # Descripción corta
+
+    def __str__(self):
+        return f'{self.position} at {self.company_name}'
+
+# Certificaciones
 class Certification(models.Model):
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
-    entity_name = models.CharField(max_length=255)
-    degree = models.CharField(max_length=255)
-    certification_id = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    certification_name = models.CharField(max_length=255)  # Nombre de la certificación
+    issuing_organization = models.CharField(max_length=255)  # Organización emisora
+    issue_date = models.DateField()
+    expiration_date = models.DateField(blank=True, null=True)  # Puede no tener fecha de expiración
+    short_description = models.TextField(max_length=500, blank=True)  # Descripción corta (opcional)
 
+    def __str__(self):
+        return f'{self.certification_name} - {self.issuing_organization}'
+
+# Portafolio
 class Portfolio(models.Model):
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
     url = models.URLField(blank=True)
     description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f'{self.url} - {self.freelancer.user.username}'
