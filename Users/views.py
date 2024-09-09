@@ -34,6 +34,5 @@ def login(request):
         pass
     return render(request, 'Users/login.html')
 
-@login_required
 def home(request):
     return render(request, 'Users/home.html')
