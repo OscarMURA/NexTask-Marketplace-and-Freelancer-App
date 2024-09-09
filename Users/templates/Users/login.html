@@ -1,27 +1,29 @@
+{% extends 'Users/base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Work Zone - Sign In</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-  </head>
-  <body>
+{% block content %}
+    <title>Login - NextTask</title>   
+    <!-- Main Start -->
     <main>
       <!-- Breadcrumb -->
-      <section class="w-breadcrumb-area" style="background: url('{% static 'img/common/breadcrumb-bg.png' %}') no-repeat center center/cover;">
+      <section class="w-breadcrumb-area" style="background: url('{% static 'img/common/breadcrumb.png' %}') no-repeat center center/cover;">
         <div class="container">
           <div class="row">
             <div class="col-auto">
-              <h2 class="section-title-light mb-2">Sign In</h2>
+              <div class="position-relative z-2" data-aos="fade-up" data-aos-duration="1000" data-aos-easing="linear">
+                <h2 class="section-title-light mb-2">Sign In</h2>
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb w-breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Login</li>
+                  </ol>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
+      <!-- Breadcrumb End -->
       <!-- Login Form -->
       <section class="py-110 bg-offWhite">
         <div class="container">
@@ -30,29 +32,18 @@
               <div class="col-lg-6 p-3 p-lg-5">
                 <div class="mb-40">
                   <h2 class="section-title mb-2">Log in</h2>
-                  <p class="section-desc">Welcome to Work Zone</p>
+                  <p class="section-desc">Welcome to NextTask</p>
                 </div>
 
-                <!-- Mostrar errores si existen -->
-                {% if messages %}
-                  <div class="alert alert-danger">
-                    <ul>
-                      {% for message in messages %}
-                        <li>{{ message }}</li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                {% endif %}
-
                 <!-- Formulario de inicio de sesión -->
-                <form method="post" action="{% url 'login' %}">
+                <form method="post">
                   {% csrf_token %}
                   <div class="form-container d-flex flex-column gap-4">
                     
-                    <!-- Campo de Username -->
+                    <!-- Campo de Email -->
                     <div class="form-input">
-                      <label for="username" class="form-label">Username <span class="text-lime-300">*</span></label>
-                      <input type="text" id="username" name="username" placeholder="Username" class="form-control shadow-none" required />
+                      <label for="email" class="form-label">Email <span class="text-lime-300">*</span></label>
+                      <input type="email" id="email" name="email" placeholder="example@gmail.com" class="form-control shadow-none" required />
                     </div>
                     
                     <!-- Campo de Contraseña -->
@@ -61,26 +52,62 @@
                       <input type="password" id="password" name="password" placeholder="********" class="form-control shadow-none" required />
                     </div>
 
+                    <!-- Selección del tipo de usuario -->
+                    <div class="form-input">
+                      <label for="user_type" class="form-label">User Type <span class="text-lime-300">*</span></label>
+                      <select id="user_type" name="user_type" class="form-select shadow-none" required>
+                        <option value="freelancer">Freelancer</option>
+                        <option value="client">Client</option>
+                      </select>
+                    </div>
+
+                    <!-- Botón de red social -->
+                    <div class="d-flex gap-3 justify-content-center align-items-center social-login">
+                      <button class="social-login-item">
+                          <svg
+                            width="26"
+                            height="26"
+                            viewBox="0 0 26 26"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M13 14.95V11.05L25.8547 11.05C25.9504 11.6861 26 12.3372 26 13C26 20.1797 20.1797 26 13 26C5.8203 26 0 20.1797 0 13C0 5.8203 5.8203 0 13 0C16.5898 0 19.8398 1.45507 22.1924 3.80761L19.4347 6.56533C17.7879 4.91855 15.5129 3.9 13 3.9C7.97421 3.9 3.9 7.97421 3.9 13C3.9 18.0258 7.97421 22.1 13 22.1C17.3565 22.1 20.9979 19.0387 21.8906 14.95H13Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                      </button>
+                    </div>
+
                     <!-- Botón de inicio de sesión -->
                     <div class="d-grid">
                       <button type="submit" class="w-btn-secondary-lg">Log In</button>
                     </div>
 
-                    <!-- Opción de registro -->
-                    <div class="mt-4">
-                      <p class="text-center form-text">Don’t have an account? <a href="{% url 'register_freelancer' %}">Create Account</a></p>
-                    </div>
-
                   </div>
                 </form>
+                
+
+                <!-- Opción de registro -->
+                <div class="mt-4">
+                  <p class="text-center form-text">Don’t have an account? <a href="{% url 'register_freelancer' %}">Create Account</a></p>
+                </div>
+              </div>
+
+              <!-- Imagen lateral -->
+              <div class="col-lg-6">
+                <div class="login-img">
+                  <img src="{% static 'img/others/login.png' %}" class="img-fluid w-100" alt="Login Image" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      <!-- Login Form End -->
     </main>
+    <!-- Main End -->
 
     <!-- Scripts -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-  </body>
-</html>
+{% endblock %}

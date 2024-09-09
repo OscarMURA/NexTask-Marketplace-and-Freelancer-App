@@ -6,6 +6,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
+from django.contrib.auth.decorators import login_required
 
 
 @never_cache
@@ -19,6 +20,9 @@ def freelancer_signup(request):
     else:
         form = FreelancerSignUpForm()
     return render(request, 'Users/freelancer_signup.html', {'form': form})
+
+def home(request):
+    return render(request, 'Users/home.html')
 
 @never_cache
 def client_signup(request):
@@ -93,4 +97,3 @@ def workexperience_register(request):
         return redirect('profile_view')
 
     return render(request, 'Users/workexperience_register.html', {'form': form})
-
