@@ -9,9 +9,7 @@ urlpatterns = [
     path('signup/freelancer/', views.freelancer_signup, name='register_freelancer'),
     path('signup/client/', views.client_signup, name='client_signup'),
     path('login/', views.login, name='login'),
-
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('social-auth/', include('social_django.urls', namespace='social')), #Agregamos esta línea
-    path('', views.home, name='home'),
-
+    path('social-auth/', include('social_django.urls', namespace='social')),
+    path('home/', views.home, name='home'),
 ]
