@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Signup - NextTask</title>
     <!-- GLightBox -->
     <link rel="stylesheet" href="{% static 'css/glightbox.min.css' %}" />
     <!-- Aos -->
@@ -24,11 +23,25 @@
     <link href="{% static 'css/resposive.css' %}" rel="stylesheet" />
     <!-- Asegúrate de incluir el archivo CSS del widget de django-countries -->
     <link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
+    <style>
+        /* Espaciado superior para evitar que el contenido se esconda detrás de la barra de navegación */
+        body {
+            padding-top: 100px; /* Ajusta este valor según la altura de tu barra de navegación */
+        }
+
+        /* Fijar la barra de navegación en la parte superior */
+        .fixed-navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030; /* Asegura que la barra de navegación quede por encima del contenido */
+        }
+    </style>
 </head>
 <body>
     <!-- Header and Navbar -->
     <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-navbar">
             <div class="container">
               <a class="navbar-brand" href="#" style="margin-left: -35px;">
                 <img src="{% static 'img/others/logoApp.png' %}" alt="Logo" style="height: 80px; width: auto;">
@@ -39,7 +52,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}" >Home :D</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">About</a>
@@ -51,18 +64,29 @@
                             <a class="nav-link" href="#">Contact</a>
                         </li>
                     </ul>
-                    <div class="d-flex">
-                        <a href="/login" class="btn btn-primary">Login</a>
-                    </div>
+                    <div class="align-items-center d-none d-lg-flex">
+                        <a href="{% url 'login' %}" class="w-btn-secondary-lg">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="13"
+                            height="17"
+                            viewBox="0 0 13 17"
+                            fill="none"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                              d="M6.5 7.55556C8.55134 7.55556 10.2143 5.86419 10.2143 3.77778C10.2143 1.69137 8.55134 0 6.5 0C4.44866 0 2.78571 1.69137 2.78571 3.77778C2.78571 5.86419 4.44866 7.55556 6.5 7.55556ZM6.5 17C10.0899 17 13 15.3086 13 13.2222C13 11.1358 10.0899 9.44444 6.5 9.44444C2.91015 9.44444 0 11.1358 0 13.2222C0 15.3086 2.91015 17 6.5 17Z"
+                              fill="white"
+                            /></svg
+                          >Login</a>
+                      </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="signup-banner" style="position: relative; text-align: left; overflow: hidden; height: 300px; width: 100%;">
-        <img src="{% static 'img/others/freelancer.png' %}" alt="Signup Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-        <h1 style="color: white; position: absolute; top: 70%; left: 2%; transform: translateY(-50%); font-size: 55px; z-index: 2;">Sign up</h1>
-    </div>
+    
 
     <!-- Aquí se insertará el contenido de las plantillas que extienden esta base -->
     {% block content %}

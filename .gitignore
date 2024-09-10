@@ -15,3 +15,10 @@ Payments/__pycache__
 Projects/__pycache__
 Reports/__pycache__
 Users/__pycache__
+
+# Ignorar archivos de caché de Python
+__pycache__/
+*.py[cod]
+
+# Ignorar migraciones compiladas de Django
+*/migrations/__pycache__/

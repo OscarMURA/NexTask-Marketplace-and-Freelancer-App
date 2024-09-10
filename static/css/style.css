@@ -3197,6 +3197,35 @@ Footer
 .footer-social-link:hover {
   color: var(--white);
 }
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1030; /* Asegúrate de que quede por encima del contenido */
+}
+body {
+  padding-top: 100px; /* Ajusta el valor según la altura de tu navbar */
+}
+
+.signup-banner {
+  position: relative;
+  text-align: left;
+  overflow: hidden;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.signup-banner h1 {
+  color: white;
+  font-size: 55px; /* Ajusta el tamaño de fuente según necesites */
+  margin-bottom: 10px; /* Espacio entre el título y el subtítulo */
+}
+
+.signup-banner p {
+  color: white;
+  font-size: 24px; /* Ajusta el tamaño de fuente según necesites */
+}
 /*******************
 Footer   End
 ********************/
