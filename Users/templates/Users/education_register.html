@@ -7,42 +7,31 @@
                 <h2 class="section-title mb-4">Education</h2>
                 <form method="post">
                     {% csrf_token %}
-                    <div class="form-container">
-                        <div class="row gy-3">
-                            <div class="form-input col-lg-6">
-                                <label for="institution_name" class="form-label">Entity Name <span class="text-lime-300">*</span></label>
-                                <input type="text" class="form-control shadow-none" id="institution_name" name="institution_name" placeholder="University Name" required>
+                    {{ education_formset.management_form }}
+                    <div id="education-forms">
+                        {% for form in education_formset %}
+                            <div class="form-container">
+                                <div class="row gy-3">
+                                    {{ form.as_p }}
+                                </div>
                             </div>
-                            <div class="form-input col-lg-6">
-                                <label for="degree" class="form-label">Degree <span class="text-lime-300">*</span></label>
-                                <input type="text" class="form-control shadow-none" id="degree" name="degree" placeholder="Degree Title" required>
-                            </div>
-                            <div class="form-input col-lg-6">
-                                <label for="major" class="form-label">Major</label>
-                                <input type="text" class="form-control shadow-none" id="major" name="major" placeholder="Major (optional)">
-                            </div>
-                            <div class="form-input col-lg-6">
-                                <label for="start_date" class="form-label">Start Date <span class="text-lime-300">*</span></label>
-                                <input type="date" class="form-control shadow-none" id="start_date" name="start_date" required>
-                            </div>
-                            <div class="form-input col-lg-6">
-                                <label for="end_date" class="form-label">End Date <span class="text-lime-300">*</span></label>
-                                <input type="date" class="form-control shadow-none" id="end_date" name="end_date" required>
-                            </div>
-                            <div class="form-input col-lg-12">
-                                <label for="short_description" class="form-label">Short Description</label>
-                                <textarea class="form-control shadow-none" id="short_description" name="short_description" placeholder="Provide a brief description of your education"></textarea>
-                            </div>
-                        </div>
-                        <!-- Botones de adelante y omitir -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="?skip=true" class="btn btn-warning">Skip</a>
-                            <button type="submit" class="btn btn-primary">Next</button>
-                        </div>
+                        {% endfor %}
                     </div>
+                    <button type="button" id="add-education" class="btn btn-success mt-2">Add More</button>
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
                 </form>
             </div>
         </div>
     </section>
 </div>
+
+<script>
+    document.getElementById('add-education').addEventListener('click', function() {
+        let totalForms = document.getElementById('id_education_set-TOTAL_FORMS');
+        let formContainer = document.getElementById('education-forms');
+        let newForm = formContainer.children[0].cloneNode(true);
+        formContainer.appendChild(newForm);
+        totalForms.value = parseInt(totalForms.value) + 1;
+    });
+</script>
 {% endblock %}

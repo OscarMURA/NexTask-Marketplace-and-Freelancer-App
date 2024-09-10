@@ -1,8 +1,10 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, ClientProfile, FreelancerProfile, Education, WorkExperience
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
+from django.forms import ModelForm, inlineformset_factory
 
 # Clase base para el registro de usuarios
 class UserSignUpForm(UserCreationForm):
@@ -52,24 +54,30 @@ class ClientSignUpForm(UserSignUpForm):
             client_profile.save()
         return user
 
-# Formulario para registrar historial académico
-class EducationForm(forms.ModelForm):
-    class Meta:
-        model = Education
-        fields = ['institution_name', 'degree', 'major', 'start_date', 'end_date', 'short_description']
-        widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
-            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
-            'short_description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
-        }
+# Form for adding education records
+EducationFormSet = inlineformset_factory(
+    FreelancerProfile,
+    Education,
+    fields=('institution_name', 'degree_obtained', 'start_date', 'end_date', 'description'),
+    widgets={
+        'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+        'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+        'description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
+    },
+    extra=1,
+    can_delete=True
+)
 
-# Formulario para registrar historial laboral
-class WorkExperienceForm(forms.ModelForm):
-    class Meta:
-        model = WorkExperience
-        fields = ['company_name', 'position', 'start_date', 'end_date', 'short_description']
-        widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
-            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
-            'short_description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
-        }
+# Form for adding work experience records
+WorkExperienceFormSet = inlineformset_factory(
+    FreelancerProfile,
+    WorkExperience,
+    fields=('company_name', 'position', 'start_date', 'end_date', 'description'),
+    widgets={
+        'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+        'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+        'description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
+    },
+    extra=1,
+    can_delete=True
+)

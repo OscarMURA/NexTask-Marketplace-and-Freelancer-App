@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
-from .forms import FreelancerSignUpForm, ClientSignUpForm, EducationForm, WorkExperienceForm
+from .forms import FreelancerSignUpForm, ClientSignUpForm, EducationFormSet, WorkExperienceFormSet
 from .models import FreelancerProfile, ClientProfile, User
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
@@ -59,38 +60,28 @@ def user_login(request):
 def welcome(request):
     return render(request, 'Users/welcome.html')
 
-
-# Vista para registrar historial académico
-def education_register(request):
-    if request.method == 'POST':
-        form = EducationForm(request.POST)
-        if form.is_valid():
-            education = form.save(commit=False)
-            education.freelancer = request.user.freelancerprofile
-            education.save()
-            return redirect('workexperience_register')
+@login_required
+def education_register_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        formset = EducationFormSet(request.POST, instance=freelancer)
+        if formset.is_valid():
+            formset.save()
+            return redirect('work_experience_register')  # Redirige al registro de experiencia laboral
     else:
-        form = EducationForm()
+        formset = EducationFormSet(instance=freelancer)
 
-    # Permitir que el usuario omita esta parte
-    if 'skip' in request.GET:
-        return redirect('workexperience_register')
+    return render(request, 'Users/education_register.html', {'education_formset': formset})
 
-    return render(request, 'Users/education_register.html', {'form': form})
-
-def workexperience_register(request):
-    if request.method == 'POST':
-        form = WorkExperienceForm(request.POST)
-        if form.is_valid():
-            workexperience = form.save(commit=False)
-            workexperience.freelancer = request.user.freelancerprofile
-            workexperience.save()
-            return redirect('profile_view')  # Redirige al perfil o home
+@login_required
+def work_experience_register_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        formset = WorkExperienceFormSet(request.POST, instance=freelancer)
+        if formset.is_valid():
+            formset.save()
+            return redirect('welcome')  # Redirige a la página de bienvenida después de registrar la experiencia laboral
     else:
-        form = WorkExperienceForm()
+        formset = WorkExperienceFormSet(instance=freelancer)
 
-    if 'skip' in request.GET:
-        return redirect('profile_view')
-
-    return render(request, 'Users/workexperience_register.html', {'form': form})
-
+    return render(request, 'Users/workexperience_register.html', {'work_experience_formset': formset})
