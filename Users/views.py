@@ -63,6 +63,10 @@ def user_login(request):
 def welcome(request):
     return render(request, 'Users/welcome.html')
 
+
+def home(request):
+    return render(request, 'Users/home.html')
+
 @login_required
 def certification_register_view(request):
     freelancer = request.user.freelancerprofile
