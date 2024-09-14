@@ -29,7 +29,7 @@
                                 <p class="section-desc">Welcome to NexTask</p>
                             </div>
 
-                            <!-- Formulario -->
+                            <!-- Form -->
                             <form method="POST" action="{% url 'register_freelancer' %}">
                                 {% csrf_token %}
                                 {{ form|crispy }}  <!-- Crispy tag to render the form -->

@@ -10,7 +10,8 @@ urlpatterns = [
     path('users/', include('Users.urls')),  # Asegúrate de incluir las urls de
     #Agregado segun el video
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('social-auth/', include('social_django.urls', namespace='social')), #Agregamos esta línea
+    path('auth/', include('social_django.urls', namespace='social')), #Agregamos esta línea
     path('', views.home, name='home'),
+    
    
 ]

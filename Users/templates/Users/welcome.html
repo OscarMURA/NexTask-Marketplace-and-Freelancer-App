@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bienvenido</title>
-  </head>
-  <body>
-    <h1>Bienvenido</h1>
-    <p>Has iniciado sesión exitosamente.</p>
-  </body>
-</html>
+{% extends 'Users/base.html' %}
+
+{% block content %}
+<div class="container py-110 bg-offWhite">
+    <section class="container bg-white rounded-3 p-3">
+        <h1 class="section-title">Welcome</h1>
+        <p class="section-desc">You have successfully completed your registration!</p>
+    </section>
+</div>
+{% endblock %}

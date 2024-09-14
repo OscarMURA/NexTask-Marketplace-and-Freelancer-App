@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_countries',
     'crispy_forms',
     'crispy_bootstrap4',
+    'social_django',
     'Users',
     'Messaging',
     'Notifications',
@@ -47,7 +48,7 @@ INSTALLED_APPS = [
     'Projects',
     'Reports',  
     
-    'social_django',
+    
     
 
 
@@ -79,7 +80,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends', # Agregamos esta línea
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -162,3 +164,5 @@ LOGOUT_REDIRECT_URL = 'login'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '569234682481-mm7phcliiq88jdkqpk9mantpkum71n52.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET= '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'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+

@@ -1,23 +1,36 @@
 {% extends 'Users/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
-<div class="container">
-    <h2>Registro de Experiencia Laboral</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ work_experience_formset.management_form }}
-        
-        <div id="workexperience-form-container">
-            {% for form in work_experience_formset %}
-                <div class="dynamic-form">
-                    {{ form|crispy }}  <!-- Crispy tag to render each formset -->
-                </div>
-            {% endfor %}
-        </div>
+    <div class="container">
+        <section class="py-110 bg-offWhite">
+            <div class="container bg-white rounded-3 p-3">
+                <h2 class="section-title mb-2">Work Experience Register</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ work_experience_formset.management_form }}
 
-        <button type="button" class="btn btn-secondary" onclick="addFormset('workexperience')">Añadir más experiencia laboral</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
-</div>
+                    <div id="workexperience-form-container">
+                        {% for form in work_experience_formset %}
+                            <div class="dynamic-form mb-3">
+                                {{ form|crispy }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="w-btn-secondary-lg">Next</button>
+                            <button type="submit" name="skip" value="skip" class="btn btn-outline-secondary">Skip</button>
+                        </div>
+                    </div>
+                    
+                    
+                </form>
+
+                <a href="{% url back_url %}" class="btn btn-outline-secondary mt-3">Back</a>
+            </div>
+        </section>
+    </div>
 {% endblock %}
