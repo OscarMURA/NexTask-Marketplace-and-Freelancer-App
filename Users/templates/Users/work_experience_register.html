@@ -1,0 +1,23 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <h2>Registro de Experiencia Laboral</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ work_experience_formset.management_form }}
+        
+        <div id="workexperience-form-container">
+            {% for form in work_experience_formset %}
+                <div class="dynamic-form">
+                    {{ form|crispy }}  <!-- Crispy tag to render each formset -->
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" class="btn btn-secondary" onclick="addFormset('workexperience')">Añadir más experiencia laboral</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}

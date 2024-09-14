@@ -1,11 +1,52 @@
+{% extends 'Users/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
-<h2>Register as Client</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign Up</button>
-</form>
+{% block content %}
+    <title>Signup - NextTask</title>    
+    <div class="signup-banner" style="position: relative; text-align: left; overflow: hidden; height: 300px; width: 100%;">
+        <img src="{% static 'img/others/freelancer.png' %}" alt="Signup Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <h1 style="color: white; position: absolute; top: 70%; left: 2%; transform: translateY(-50%); font-size: 55px; z-index: 2;">Sign up</h1>
+    </div>
+    <div class="container">
+        <section class="py-110 bg-offWhite">
+            <div class="container">
+                <div class="mb-5" style="margin-top: -60px;">
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="{% url 'register_freelancer' %}" class="w-form-btn-outline">Freelancer</a>
+                                <a href="{% url 'client_signup' %}" class="w-form-btn">Client</a>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3 p-3">
+                    <div class="row g-4">
+                        <div class="col-lg-6 p-3 p-lg-5">
+                            <div class="mb-40">
+                                <h2 class="section-title mb-2">Client Sign up</h2>
+                                <p class="section-desc">Welcome to NexTask</p>
+                            </div>
 
-<!-- Asegúrate de incluir el archivo CSS del widget de django-countries -->
-<link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
+                            <!-- Formulario -->
+                            <form method="POST" action="{% url 'client_signup' %}">
+                                {% csrf_token %}
+                                {{ form|crispy }}  <!-- Crispy tag to render the form -->
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="w-btn-secondary-lg">Create Account</button>
+                                </div>
+                            </form>
+                            
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="login-img">
+                                <img src="{% static 'img/others/1.png' %}" class="img-fluid w-100" alt="Signup Image" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
