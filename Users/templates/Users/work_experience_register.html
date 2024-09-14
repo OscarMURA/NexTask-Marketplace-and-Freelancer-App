@@ -7,7 +7,7 @@
         <section class="py-110 bg-offWhite">
             <div class="container bg-white rounded-3 p-3">
                 <h2 class="section-title mb-2">Work Experience Register</h2>
-                <form method="POST">
+                <form method="POST" id="workExperienceForm">
                     {% csrf_token %}
                     {{ work_experience_formset.management_form }}
 
@@ -21,16 +21,55 @@
 
                     <div class="d-grid mt-4">
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="w-btn-secondary-lg">Next</button>
+                            <button type="button" id="add-more-work-experience" class="btn btn-primary">Add More Work Experience</button>
+                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">Next</button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url back_url %}" class="btn btn-outline-secondary mt-3">Back</a>
                             <button type="submit" name="skip" value="skip" class="btn btn-outline-secondary">Skip</button>
                         </div>
                     </div>
-                    
-                    
                 </form>
-
-                <a href="{% url back_url %}" class="btn btn-outline-secondary mt-3">Back</a>
             </div>
         </section>
     </div>
+
+    <script>
+        document.getElementById('add-more-work-experience').onclick = function(e) {
+            e.preventDefault();
+            let formContainer = document.getElementById('workexperience-form-container');
+            let totalFormsInput = document.querySelector('#id_workexperience_set-TOTAL_FORMS');
+            let totalForms = parseInt(totalFormsInput.value);
+            let newForm = formContainer.children[0].cloneNode(true);
+            newForm.innerHTML = newForm.innerHTML.replace(/workexperience_set-(\d+)-/g, `workexperience_set-${totalForms}-`);
+            let inputs = newForm.querySelectorAll('input, textarea');
+            inputs.forEach(input => input.value = '');
+            formContainer.appendChild(newForm);
+            totalFormsInput.value = totalForms + 1;
+        };
+
+        document.getElementById('workExperienceForm').onsubmit = function(e) {
+            if (!e.submitter || e.submitter.name !== "skip") {
+                let forms = document.querySelectorAll('.dynamic-form');
+                let isEmpty = true;
+
+                forms.forEach(function(form) {
+                    let inputs = form.querySelectorAll('input, textarea');
+                    inputs.forEach(function(input) {
+                        if (input.value.trim() !== "") {
+                            isEmpty = false;
+                        }
+                    });
+                });
+
+                if (isEmpty) {
+                    e.preventDefault();
+                    alert("Please fill out the form before proceeding to the next step.");
+                }
+            }
+        };
+    </script>
 {% endblock %}

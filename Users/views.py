@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
-from .forms import FreelancerSignUpForm, ClientSignUpForm, EducationFormSet, WorkExperienceFormSet, CertificationFormSet, PortfolioFormSet
+from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
@@ -90,8 +90,12 @@ def work_experience_register_view(request):
     else:
         formset = WorkExperienceFormSet(instance=freelancer)
 
+    # Add the helper here
+    helper = WorkExperienceFormHelper()
+
     return render(request, 'Users/work_experience_register.html', {
         'work_experience_formset': formset,
+        'helper': helper,  # Pass the helper to the template
         'back_url': 'register_freelancer',
         'next_url': 'education_register',
     })
@@ -109,11 +113,16 @@ def education_register_view(request):
     else:
         formset = EducationFormSet(instance=freelancer)
 
+    # Add the helper here
+    helper = EducationFormHelper()
+
     return render(request, 'Users/education_register.html', {
         'education_formset': formset,
+        'helper': helper,  # Pass the helper to the template
         'back_url': 'work_experience_register',
         'next_url': 'certification_register',
     })
+
 
 @login_required
 def certification_register_view(request):
@@ -128,11 +137,16 @@ def certification_register_view(request):
     else:
         formset = CertificationFormSet(instance=freelancer)
 
+    # Add the helper here
+    helper = CertificationFormHelper()
+
     return render(request, 'Users/certification_register.html', {
         'certification_formset': formset,
+        'helper': helper,  # Pass the helper to the template
         'back_url': 'education_register',
         'next_url': 'portfolio_register',
     })
+
 
 @login_required
 def portfolio_register_view(request):
@@ -147,11 +161,16 @@ def portfolio_register_view(request):
     else:
         formset = PortfolioFormSet(instance=freelancer)
 
+    # Add the helper here
+    helper = PortfolioFormHelper()
+
     return render(request, 'Users/portfolio_register.html', {
         'portfolio_formset': formset,
+        'helper': helper,  # Pass the helper to the template
         'back_url': 'certification_register',
         'next_url': 'welcome',
     })
+
 
 def user_login(request):
     if request.method == 'POST':
