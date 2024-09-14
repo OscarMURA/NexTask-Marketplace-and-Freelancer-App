@@ -1,0 +1,23 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <h2>Registro de Certificaciones</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ certification_formset.management_form }}
+        
+        <div id="certification-form-container">
+            {% for form in certification_formset %}
+                <div class="dynamic-form">
+                    {{ form|crispy }}  <!-- Crispy tag to render each formset -->
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" class="btn btn-secondary" onclick="addFormset('certification')">Añadir más certificaciones</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, FreelancerProfile, ClientProfile, Skill
+from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -20,3 +20,12 @@ class ClientProfileAdmin(admin.ModelAdmin):
     list_filter = ('country', 'city')  # Opción para filtrar por país y ciudad
 
 admin.site.register(Skill)
+
+@admin.register(Certification)
+class CertificationAdmin(admin.ModelAdmin):
+    list_display = ('freelancer', 'certification_name', 'issuing_organization', 'issue_date')
+
+@admin.register(Portfolio)
+class PortfolioAdmin(admin.ModelAdmin):
+    list_display = ('freelancer', 'url')
+
