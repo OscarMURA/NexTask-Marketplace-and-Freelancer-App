@@ -21,8 +21,6 @@ def freelancer_signup(request):
         form = FreelancerSignUpForm()
     return render(request, 'Users/freelancer_signup.html', {'form': form})
 
-def home(request):
-    return render(request, 'Users/home.html')
 
 @never_cache
 def client_signup(request):
@@ -63,9 +61,8 @@ def user_login(request):
 def welcome(request):
     return render(request, 'Users/welcome.html')
 
-
 def home(request):
-    return render(request, 'Users/home.html')
+    return render(request, 'users/home.html')
 
 @login_required
 def certification_register_view(request):
