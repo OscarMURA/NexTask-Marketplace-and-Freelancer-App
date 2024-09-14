@@ -1,12 +1,14 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, ClientProfile, FreelancerProfile, Education, WorkExperience
+from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
-# Clase base para el registro de usuarios
+# Base class for User Signup
 class UserSignUpForm(UserCreationForm):
     country = CountryField().formfield(
         widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})
@@ -19,8 +21,20 @@ class UserSignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
 
-# Formulario para el registro de Freelancers
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Sign Up'))
+
+# Form for Freelancer Signup
 class FreelancerSignUpForm(UserSignUpForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Sign Up as Freelancer'))
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.user_type = 'freelancer'
@@ -34,10 +48,16 @@ class FreelancerSignUpForm(UserSignUpForm):
             freelancer_profile.save()
         return user
 
-# Formulario para el registro de Clientes
+# Form for Client Signup
 class ClientSignUpForm(UserSignUpForm):
     company_name = forms.CharField(max_length=255, required=True)
     company_website = forms.URLField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Sign Up as Client'))
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -54,7 +74,34 @@ class ClientSignUpForm(UserSignUpForm):
             client_profile.save()
         return user
 
-# Form for adding education records
+# Certification Formset
+CertificationFormSet = inlineformset_factory(
+    FreelancerProfile,
+    Certification,
+    fields=('certification_name', 'issuing_organization', 'issue_date', 'expiration_date', 'short_description'),
+    widgets={
+        'issue_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+        'expiration_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+        'short_description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
+    },
+    extra=1,
+    can_delete=True
+)
+
+# Portfolio Formset
+PortfolioFormSet = inlineformset_factory(
+    FreelancerProfile,
+    Portfolio,
+    fields=('url', 'description'),
+    widgets={
+        'url': forms.URLInput(attrs={'class': 'form-control shadow-none'}),
+        'description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
+    },
+    extra=1,
+    can_delete=True
+)
+
+# Education Formset
 EducationFormSet = inlineformset_factory(
     FreelancerProfile,
     Education,
@@ -68,7 +115,7 @@ EducationFormSet = inlineformset_factory(
     can_delete=True
 )
 
-# Form for adding work experience records
+# Work Experience Formset
 WorkExperienceFormSet = inlineformset_factory(
     FreelancerProfile,
     WorkExperience,

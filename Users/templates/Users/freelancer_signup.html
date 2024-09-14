@@ -1,5 +1,6 @@
 {% extends 'Users/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <title>Signup - NextTask</title>    
@@ -7,143 +8,50 @@
         <img src="{% static 'img/others/freelancer.png' %}" alt="Signup Banner" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <h1 style="color: white; position: absolute; top: 70%; left: 2%; transform: translateY(-50%); font-size: 55px; z-index: 2;">Sign up</h1>
     </div>
-    <!-- Signup Form -->
     <div class="container">
-    <section class="py-110 bg-offWhite">
-        <div class="container">
-            <div class="mb-5" style="margin-top: -60px;">
-                <div class="row justify-content-center">
-                    <div class="col-auto">
-                        <div class="d-flex align-items-center gap-3">
-                            <a href="{% url 'register_freelancer' %}" class="w-form-btn">Freelancer</a>
-                            <a href="{% url 'client_signup' %}" class="w-form-btn-outline">Client</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-3 p-3">
-                <div class="row g-4">
-                    <div class="col-lg-6 p-3 p-lg-5">
-                        <div class="mb-40">
-                            <h2 class="section-title mb-2">Sign up</h2>
-                            <p class="section-desc">Welcome to NexTask</p>
-                        </div>
-
-                        <!-- Manejo de Errores -->
-                        {% if form.errors %}
-                        <div class="alert alert-danger">
-                            <p>Por favor, corrige los siguientes errores:</p>
-                            <ul>
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                        <li>{{ field.label }}: {{ error }}</li>
-                                    {% endfor %}
-                                {% endfor %}
-                                {% for error in form.non_field_errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% endif %}
-                        
-                        <!-- Formulario -->
-                        <form method="POST" action="{% url 'register_freelancer' %}">
-                            {% csrf_token %}
-                            <div class="form-container">
-                                <div class="row gy-3">
-                                    <div class="form-input col-lg-6">
-                                        <label for="username" class="form-label">Username <span class="text-lime-300">*</span></label>
-                                        <input type="text" class="form-control shadow-none" id="username" name="username" placeholder="Username" required />
-                                    </div>
-                                    <div class="form-input col-lg-6">
-                                        <label for="first_name" class="form-label">First Name <span class="text-lime-300">*</span></label>
-                                        <input type="text" class="form-control shadow-none" id="first_name" name="first_name" placeholder="First Name" required />
-                                    </div>
-                                    <div class="form-input col-lg-6">
-                                        <label for="last_name" class="form-label">Last Name <span class="text-lime-300">*</span></label>
-                                        <input type="text" class="form-control shadow-none" id="last_name" name="last_name" placeholder="Last Name" required />
-                                    </div>
-                                    <div class="form-input col-lg-6">
-                                        <label for="phone" class="form-label">Phone <span class="text-lime-300">*</span></label>
-                                        <input type="text" class="form-control shadow-none" id="phone" name="phone" placeholder="Phone" required />
-                                    </div>
-                                    <div class="form-input col-lg-6">
-                                        <label for="email" the form-label">Email <span class="text-lime-300">*</span></label>
-                                        <input type="email" class="form-control shadow-none" id="email" name="email" placeholder="demo@email.com" required />
-                                    </div>
-                                    <div class="form-input col-lg-6">
-                                        <label for="country" class="form-label">Country <span class="text-lime-300">*</span></label>
-                                        {{ form.country }}
-                                    </div>
-                                    <div class="form-input col-lg-6">
-                                        <label for="city" class="form-label">City <span class="text-lime-300">*</span></label>
-                                        <input type="text" class="form-control shadow-none" id="city" name="city" placeholder="City" required />
-                                    </div>
-                                    <div class="form-input col-lg-12">
-                                        <label for="address" the form-label">Address <span class="text-lime-300">*</span></label>
-                                        <input type="text" class="form-control shadow-none" id="address" name="address" placeholder="Address" required />
-                                    </div>
-                                    <div class="form-input col-lg-12">
-                                        <label for="password1" the form-label">Password <span class="text-lime-300">*</span></label>
-                                        <input type="password" class="form-control shadow-none" id="password1" name="password1" placeholder="Password" required />
-                                    </div>
-                                    <div class="form-input col-lg-12">
-                                        <label for="password2" class="form-label">Confirm Password <span class="text-lime-300">*</span></label>
-                                        <input type="password" class="form-control shadow-none" id="password2" name="password2" placeholder="Confirm Password" required />
-                                    </div>
-                                </div>
-                                
-                                <!-- Botón de red social -->
-                                <div class="d-flex gap-3 justify-content-center align-items-center social-login">
-                                    <button class="social-login-item">
-                                        <svg
-                                          width="26"
-                                          height="26"
-                                          viewBox="0 0 26 26"
-                                          fill="none"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M13 14.95V11.05L25.8547 11.05C25.9504 11.6861 26 12.3372 26 13C26 20.1797 20.1797 26 13 26C5.8203 26 0 20.1797 0 13C0 5.8203 5.8203 0 13 0C16.5898 0 19.8398 1.45507 22.1924 3.80761L19.4347 6.56533C17.7879 4.91855 15.5129 3.9 13 3.9C7.97421 3.9 3.9 7.97421 3.9 13C3.9 18.0258 7.97421 22.1 13 22.1C17.3565 22.1 20.9979 19.0387 21.8906 14.95H13Z"
-                                            fill="currentColor"
-                                          />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <div class="d-grid mt-4">
-                                     <a href="{% url 'social:begin' 'google-oauth2' %}" class="w-btn-secondary-lg btn" role="button" id="submit-btn">Create Account</a>
-                                </div>
+        <section class="py-110 bg-offWhite">
+            <div class="container">
+                <div class="mb-5" style="margin-top: -60px;">
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="{% url 'register_freelancer' %}" class="w-form-btn">Freelancer</a>
+                                <a href="{% url 'client_signup' %}" class="w-form-btn-outline">Client</a>
                             </div>
-                        </form>
-                        
-                        <div class="mt-3">
-                            <p class="text-center form-text">
-                                Already have an account? <a href="{% url 'login' %}"> Login </a> 
-                            </p>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="login-img">
-                            <img src="{% static 'img/others/1.png' %}" class="img-fluid w-100" alt="Signup Image" />
+                </div>
+                <div class="bg-white rounded-3 p-3">
+                    <div class="row g-4">
+                        <div class="col-lg-6 p-3 p-lg-5">
+                            <div class="mb-40">
+                                <h2 class="section-title mb-2">Sign up</h2>
+                                <p class="section-desc">Welcome to NexTask</p>
+                            </div>
+
+                            <!-- Formulario -->
+                            <form method="POST" action="{% url 'register_freelancer' %}">
+                                {% csrf_token %}
+                                {{ form|crispy }}  <!-- Crispy tag to render the form -->
+                                <div class="d-grid mt-4">
+                                     <button type="submit" class="w-btn-secondary-lg">Create Account</button>
+                                </div>
+                            </form>
+
+                            <div class="mt-3">
+                                <p class="text-center form-text">
+                                    Already have an account? <a href="{% url 'login' %}"> Login </a> 
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="login-img">
+                                <img src="{% static 'img/others/1.png' %}" class="img-fluid w-100" alt="Signup Image" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
     </div>
-    <!-- Bootstrap JS and dependencies -->
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <!-- Main JS -->
-    <script src="{% static 'js/main.js' %}"></script>
-
-    <!-- Script para evitar múltiples envíos de formularios -->
-    <script>
-        document.querySelector('form').addEventListener('submit', function() {
-            const submitButton = document.getElementById('submit-btn');
-            submitButton.disabled = true;  // Deshabilitar el botón después de hacer clic para evitar múltiples envíos
-        });
-    </script>
 {% endblock %}
-

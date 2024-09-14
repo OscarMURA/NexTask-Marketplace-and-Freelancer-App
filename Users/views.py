@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
-from .forms import FreelancerSignUpForm, ClientSignUpForm, EducationFormSet, WorkExperienceFormSet
-from .models import FreelancerProfile, ClientProfile, User
+from .forms import FreelancerSignUpForm, ClientSignUpForm, EducationFormSet, WorkExperienceFormSet, CertificationFormSet, PortfolioFormSet
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
@@ -65,6 +64,34 @@ def welcome(request):
     return render(request, 'Users/welcome.html')
 
 @login_required
+def certification_register_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        formset = CertificationFormSet(request.POST, instance=freelancer)
+        if formset.is_valid():
+            formset.save()
+            return redirect('portfolio_register')  # Redirige al registro de enlaces de portafolio
+    else:
+        formset = CertificationFormSet(instance=freelancer)
+
+    return render(request, 'Users/certification_register.html', {'certification_formset': formset})
+
+@login_required
+def portfolio_register_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        formset = PortfolioFormSet(request.POST, instance=freelancer)
+        if formset.is_valid():
+            formset.save()
+            return redirect('welcome')  # Redirige a la página de bienvenida al terminar
+    else:
+        formset = PortfolioFormSet(instance=freelancer)
+
+    return render(request, 'Users/portfolio_register.html', {'portfolio_formset': formset})
+
+from .forms import EducationFormSet  # Asegúrate de que el FormSet esté importado
+
+@login_required
 def education_register_view(request):
     freelancer = request.user.freelancerprofile
     if request.method == "POST":
@@ -77,6 +104,8 @@ def education_register_view(request):
 
     return render(request, 'Users/education_register.html', {'education_formset': formset})
 
+from .forms import WorkExperienceFormSet  # Asegúrate de que el FormSet esté importado
+
 @login_required
 def work_experience_register_view(request):
     freelancer = request.user.freelancerprofile
@@ -84,17 +113,8 @@ def work_experience_register_view(request):
         formset = WorkExperienceFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
             formset.save()
-            return redirect('welcome')  # Redirige a la página de bienvenida después de registrar la experiencia laboral
+            return redirect('certification_register')  # Redirige al registro de certificaciones
     else:
-<<<<<<< HEAD
         formset = WorkExperienceFormSet(instance=freelancer)
 
-    return render(request, 'Users/workexperience_register.html', {'work_experience_formset': formset})
-=======
-        form = WorkExperienceForm()
-
-    if 'skip' in request.GET:
-        return redirect('profile_view')
-
-    return render(request, 'Users/workexperience_register.html', {'form': form})
->>>>>>> d2f3f1f88ab4d7dd0e616a128e893fe1aca79912
+    return render(request, 'Users/work_experience_register.html', {'work_experience_formset': formset})

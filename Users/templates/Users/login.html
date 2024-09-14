@@ -1,11 +1,10 @@
 {% extends 'Users/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <title>Login - NextTask</title>   
-    <!-- Main Start -->
     <main>
-      <!-- Breadcrumb -->
       <section class="w-breadcrumb-area" style="background: url('{% static 'img/common/breadcrumb.png' %}') no-repeat center center/cover;">
         <div class="container">
           <div class="row">
@@ -23,8 +22,6 @@
           </div>
         </div>
       </section>
-      <!-- Breadcrumb End -->
-      <!-- Login Form -->
       <section class="py-110 bg-offWhite">
         <div class="container">
           <div class="bg-white rounded-3 p-3">
@@ -34,67 +31,17 @@
                   <h2 class="section-title mb-2">Log in</h2>
                   <p class="section-desc">Welcome to NextTask</p>
                 </div>
-
-                <!-- Formulario de inicio de sesión -->
                 <form method="post">
                   {% csrf_token %}
-                  <div class="form-container d-flex flex-column gap-4">
-                    
-                    <!-- Campo de Email -->
-                    <div class="form-input">
-                      <label for="email" class="form-label">Email <span class="text-lime-300">*</span></label>
-                      <input type="email" id="email" name="email" placeholder="example@gmail.com" class="form-control shadow-none" required />
-                    </div>
-                    
-                    <!-- Campo de Contraseña -->
-                    <div class="form-input">
-                      <label for="password" class="form-label">Password <span class="text-lime-300">*</span></label>
-                      <input type="password" id="password" name="password" placeholder="********" class="form-control shadow-none" required />
-                    </div>
-
-                    <!-- Selección del tipo de usuario -->
-                    <div class="form-input">
-                      <label for="user_type" class="form-label">User Type <span class="text-lime-300">*</span></label>
-                      <select id="user_type" name="user_type" class="form-select shadow-none" required>
-                        <option value="freelancer">Freelancer</option>
-                        <option value="client">Client</option>
-                      </select>
-                    </div>
-
-                    <!-- Botón de red social -->
-                    <div class="d-flex gap-3 justify-content-center align-items-center social-login">
-                      <button class="social-login-item">
-                          <svg
-                            width="26"
-                            height="26"
-                            viewBox="0 0 26 26"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M13 14.95V11.05L25.8547 11.05C25.9504 11.6861 26 12.3372 26 13C26 20.1797 20.1797 26 13 26C5.8203 26 0 20.1797 0 13C0 5.8203 5.8203 0 13 0C16.5898 0 19.8398 1.45507 22.1924 3.80761L19.4347 6.56533C17.7879 4.91855 15.5129 3.9 13 3.9C7.97421 3.9 3.9 7.97421 3.9 13C3.9 18.0258 7.97421 22.1 13 22.1C17.3565 22.1 20.9979 19.0387 21.8906 14.95H13Z"
-                              fill="currentColor"
-                            />
-                          </svg>
-                      </button>
-                    </div>
-
-                    <!-- Botón de inicio de sesión -->
-                    <div class="d-grid">
-                      <button type="submit" class="w-btn-secondary-lg">Log In</button>
-                    </div>
-
+                  {{ form|crispy }}  <!-- Crispy tag to render the form -->
+                  <div class="d-grid">
+                    <button type="submit" class="w-btn-secondary-lg">Log In</button>
                   </div>
                 </form>
-                
-
-                <!-- Opción de registro -->
                 <div class="mt-4">
                   <p class="text-center form-text">Don’t have an account? <a href="{% url 'register_freelancer' %}">Create Account</a></p>
                 </div>
               </div>
-
-              <!-- Imagen lateral -->
               <div class="col-lg-6">
                 <div class="login-img">
                   <img src="{% static 'img/others/login.png' %}" class="img-fluid w-100" alt="Login Image" />
@@ -104,10 +51,6 @@
           </div>
         </div>
       </section>
-      <!-- Login Form End -->
     </main>
-    <!-- Main End -->
-
-    <!-- Scripts -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 {% endblock %}

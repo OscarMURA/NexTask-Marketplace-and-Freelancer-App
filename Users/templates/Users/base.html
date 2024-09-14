@@ -1,4 +1,6 @@
 {% load static %}
+{% load crispy_forms_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,31 +68,38 @@
                     </ul>
                     <div class="align-items-center d-none d-lg-flex">
                         <a href="{% url 'login' %}" class="w-btn-secondary-lg">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="17"
-                            viewBox="0 0 13 17"
-                            fill="none"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M6.5 7.55556C8.55134 7.55556 10.2143 5.86419 10.2143 3.77778C10.2143 1.69137 8.55134 0 6.5 0C4.44866 0 2.78571 1.69137 2.78571 3.77778C2.78571 5.86419 4.44866 7.55556 6.5 7.55556ZM6.5 17C10.0899 17 13 15.3086 13 13.2222C13 11.1358 10.0899 9.44444 6.5 9.44444C2.91015 9.44444 0 11.1358 0 13.2222C0 15.3086 2.91015 17 6.5 17Z"
-                              fill="white"
-                            /></svg
-                          >Login</a>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="17" viewBox="0 0 13 17" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 7.55556C8.55134 7.55556 10.2143 5.86419 10.2143 3.77778C10.2143 1.69137 8.55134 0 6.5 0C4.44866 0 2.78571 1.69137 2.78571 3.77778C2.78571 5.86419 4.44866 7.55556 6.5 7.55556ZM6.5 17C10.0899 17 13 15.3086 13 13.2222C13 11.1358 10.0899 9.44444 6.5 9.44444C2.91015 9.44444 0 11.1358 0 13.2222C0 15.3086 2.91015 17 6.5 17Z" fill="white"/>
+                          </svg>Login</a>
                       </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    
-
     <!-- Aquí se insertará el contenido de las plantillas que extienden esta base -->
     {% block content %}
     {% endblock %}
 
+    <!-- Script para agregar formsets dinámicamente -->
+    <script>
+        function addFormset(formsetPrefix) {
+            var totalForms = document.querySelector(`#id_${formsetPrefix}-TOTAL_FORMS`);
+            var formContainer = document.getElementById(`${formsetPrefix}-form-container`);
+            var currentFormCount = parseInt(totalForms.value);
+
+            var newForm = formContainer.children[0].cloneNode(true);
+            var formRegex = RegExp(`${formsetPrefix}-(\\d){1}-`, 'g');
+            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `${formsetPrefix}-${currentFormCount}-`);
+
+            // Limpiar los campos del nuevo formulario
+            var inputs = newForm.querySelectorAll('input, textarea');
+            inputs.forEach(input => input.value = '');
+
+            // Añadir el nuevo formulario al contenedor
+            formContainer.appendChild(newForm);
+            totalForms.value = currentFormCount + 1;
+        }
+    </script>
 </body>
 </html>

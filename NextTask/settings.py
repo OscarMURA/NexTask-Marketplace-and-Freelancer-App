@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_countries',
-    
+    'crispy_forms',
+    'crispy_bootstrap4',
     'Users',
     'Messaging',
     'Notifications',
@@ -46,7 +47,10 @@ INSTALLED_APPS = [
     'Projects',
     'Reports',  
     
-    'social_django', #Agregamos esta línea
+    'social_django',
+    
+
+
 ]
 
 MIDDLEWARE = [
@@ -156,3 +160,4 @@ LOGOUT_REDIRECT_URL = 'login'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '569234682481-mm7phcliiq88jdkqpk9mantpkum71n52.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET= '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'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
