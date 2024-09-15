@@ -24,4 +24,11 @@ urlpatterns = [
     
     # URL de bienvenida
     path('welcome/', views.welcome, name='welcome'),
+    
+    path("Home-Client/", views.home_client, name="home_client"),
+    
+    path("CreateProject/", views.createProject, name="createProject"),
+    
+    path("ChangePassword/", views.change_password, name="change_password"),
+    
 ]

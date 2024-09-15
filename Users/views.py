@@ -119,3 +119,12 @@ def work_experience_register_view(request):
         formset = WorkExperienceFormSet(instance=freelancer)
 
     return render(request, 'Users/work_experience_register.html', {'work_experience_formset': formset})
+
+def home_client(request):
+    return render(request, 'Users/homeClient.html')
+
+def createProject(request):
+    return render(request, 'Users/createProject.html')
+
+def change_password(request):
+    return render(request, 'Users/changePassword.html')
