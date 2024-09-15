@@ -1,21 +1,9 @@
+{% extends 'NextTask/base.html' %}
 {% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Signup - NextTask</title>
-    <!-- External CSS -->
-    <link rel="stylesheet" href="{% static 'css/glightbox.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" />
-    <link href="{% static 'css/quill.core.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/quill.snow.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/font-awesome-all.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/style.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'django_countries/css/country-select.css' %}">
     <style>
         .info-section {
             padding: 40px;
@@ -44,39 +32,6 @@
     </style>
 </head>
 <body>
-    <!-- Header and Navbar -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="#">
-                    <img src="{% static 'img/others/logoApp.png' %}" alt="Logo" style="height: 80px; width: auto;">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex">
-                        <a href="/login" class="btn btn-primary">Login</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-
     <!-- Banner Section with Flexbox -->
     <div style="background-color: #1A1773; display: flex; align-items: center; justify-content: space-between; padding: 20px; text-align: left; color: white;">
         <div style="flex: 1; padding-right: 20px;">
@@ -124,7 +79,9 @@
     <div class="footer">
         <p>&copy; 2024 NextTask. All rights reserved.</p>
     </div>
+
     <!-- Scripts -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
+{% endblock %}
