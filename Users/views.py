@@ -123,6 +123,9 @@ def work_experience_register_view(request):
 def home_client(request):
     return render(request, 'Users/homeClient.html')
 
+def home_freelancer(request):
+    return render(request, 'Users/homeFreelancer.html')
+
 def createProject(request):
     return render(request, 'Users/createProject.html')
 
