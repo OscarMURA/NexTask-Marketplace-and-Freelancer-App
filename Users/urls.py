@@ -26,6 +26,8 @@ urlpatterns = [
     path('welcome/', views.welcome, name='welcome'),
     
     path("Home-Client/", views.home_client, name="home_client"),
+
+    path("Home-Freelancer/", views.home_freelancer, name="home_freelancer"),
     
     path("CreateProject/", views.createProject, name="createProject"),
     
