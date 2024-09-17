@@ -1,23 +1,97 @@
 {% extends 'NextTask/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
-<div class="container">
-    <h2>Registro de Educación</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ education_formset.management_form }}
-        
-        <div id="education-form-container">
-            {% for form in education_formset %}
-                <div class="dynamic-form">
-                    {{ form|crispy }}  <!-- Crispy tag to render each formset -->
-                </div>
-            {% endfor %}
-        </div>
+    <div class="container">
+        <section class="py-110 bg-offWhite">
+            <div class="container bg-white rounded-3 p-3">
+                <h2 class="section-title mb-2">Education Register</h2>
+                <form method="POST" id="educationForm">
+                    {% csrf_token %}
+                    
+                    <!-- Management form (educations prefix) -->
+                    {{ education_formset.management_form }}
 
-        <button type="button" class="btn btn-secondary" onclick="addFormset('education_formset')">Añadir más educación</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
-</div>
+                    <div id="education-form-container">
+                        {% for form in education_formset %}
+                            <div class="dynamic-form mb-3">
+                                {{ form|crispy }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Add More Education button and navigation -->
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <button type="button" id="add-more-education" class="btn btn-primary">Add More Education</button>
+                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">Next</button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url back_url %}" class="btn btn-outline-secondary mt-3">Back</a>
+                            <button type="submit" name="skip" value="skip" class="btn btn-outline-secondary">Skip</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript to handle dynamic formset additions -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('add-more-education').onclick = function(e) {
+                e.preventDefault();
+                
+                let formContainer = document.getElementById('education-form-container');
+                // Using the correct prefix for the educations formset
+                let totalFormsInput = document.querySelector('#id_educations-TOTAL_FORMS');
+
+                if (!totalFormsInput) {
+                    console.error("TOTAL_FORMS input not found. Ensure the formset is rendered correctly.");
+                    return;
+                }
+
+                let totalForms = parseInt(totalFormsInput.value);
+                let newForm = formContainer.children[0].cloneNode(true);
+
+                // Update the formset index using the correct prefix (educations)
+                newForm.innerHTML = newForm.innerHTML.replace(/educations-(\d+)-/g, `educations-${totalForms}-`);
+
+                // Clear all input fields in the cloned form
+                let inputs = newForm.querySelectorAll('input, textarea');
+                inputs.forEach(input => input.value = '');
+
+                // Append the new form to the form container
+                formContainer.appendChild(newForm);
+
+                // Increment TOTAL_FORMS count
+                totalFormsInput.value = totalForms + 1;
+            };
+        });
+
+        document.getElementById('educationForm').onsubmit = function(e) {
+            if (!e.submitter || e.submitter.name !== "skip") {
+                let forms = document.querySelectorAll('.dynamic-form');
+                let isEmpty = true;
+
+                forms.forEach(function(form) {
+                    let inputs = form.querySelectorAll('input, textarea');
+                    inputs.forEach(function(input) {
+                        if (input.value.trim() !== "") {
+                            isEmpty = false;
+                        }
+                    });
+                });
+
+                if (isEmpty) {
+                    e.preventDefault();
+                    alert("Please fill out the form before proceeding to the next step.");
+                }
+            }
+        };
+    </script>
 {% endblock %}

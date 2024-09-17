@@ -88,6 +88,14 @@ CertificationFormSet = inlineformset_factory(
     can_delete=True
 )
 
+
+class CertificationFormHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.render_required_fields = True
+
+
 # Portfolio Formset
 PortfolioFormSet = inlineformset_factory(
     FreelancerProfile,
@@ -100,6 +108,13 @@ PortfolioFormSet = inlineformset_factory(
     extra=1,
     can_delete=True
 )
+
+class PortfolioFormHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.render_required_fields = True
+        self.add_input(Submit('submit', 'Save'))
 
 # Education Formset
 EducationFormSet = inlineformset_factory(
@@ -115,6 +130,16 @@ EducationFormSet = inlineformset_factory(
     can_delete=True
 )
 
+class EducationFormHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.render_required_fields = True
+        self.add_input(Submit('submit', 'Save'))
+        
+        
+
+
 # Work Experience Formset
 WorkExperienceFormSet = inlineformset_factory(
     FreelancerProfile,
@@ -128,3 +153,10 @@ WorkExperienceFormSet = inlineformset_factory(
     extra=1,
     can_delete=True
 )
+
+class WorkExperienceFormHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.render_required_fields = True
+        self.add_input(Submit('submit', 'Save'))

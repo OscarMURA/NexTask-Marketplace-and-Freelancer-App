@@ -1,23 +1,77 @@
 {% extends 'NextTask/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
-<div class="container">
-    <h2>Registro de Experiencia Laboral</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ work_experience_formset.management_form }}
-        
-        <div id="workexperience-form-container">
-            {% for form in work_experience_formset %}
-                <div class="dynamic-form">
-                    {{ form|crispy }}  <!-- Crispy tag to render each formset -->
-                </div>
-            {% endfor %}
-        </div>
+    <div class="container">
+        <section class="py-110 bg-offWhite">
+            <div class="container bg-white rounded-3 p-3">
+                <h2 class="section-title mb-2">Work Experience Register</h2>
+                <form method="POST" id="workExperienceForm">
+                    {% csrf_token %}
+                    
+                    <!-- Management form to track formset -->
+                    {{ work_experience_formset.management_form }}
+                    
+                    <!-- Container for dynamic formset entries -->
+                    <div id="workexperience-form-container">
+                        {% for form in work_experience_formset %}
+                            <div class="dynamic-form mb-3">
+                                {{ form|crispy }}
+                            </div>
+                        {% endfor %}
+                    </div>
 
-        <button type="button" class="btn btn-secondary" onclick="addFormset('workexperience')">Añadir más experiencia laboral</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
-</div>
+                    <!-- Add more forms button and submit buttons -->
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <button type="button" id="add-more-work-experience" class="btn btn-primary">Add More Work Experience</button>
+                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">Next</button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url back_url %}" class="btn btn-outline-secondary mt-3">Back</a>
+                            <button type="submit" name="skip" value="skip" class="btn btn-outline-secondary">Skip</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript for adding dynamic form entries -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('add-more-work-experience').onclick = function(e) {
+                e.preventDefault();
+
+                let formContainer = document.getElementById('workexperience-form-container');
+                // Correctly targeting the TOTAL_FORMS input
+                let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+
+                if (!totalFormsInput) {
+                    console.error("TOTAL_FORMS input not found. Ensure the formset is rendered correctly.");
+                    return;  // Stop execution if TOTAL_FORMS is missing
+                }
+
+                let totalForms = parseInt(totalFormsInput.value);
+                let newForm = formContainer.children[0].cloneNode(true);
+
+                // Update the form index to the next number
+                newForm.innerHTML = newForm.innerHTML.replace(/work_experiences-(\d+)-/g, `work_experiences-${totalForms}-`);
+
+                // Clear input values in the cloned form
+                let inputs = newForm.querySelectorAll('input, textarea');
+                inputs.forEach(input => input.value = '');
+
+                // Append the new form to the container
+                formContainer.appendChild(newForm);
+
+                // Increment TOTAL_FORMS value to reflect the new form
+                totalFormsInput.value = totalForms + 1;
+            };
+        });
+    </script>
 {% endblock %}

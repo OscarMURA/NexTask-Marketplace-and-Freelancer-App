@@ -32,5 +32,6 @@ urlpatterns = [
     path("CreateProject/", views.createProject, name="createProject"),
     
     path("ChangePassword/", views.change_password, name="change_password"),
-    
+
 ]
+

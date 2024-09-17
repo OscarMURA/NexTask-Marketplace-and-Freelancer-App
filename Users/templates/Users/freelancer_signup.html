@@ -84,7 +84,7 @@
                                         <input type="text" class="form-control shadow-none" id="address" name="address" placeholder="Address" required />
                                     </div>
                                     <div class="form-input col-lg-12">
-                                        <label for="password1" the form-label">Password <span class="text-lime-300>*</span></label>
+                                        <label for="password1" the form-label>Password <span class="text-lime-300">*</span></label>
                                         <input type="password" class="form-control shadow-none" id="password1" name="password1" placeholder="Password" required />
                                     </div>
                                     <div class="form-input col-lg-12">
@@ -112,8 +112,11 @@
                                 </div>
 
                                 <div class="d-grid mt-4">
-                                    <button href="{% url 'social:begin' 'google-oauth2' %}" class="w-btn-secondary-lg" type="submit" id="submit-btn">Create Account</button>
+                                    <button href="{% url 'work_experience_register' %}" class="w-btn-secondary-lg" type="submit" id="submit-btn">Create Account</button>
                                 </div>
+
+                            
+                                
                             </div>
                         </form>
                         
@@ -146,4 +149,3 @@
         });
     </script>
 {% endblock %}
-
