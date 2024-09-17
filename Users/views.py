@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from languages.fields import LanguageField, RegionField
-
+from .models import FreelancerProfile, Language  # Asegúrate de incluir Language
 
 @never_cache
 def freelancer_signup(request):
@@ -226,7 +226,7 @@ def register_skills_view(request):
         form = SkillsForm(request.POST, instance=freelancer)
         if form.is_valid():
             form.save()
-            return redirect('welcome')  # Redirigir al final del flujo, página de bienvenida
+            return redirect('home_freelancer')  # Redirigir al final del flujo, página de bienvenida
     else:
         form = SkillsForm(instance=freelancer)
 
@@ -239,7 +239,7 @@ def register_languages_view(request):
         form = LanguageForm(request.POST, instance=freelancer)
         if form.is_valid():
             form.save()
-            return redirect('register_skills')  # Redirigir al siguiente paso después del registro de idiomas
+            return redirect('register_skills')  # Redirigir al siguiente paso
     else:
         form = LanguageForm(instance=freelancer)
 

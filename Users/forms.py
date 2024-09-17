@@ -188,7 +188,7 @@ class SkillsForm(forms.ModelForm):
 class LanguageForm(forms.ModelForm):
     class Meta:
         model = FreelancerProfile
-        fields = ['language']
+        fields = ['languages']
         widgets = {
-            'language': forms.Select(attrs={'class': 'form-control'})
+            'languages': forms.CheckboxSelectMultiple(attrs={'class': 'form-control'})
         }
