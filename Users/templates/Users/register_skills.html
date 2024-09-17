@@ -1,0 +1,30 @@
+{% extends 'NextTask/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <section class="py-110 bg-offWhite">
+            <div class="container bg-white rounded-3 p-3">
+                <h2 class="section-title mb-2">Registro de Habilidades</h2>
+                <form method="POST" id="skillsForm">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">Guardar y Finalizar</button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'register_languages' %}" class="btn btn-outline-secondary mt-3">Atrás</a>
+                            <button type="submit" name="skip" value="skip" class="btn btn-outline-secondary">Omitir</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+{% endblock %}

@@ -179,11 +179,11 @@ def portfolio_register_view(request):
     freelancer = request.user.freelancerprofile
     if request.method == "POST":
         if 'skip' in request.POST:
-            return redirect('welcome')
+            return redirect('register_languages')
         formset = PortfolioFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
             formset.save()
-            return redirect('welcome')
+            return redirect('register_languages')
     else:
         formset = PortfolioFormSet(instance=freelancer)
 
@@ -215,6 +215,34 @@ def user_login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'Users/login.html', {'form': form})
+
+
+
+@login_required
+def register_skills_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        form = SkillsForm(request.POST, instance=freelancer)
+        if form.is_valid():
+            form.save()
+            return redirect('welcome')  # Redirigir al final del flujo, página de bienvenida
+    else:
+        form = SkillsForm(instance=freelancer)
+
+    return render(request, 'Users/register_skills.html', {'form': form})
+
+@login_required
+def register_languages_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        form = LanguageForm(request.POST, instance=freelancer)
+        if form.is_valid():
+            form.save()
+            return redirect('register_skills')
+    else:
+        form = LanguageForm(instance=freelancer)
+
+    return render(request, 'Users/register_languages.html', {'form': form})
 
 
 def home_client(request):

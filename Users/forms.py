@@ -160,3 +160,51 @@ class WorkExperienceFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
+        
+
+
+class SkillsForm(forms.ModelForm):
+    new_skill = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu habilidad, agrégala aquí.")
+
+    class Meta:
+        model = FreelancerProfile
+        fields = ['skills']
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        new_skill = self.cleaned_data.get('new_skill')
+
+        if new_skill:
+            skill, created = Skill.objects.get_or_create(name=new_skill)
+            profile.skills.add(skill)
+
+        if commit:
+            profile.save()
+            self.save_m2m()
+
+        return profile
+
+    
+from django import forms
+from .models import FreelancerProfile, Language
+
+class LanguageForm(forms.ModelForm):
+    new_language = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu idioma, agrégalo aquí.")
+
+    class Meta:
+        model = FreelancerProfile
+        fields = ['languages']
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        new_language = self.cleaned_data.get('new_language')
+
+        if new_language:
+            language, created = Language.objects.get_or_create(name=new_language)
+            profile.languages.add(language)
+
+        if commit:
+            profile.save()
+            self.save_m2m()
+
+        return profile

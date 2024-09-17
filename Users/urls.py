@@ -19,6 +19,10 @@ urlpatterns = [
     # URL para registrar enlaces de portafolio
     path('portfolio/register/', views.portfolio_register_view, name='portfolio_register'),
     
+     path('languages/register/', views.register_languages_view, name='register_languages'),
+     
+    path('skills/register/', views.register_skills_view, name='register_skills'),
+    
     # URL para login
     path('login/', views.user_login, name='login'),
     
