@@ -6,6 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="{% static 'img\others\icon.png' %}" type="image/png" />
     <!-- GLightBox -->
     <link rel="stylesheet" href="{% static 'css/glightbox.min.css' %}" />
     <!-- Aos -->
@@ -64,6 +65,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'register_freelancer' %}" class="nav-link" href="#">Sign up</a>
                         </li>
                     </ul>
                     <div class="align-items-center d-none d-lg-flex">

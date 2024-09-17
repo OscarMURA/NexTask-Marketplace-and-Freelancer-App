@@ -72,15 +72,15 @@ div.highlight pre.source {
 
 /* highligting */
 pre.code .str { 
-	color: #080; 
+	color: rgb(101, 40, 214); 
 }
 pre.code .kwd,
 pre.code .kwd span { 
-	color: #070;
+	color: rgb(79, 76, 235);
 }
 pre.code .com,
 pre.code .com span { 
-	color:#080;
+	color:rgb(57, 85, 243);
 	font-style: italic;
 	font-weight: normal; 
 }

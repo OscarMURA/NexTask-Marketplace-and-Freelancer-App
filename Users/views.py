@@ -9,6 +9,31 @@ from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 
 
+@never_cache
+def freelancer_signup(request):
+    if request.method == 'POST':
+        form = FreelancerSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)  # Usamos auth_login para evitar conflicto
+            return redirect('education_register')  # Redirige al registro de educación
+    else:
+        form = FreelancerSignUpForm()
+    return render(request, 'Users/freelancer_signup.html', {'form': form})
+
+
+@never_cache
+def client_signup(request):
+    if request.method == 'POST':
+        form = ClientSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)  # Usamos auth_login para evitar conflicto
+            return redirect('home')
+    else:
+        form = ClientSignUpForm()
+    return render(request, 'Users/client_signup.html', {'form': form})
+
 # Renombramos la función login a user_login
 def user_login(request):
     if request.method == 'POST':
@@ -36,9 +61,8 @@ def user_login(request):
 def welcome(request):
     return render(request, 'Users/welcome.html')
 
-
 def home(request):
-    return render(request, 'Users/home.html')
+    return render(request, 'users/home.html')
 
 
 @never_cache
@@ -191,4 +215,17 @@ def user_login(request):
     else:
         form = AuthenticationForm()
     return render(request, 'Users/login.html', {'form': form})
+
+
+def home_client(request):
+    return render(request, 'Users/homeClient.html')
+
+def home_freelancer(request):
+    return render(request, 'Users/homeFreelancer.html')
+
+def createProject(request):
+    return render(request, 'Users/createProject.html')
+
+def change_password(request):
+    return render(request, 'Users/changePassword.html')
 
