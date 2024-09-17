@@ -1,0 +1,89 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% block content %}
+<title>Create Project</title>
+
+<div class="dashboard-headline">
+    <h3>Project Name</h3>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="buyer_create_job_post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="dashboard-box margin-top-0">
+                <div class="content with-padding padding-bottom-10">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Project Title <span style="color:red;">*</span></h5>
+                                <input type="text" class="with-border" placeholder="Title name here" name="project_title" id="project_title">
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Post By</h5>
+                                <input type="text" class="with-border" name="author_name" id="author_name" placeholder="Author name here">
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Budget</h5>
+                                <input type="text" class="with-border" name="project_budget" id="project_budget" placeholder="Budget here">
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Start Date</h5>
+                                <input type="date" class="with-border" name="start_date" id="start_date" placeholder="dd/mm/yyyy">
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Due Date</h5>
+                                <input type="date" class="with-border" name="due_date" id="due_date" placeholder="dd/mm/yyyy">
+                            </div>
+                        </div>
+                        <div class="col-xl-12">
+                            <div class="submit-field">
+                                <h5>Project requirements</h5>
+                                <textarea cols="30" rows="5" class="with-border" name="project_description" id="project_description"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Agile Methodology <span style="color:red;">*</span></h5>
+                                <input type="text" class="with-border" name="agile_methodology" id="agile_methodology" placeholder="Email, GitHub, etc.">
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="submit-field">
+                                <h5>Delivery URL / Address / Repository Link <span style="color:red;">*</span></h5>
+                                <input type="text" class="with-border" name="delivery_link" id="delivery_link" placeholder="Budget here">
+                            </div>
+                        </div>
+                        <div class="col-xl-12">
+                            <div class="submit-field">
+                                <h5>Upload Documents</h5>
+                                <div class="uploadButton margin-top-30">
+                                    <input class="uploadButton-input" type="file" accept="application/pdf,application/vnd.ms-excel,image/*" id="upload" name="project_documents">
+                                    <label class="uploadButton-button ripple-effect" for="upload">Upload Documents</label>
+                                    <span class="uploadButton-file-name">Max Size 10MB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div class="col-xl-12">
+            <button type="submit" class="button ripple-effect big margin-top-30">
+                Publish Now
+            </button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
