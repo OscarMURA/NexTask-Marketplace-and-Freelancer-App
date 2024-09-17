@@ -77,25 +77,26 @@ def freelancer_signup(request):
     return render(request, 'Users/freelancer_signup.html', {'form': form})
 
 
-@login_required
 def work_experience_register_view(request):
     freelancer = request.user.freelancerprofile
     if request.method == "POST":
-        if 'skip' in request.POST:
-            return redirect('education_register')
         formset = WorkExperienceFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
             formset.save()
             return redirect('education_register')
+        else:
+            print(formset.errors)  # Debugging formset errors
     else:
         formset = WorkExperienceFormSet(instance=freelancer)
 
-    # Add the helper here
     helper = WorkExperienceFormHelper()
+
+    # Debugging: print the management form to check if it's being rendered
+    print("Management form:", formset.management_form)
 
     return render(request, 'Users/work_experience_register.html', {
         'work_experience_formset': formset,
-        'helper': helper,  # Pass the helper to the template
+        'helper': helper,
         'back_url': 'register_freelancer',
         'next_url': 'education_register',
     })
@@ -104,8 +105,6 @@ def work_experience_register_view(request):
 def education_register_view(request):
     freelancer = request.user.freelancerprofile
     if request.method == "POST":
-        if 'skip' in request.POST:
-            return redirect('certification_register')
         formset = EducationFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
             formset.save()
@@ -113,15 +112,18 @@ def education_register_view(request):
     else:
         formset = EducationFormSet(instance=freelancer)
 
-    # Add the helper here
     helper = EducationFormHelper()
+
+    # Debugging: print the management form to check the formset prefix
+    print("Management form:", formset.management_form)
 
     return render(request, 'Users/education_register.html', {
         'education_formset': formset,
-        'helper': helper,  # Pass the helper to the template
+        'helper': helper,
         'back_url': 'work_experience_register',
         'next_url': 'certification_register',
     })
+
 
 
 @login_required

@@ -9,6 +9,8 @@
                 <h2 class="section-title mb-2">Education Register</h2>
                 <form method="POST" id="educationForm">
                     {% csrf_token %}
+                    
+                    <!-- Management form (educations prefix) -->
                     {{ education_formset.management_form }}
 
                     <div id="education-form-container">
@@ -19,6 +21,7 @@
                         {% endfor %}
                     </div>
 
+                    <!-- Add More Education button and navigation -->
                     <div class="d-grid mt-4">
                         <div class="d-flex justify-content-between">
                             <button type="button" id="add-more-education" class="btn btn-primary">Add More Education</button>
@@ -37,19 +40,38 @@
         </section>
     </div>
 
+    <!-- JavaScript to handle dynamic formset additions -->
     <script>
-        document.getElementById('add-more-education').onclick = function(e) {
-            e.preventDefault();
-            let formContainer = document.getElementById('education-form-container');
-            let totalFormsInput = document.querySelector('#id_education_set-TOTAL_FORMS');
-            let totalForms = parseInt(totalFormsInput.value);
-            let newForm = formContainer.children[0].cloneNode(true);
-            newForm.innerHTML = newForm.innerHTML.replace(/education_set-(\d+)-/g, `education_set-${totalForms}-`);
-            let inputs = newForm.querySelectorAll('input, textarea');
-            inputs.forEach(input => input.value = '');
-            formContainer.appendChild(newForm);
-            totalFormsInput.value = totalForms + 1;
-        };
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('add-more-education').onclick = function(e) {
+                e.preventDefault();
+                
+                let formContainer = document.getElementById('education-form-container');
+                // Using the correct prefix for the educations formset
+                let totalFormsInput = document.querySelector('#id_educations-TOTAL_FORMS');
+
+                if (!totalFormsInput) {
+                    console.error("TOTAL_FORMS input not found. Ensure the formset is rendered correctly.");
+                    return;
+                }
+
+                let totalForms = parseInt(totalFormsInput.value);
+                let newForm = formContainer.children[0].cloneNode(true);
+
+                // Update the formset index using the correct prefix (educations)
+                newForm.innerHTML = newForm.innerHTML.replace(/educations-(\d+)-/g, `educations-${totalForms}-`);
+
+                // Clear all input fields in the cloned form
+                let inputs = newForm.querySelectorAll('input, textarea');
+                inputs.forEach(input => input.value = '');
+
+                // Append the new form to the form container
+                formContainer.appendChild(newForm);
+
+                // Increment TOTAL_FORMS count
+                totalFormsInput.value = totalForms + 1;
+            };
+        });
 
         document.getElementById('educationForm').onsubmit = function(e) {
             if (!e.submitter || e.submitter.name !== "skip") {

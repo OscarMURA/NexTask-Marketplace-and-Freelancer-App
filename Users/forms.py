@@ -136,6 +136,9 @@ class EducationFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
+        
+        
+
 
 # Work Experience Formset
 WorkExperienceFormSet = inlineformset_factory(
