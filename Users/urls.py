@@ -29,7 +29,7 @@ urlpatterns = [
 
     path("Home-Freelancer/", views.home_freelancer, name="home_freelancer"),
     
-    path("CreateProject/", views.createProject, name="createProject"),
+    # path("CreateProject/", views.createProject, name="createProject"),
     
     path("ChangePassword/", views.change_password, name="change_password"),
 
