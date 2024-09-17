@@ -7,6 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
+from languages.fields import LanguageField, RegionField
 
 
 @never_cache
@@ -238,7 +239,7 @@ def register_languages_view(request):
         form = LanguageForm(request.POST, instance=freelancer)
         if form.is_valid():
             form.save()
-            return redirect('register_skills')
+            return redirect('register_skills')  # Redirigir al siguiente paso después del registro de idiomas
     else:
         form = LanguageForm(instance=freelancer)
 

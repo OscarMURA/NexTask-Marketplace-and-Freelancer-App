@@ -7,6 +7,7 @@ from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from languages.fields import LanguageField, RegionField
 
 # Base class for User Signup
 class UserSignUpForm(UserCreationForm):
@@ -184,27 +185,10 @@ class SkillsForm(forms.ModelForm):
 
         return profile
 
-    
-from django import forms
-from .models import FreelancerProfile, Language
-
 class LanguageForm(forms.ModelForm):
-    new_language = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu idioma, agrégalo aquí.")
-
     class Meta:
         model = FreelancerProfile
-        fields = ['languages']
-
-    def save(self, commit=True):
-        profile = super().save(commit=False)
-        new_language = self.cleaned_data.get('new_language')
-
-        if new_language:
-            language, created = Language.objects.get_or_create(name=new_language)
-            profile.languages.add(language)
-
-        if commit:
-            profile.save()
-            self.save_m2m()
-
-        return profile
+        fields = ['language']
+        widgets = {
+            'language': forms.Select(attrs={'class': 'form-control'})
+        }
