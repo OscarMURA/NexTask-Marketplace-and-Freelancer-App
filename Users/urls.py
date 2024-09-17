@@ -25,7 +25,7 @@ urlpatterns = [
     # URL de bienvenida
     path('welcome/', views.welcome, name='welcome'),
     
-    path("Home-Client/", views.home_client, name="home_client"),
+    path("home-Client/", views.home_client, name="home_client"),
 
     path("Home-Freelancer/", views.home_freelancer, name="home_freelancer"),
     
