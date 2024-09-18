@@ -13,6 +13,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('auth/', include('social_django.urls', namespace='social')), #Agregamos esta línea
     path('', views.home, name='home'),
+    path('projects/', include('Projects.urls')),
     
-
 ]
