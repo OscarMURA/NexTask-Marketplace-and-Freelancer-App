@@ -188,8 +188,7 @@ def portfolio_register_view(request):
 def profile_settings(request):
     return render(request, 'Users/changePassword.html')
 
-def home_client(request):
-    return render(request, 'Users/homeClient.html')
+
 
 def home_freelancer(request):
     return render(request, 'Users/homeFreelancer.html')

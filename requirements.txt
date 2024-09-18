@@ -7,3 +7,4 @@ django-crispy-forms
 crispy-bootstrap4
 pytest-django
 pytest
+django-extensions
