@@ -3,7 +3,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
 from .models import Project  
-
+from django.urls import reverse
+from django.contrib import messages
+from .models import Project
 
 
 def create_project(request):
@@ -46,4 +48,14 @@ def edit_project(request, project_id):
         form = ProjectForm(instance=project)
         
     return render(request, 'Projects/edit_project.html', {'form': form, 'project': project})
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, "Proyecto eliminado exitosamente")
+        return redirect('home_client') 
+
+    return redirect(reverse('home_client'))
 
