@@ -5,6 +5,7 @@ from .models import User, FreelancerProfile, ClientProfile, Skill, Certification
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
+from django_select2.forms import Select2MultipleWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -188,8 +189,8 @@ class SkillsForm(forms.ModelForm):
 
 class LanguageForm(forms.ModelForm):
     languages = forms.ModelMultipleChoiceField(
-        queryset=Language.objects.all(),  # Preload all languages
-        widget=forms.CheckboxSelectMultiple,  # Allow multiple selection
+        queryset=Language.objects.all(),
+        widget=forms.CheckboxSelectMultiple,  # Use checkboxes instead of dropdown
         required=True
     )
 

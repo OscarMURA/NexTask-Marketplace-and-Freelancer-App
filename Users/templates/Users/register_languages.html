@@ -1,6 +1,14 @@
 {% extends 'NextTask/base.html' %}
 {% load crispy_forms_tags %}
 
+{% block extra_css %}
+<style>
+    .checkbox-item {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <section class="py-110 bg-offWhite">
@@ -8,7 +16,21 @@
             <h2 class="section-title mb-2">Registro de Idiomas</h2>
             <form method="POST" id="languageForm">
                 {% csrf_token %}
-                {{ form|crispy }}
+
+                <!-- Search bar -->
+                <div class="form-group d-flex align-items-center">
+                    <input type="text" id="searchLanguages" class="form-control me-2" placeholder="Type your language">
+                </div>
+
+                <!-- Render checkboxes -->
+                <div class="form-group" id="languagesList">
+                    <label for="id_languages">Languages List</label>
+                    {% for checkbox in form.languages %}
+                        <div class="checkbox-item">
+                            {{ checkbox.tag }} <label>{{ checkbox.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
 
                 <div class="d-grid mt-4">
                     <div class="d-flex justify-content-between">
@@ -20,4 +42,39 @@
         </div>
     </section>
 </div>
+
+
+<script>
+    
+
+    document.getElementById('searchLanguages').addEventListener('keyup', function() {
+        var filter = this.value.toLowerCase().trim();  // Get the value the user typed in
+        
+
+        var checkboxes = document.querySelectorAll('#languagesList .checkbox-item');  // All checkbox divs
+
+        // Loop through each checkbox item and hide/show based on matching label text
+        checkboxes.forEach(function(checkbox) {
+            var label = checkbox.querySelector('label').textContent.toLowerCase().trim();  // Get the label text
+            
+            if (label.includes(filter)) {
+                
+                checkbox.style.display = 'block';  // Show checkbox if it matches
+            } else {
+                
+                checkbox.style.display = 'none';  // Hide checkbox if it doesn't match
+            }
+        });
+    });
+
+    // Prevent form submission when pressing Enter in the search field
+    document.getElementById('languageForm').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();  // Prevent form submission on Enter key
+        }
+    });
+</script>
+
 {% endblock %}
+
+

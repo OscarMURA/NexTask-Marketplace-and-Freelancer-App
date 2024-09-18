@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_countries',
+    'django_select2',
     'crispy_forms',
     'crispy_bootstrap4',
     'social_django',
