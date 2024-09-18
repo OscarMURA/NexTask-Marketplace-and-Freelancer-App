@@ -184,7 +184,9 @@ def portfolio_register_view(request):
         'back_url': 'certification_register',
         'next_url': 'welcome',
     })
-
+@login_required
+def profile_settings(request):
+    return render(request, 'Users/changePassword.html')
 
 def home_client(request):
     return render(request, 'Users/homeClient.html')
