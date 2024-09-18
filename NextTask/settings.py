@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'Notifications',
     'Payments',
     'Projects',
-    'Reports',  
+    'Reports', 
+    'django_quill',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,30 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET= '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'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
+QUILL_CONFIGS = {
+    'default':{
+        'theme': 'snow',
+        'modules': {
+            'syntax': True,
+            'toolbar': [
+                ['bold', 'italic', 'underline', 'strike'], 
+                ['blockquote', 'code-block', 'link'],
+
+                [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+
+                [{ 'size': ['small', True, 'large', 'huge'] }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, False] }],
+
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+
+                ['clean']
+            ]
+        }
+    }
+}
