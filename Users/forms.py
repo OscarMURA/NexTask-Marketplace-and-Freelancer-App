@@ -1,13 +1,12 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience
+from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience, Language
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from languages.fields import LanguageField, RegionField
 
 # Base class for User Signup
 class UserSignUpForm(UserCreationForm):
@@ -185,10 +184,15 @@ class SkillsForm(forms.ModelForm):
 
         return profile
 
+
+
 class LanguageForm(forms.ModelForm):
+    languages = forms.ModelMultipleChoiceField(
+        queryset=Language.objects.all(),  # Preload all languages
+        widget=forms.CheckboxSelectMultiple,  # Allow multiple selection
+        required=True
+    )
+
     class Meta:
         model = FreelancerProfile
         fields = ['languages']
-        widgets = {
-            'languages': forms.CheckboxSelectMultiple(attrs={'class': 'form-control'})
-        }

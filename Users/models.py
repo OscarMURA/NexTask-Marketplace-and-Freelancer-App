@@ -1,8 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_countries.fields import CountryField
-from parler.models import TranslatableModel, TranslatedFields
-from languages.fields import LanguageField, RegionField
+
 
 
 
@@ -12,6 +11,12 @@ class User(AbstractUser):
         ('client', 'Client'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
+    
+class Language(models.Model):
+    language = models.CharField(max_length=100)  # Use CharField instead of LanguageField
+
+    def __str__(self):
+        return self.language
 
 class Skill(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -26,7 +31,8 @@ class FreelancerProfile(models.Model):
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
     skills = models.ManyToManyField(Skill, blank=True)
-    languages = models.ManyToManyField('Language', blank=True) 
+    languages = models.ManyToManyField('Language', blank=True)
+
 
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -83,8 +89,3 @@ class Portfolio(models.Model):
         return f'{self.url} - {self.freelancer.user.username}'
 
 
-class Language(models.Model):
-    language = LanguageField(max_length=15)  # Ajustar max_length
-
-    def __str__(self):
-        return self.language
