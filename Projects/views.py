@@ -34,4 +34,16 @@ def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     return render(request, 'Projects/project_detail.html', {'project': project})
 
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('project_detail', project_id=project.id)  # Redirige a la página de detalles del proyecto
+    else:
+        form = ProjectForm(instance=project)
+        
+    return render(request, 'Projects/edit_project.html', {'form': form, 'project': project})
 

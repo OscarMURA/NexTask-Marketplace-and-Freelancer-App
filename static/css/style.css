@@ -3741,6 +3741,28 @@ body {
 .header-hidden {
   transform: translateY(-100%);
 }
+.w-btn-danger-lg {
+  color: #ffffff;
+  background-color: #ff5959; /* Rojo claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
+
+.w-btn-danger-lg:hover {
+  background-color: #fb1c1c; /* Rojo oscuro */
+}
+.button-group {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  align-items: center; /* Alinea los botones verticalmente */
+  gap: 10px; /* Espacio entre los botones */
+}
 
 /*******************
 Footer   End
