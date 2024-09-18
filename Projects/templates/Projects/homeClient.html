@@ -1,4 +1,5 @@
-{% extends 'Users/baseClient.html' %} {% load static %} {% block content %}
+{% extends 'Users/baseClient.html' %} {% load static %} 
+{% block content %}
 <title>Client Dashboard</title>
 <!-- Page Header -->
 <div
@@ -89,44 +90,29 @@
         <tbody>
 
 
-          <tr>
-            <td>
-              <div
-                class="d-flex gap-3 align-items-center project-name"
-              >
-                
-                <div>
-                  <p class="text-dark-200">
-                    Software engineer for android Development
-                  </p>
+          <tbody>
+            {% for project in projects %}
+            <tr>
+              <td>
+                <div class="d-flex gap-3 align-items-center project-name">
+                  <div>
+                    <p class="text-dark-200">{{ project.title }}</p>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="text-dark-200">$15</td>
-            <td>
-              <span class="status-badge pending"> Close </span>
-            </td>
-            <td class="text-dark-200">02</td>
-            <td>
-              <div class="d-flex justify-content-end gap-2">
-                <button class="dashboard-action-btn">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19 10V15.4C19 17.3882 17.3882 19 15.4 19H4.6C2.61177 19 1 17.3882 1 15.4V4.6C1 2.61177 2.61177 1 4.6 1H10M13.3177 2.82047C13.3177 2.82047 13.3177 4.10774 14.605 5.39501C15.8923 6.68228 17.1795 6.68228 17.1795 6.68228M7.43921 13.5906L10.1425 13.2044C10.5324 13.1487 10.8938 12.968 11.1723 12.6895L18.4668 5.39501C19.1777 4.68407 19.1777 3.53141 18.4668 2.82047L17.1795 1.5332C16.4686 0.822266 15.3159 0.822265 14.605 1.5332L7.31048 8.82772C7.03195 9.10624 6.85128 9.4676 6.79557 9.85753L6.40939 12.5608C6.32357 13.1615 6.83848 13.6764 7.43921 13.5906Z"
-                      stroke="#5B5B5B"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                </button>
-                <button class="dashboard-action-btn">
-                  <svg
+              </td>
+              <td class="text-dark-200">${{ project.budget }}</td> 
+              <td>
+                <span class="status-badge pending">{{ project.actual_end_date|date:"Y-m-d"|default:"Close" }}</span>
+              </td>
+              <td class="text-dark-200">
+                {{ project.days_until_due }}
+              </td>
+              <td>
+                <div class="d-flex justify-content-end gap-2">
+                  <a href="{% url 'project_detail' project.id %}">
+                  <button class="dashboard-action-btn">
+                    <!-- Icono de acción 1 -->
+                    <svg
                     width="26"
                     height="19"
                     viewBox="0 0 26 19"
@@ -146,10 +132,34 @@
                       stroke-width="1.5"
                     />
                   </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
+                  </button>
+                  <button class="dashboard-action-btn">
+                    <!-- Icono de acción 2 -->
+                    <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M19 10V15.4C19 17.3882 17.3882 19 15.4 19H4.6C2.61177 19 1 17.3882 1 15.4V4.6C1 2.61177 2.61177 1 4.6 1H10M13.3177 2.82047C13.3177 2.82047 13.3177 4.10774 14.605 5.39501C15.8923 6.68228 17.1795 6.68228 17.1795 6.68228M7.43921 13.5906L10.1425 13.2044C10.5324 13.1487 10.8938 12.968 11.1723 12.6895L18.4668 5.39501C19.1777 4.68407 19.1777 3.53141 18.4668 2.82047L17.1795 1.5332C16.4686 0.822266 15.3159 0.822265 14.605 1.5332L7.31048 8.82772C7.03195 9.10624 6.85128 9.4676 6.79557 9.85753L6.40939 12.5608C6.32357 13.1615 6.83848 13.6764 7.43921 13.5906Z"
+                      stroke="#5B5B5B"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center">No hay proyectos disponibles.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          
 
 
       </table>

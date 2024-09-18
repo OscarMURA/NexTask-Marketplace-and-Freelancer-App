@@ -1,8 +1,8 @@
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
-from .models import Project  # Asegúrate de que Project esté importado
+from .models import Project  
 
 
 
@@ -24,4 +24,14 @@ def create_project(request):
     return render(request, 'Projects/createProject.html', {'form': form})
 
 def home_client(request):
-    return render(request, 'Projects/homeClient.html')
+    # Supongamos que el cliente está autenticado y puedes acceder a su perfil
+    client_profile = request.user.clientprofile  # Asumiendo que el usuario tiene un perfil de cliente
+    projects = client_profile.projects.all()  # Obtiene todos los proyectos asociados al cliente
+
+    return render(request, 'Projects/homeClient.html', {'projects': projects})
+
+def project_detail(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'Projects/project_detail.html', {'project': project})
+
+
