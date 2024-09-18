@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
+from .models import Project  # Asegúrate de que Project esté importado
+
 
 
 def create_project(request):
