@@ -3766,7 +3766,7 @@ body {
 
 .w-btn-plus-lg {
   color: #ffffff;
-  background-color: #95e973; /* Verde claro */
+  background-color: #71ea41; /* Verde claro */
   padding: 16px 32px;
   border-radius: 30px;
   justify-content: center;
@@ -3778,7 +3778,7 @@ body {
 }
 
 .w-btn-plus-lg:hover {
-  background-color: #43ca1a; /* Rojo oscuro */
+  background-color: #32ac0d; /* Rojo oscuro */
 }
 
 /*******************

@@ -96,3 +96,7 @@ def edit_milestone(request, milestone_id):
         form = MilestoneForm(instance=milestone)
 
     return render(request, 'Projects/edit_milestone.html', {'form': form, 'milestone': milestone})
+
+def milestone_detail_view(request, pk):
+    milestone = get_object_or_404(Milestone, pk=pk)
+    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})

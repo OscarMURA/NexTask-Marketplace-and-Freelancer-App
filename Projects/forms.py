@@ -22,7 +22,11 @@ class MilestoneForm(forms.ModelForm):
 
     class Meta:
         model = Milestone
-        fields = ['title', 'description', 'due_date', 'file']
+        fields = ['title', 'description', 'due_date', 'file','category']
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+            'category': forms.Select(attrs={'class': 'form-select shadow-none'}),
+            'file': forms.FileInput(attrs={'class': 'form-control shadow-none'}),
+            'title': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
+
         }
