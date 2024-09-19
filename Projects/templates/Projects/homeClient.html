@@ -92,20 +92,20 @@
 
           <tbody>
             {% for project in projects %}
-            <tr  onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;">
-              
-              <td>
+            <tr  >  
+              <td onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;" >
                 <div class="d-flex gap-3 align-items-center project-name">
                   <div>
                     <p class="text-dark-200">{{ project.title }}</p>
                   </div>
                 </div>
               </td>
-              <td class="text-dark-200">${{ project.budget }}</td> 
-              <td>
+              <td onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;" class="text-dark-200">
+                ${{ project.budget }}</td> 
+              <td onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;">
                 <span class="status-badge pending">{{ project.actual_end_date|date:"Y-m-d"|default:"Close" }}</span>
               </td>
-              <td class="text-dark-200">
+              <td onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;" class="text-dark-200">
                 {{ project.days_until_due }}
               </td>
               <td>
