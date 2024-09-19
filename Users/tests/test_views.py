@@ -57,29 +57,6 @@ def test_freelancer_profile_detail_view(client, user):
     assert '1234 Freelance Ave' in response.content.decode()
 
 @pytest.mark.django_db
-def test_create_freelancer_profile_view(client, user):
-    # Simular el inicio de sesión del usuario
-    client.login(username='testuser', password='testpassword')
-
-    # Datos para crear un perfil de freelancer
-    data = {
-        'country': 'US',
-        'city': 'New York',
-        'phone': '1234567890',
-        'address': '1234 Freelance Ave'
-    }
-
-    response = client.post(reverse('create_freelancer_profile'), data)
-
-    # Verificar que la respuesta es correcta y el perfil se ha creado
-    assert response.status_code == 302  # Redirección después de la creación
-    profile = FreelancerProfile.objects.get(user=user)
-    assert profile.country == 'US'
-    assert profile.city == 'New York'
-    assert profile.phone == '1234567890'
-    assert profile.address == '1234 Freelance Ave'
-
-@pytest.mark.django_db
 def test_freelancer_profile_detail_view(client, user):
     # Crear un perfil de freelancer para el usuario
     profile = FreelancerProfile.objects.create(

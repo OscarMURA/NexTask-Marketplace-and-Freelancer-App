@@ -216,3 +216,50 @@ def test_freelancer_profile_skills():
     assert skill1 in freelancer_profile.skills.all()
     assert skill2 in freelancer_profile.skills.all()
     assert skill3 in freelancer_profile.skills.all()
+
+@pytest.mark.django_db
+def test_freelancer_profile_missing_required_fields(user):
+    # Intenta crear un perfil sin un campo obligatorio como "country"
+    with pytest.raises(ValidationError):
+        FreelancerProfile.objects.create(
+            user=user,
+            city="New York",
+            phone="123456789",
+            address="1234 Freelance Ave"
+        )
+
+@pytest.mark.django_db
+def test_freelancer_profile_phone_length(freelancer_profile):
+    freelancer_profile.phone = "1" * 21
+    with pytest.raises(ValidationError):
+        freelancer_profile.full_clean()
+
+@pytest.mark.django_db
+def test_freelancer_profile_cascade_delete(freelancer_profile):
+    work_experience = WorkExperience.objects.create(
+        freelancer=freelancer_profile,
+        company_name="Tech Corp",
+        position="Software Engineer",
+        start_date="2020-01-01",
+        end_date="2022-12-31"
+    )
+    freelancer_profile.delete()
+    assert WorkExperience.objects.filter(id=work_experience.id).count() == 0
+
+@pytest.mark.django_db
+def test_skill_reverse_relation():
+    skill = Skill.objects.create(name="Python")
+    user = User.objects.create_user(username="testuser", password="password")
+    freelancer_profile = FreelancerProfile.objects.create(user=user, country="US")
+    freelancer_profile.skills.add(skill)
+
+    assert skill.freelancerprofile_set.count() == 1
+    assert freelancer_profile in skill.freelancerprofile_set.all()
+
+@pytest.mark.django_db
+def test_freelancer_profile_update(freelancer_profile):
+    freelancer_profile.city = "Los Angeles"
+    freelancer_profile.save()
+
+    updated_profile = FreelancerProfile.objects.get(id=freelancer_profile.id)
+    assert updated_profile.city == "Los Angeles"

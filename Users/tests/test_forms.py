@@ -2,6 +2,7 @@ import pytest
 from Users.models import User, FreelancerProfile, Skill, Education, WorkExperience, Certification, Portfolio, ClientProfile
 from Users.forms import FreelancerSignUpForm, ClientSignUpForm, WorkExperienceFormSet, CertificationFormSet, EducationFormSet, PortfolioFormSet
 from django.test import Client
+from django.urls import reverse
 
 @pytest.fixture
 def user():
@@ -124,61 +125,66 @@ def test_client_signup_form_invalid_missing_company_name():
     assert 'company_name' in form.errors
 
 @pytest.mark.django_db
-def test_work_experience_formset_valid(freelancer_profile):
-    data = {
-        'workexperience_set-TOTAL_FORMS': '1',
-        'workexperience_set-INITIAL_FORMS': '0',
-        'workexperience_set-MIN_NUM_FORMS': '0',
-        'workexperience_set-MAX_NUM_FORMS': '1000',
-        'workexperience_set-0-company_name': 'Company A',
-        'workexperience_set-0-position': 'Developer',
-        'workexperience_set-0-start_date': '2020-01-01',
-        'workexperience_set-0-end_date': '2021-01-01',
-        'workexperience_set-0-description': 'Developed cool stuff'
+def test_work_experience_formset_valid():
+    user = User.objects.create_user(username='testuser', password='securepassword123')
+    profile = FreelancerProfile.objects.create(user=user)
+    
+    formset_data = {
+        'form-0-company_name': 'Company A',
+        'form-0-position': 'Developer',
+        'form-0-start_date': '2020-01-01',
+        'form-0-end_date': '2022-01-01',
+        'form-0-description': 'Developed software',
+        'form-TOTAL_FORMS': '1',
+        'form-INITIAL_FORMS': '0',
+        'form-MAX_NUM_FORMS': ''
     }
-
-    formset = WorkExperienceFormSet(data, instance=freelancer_profile)
-
-    if not formset.is_valid():
-        print(formset.errors)
+    
+    formset = WorkExperienceFormSet(data=formset_data, instance=profile)
     assert formset.is_valid()
-
+    formset.save()
+    assert WorkExperience.objects.filter(company_name='Company A').exists()
 
 @pytest.mark.django_db
-def test_education_formset_valid(freelancer_profile):
-    data = {
-        'education_set-TOTAL_FORMS': '1',
-        'education_set-INITIAL_FORMS': '0',
-        'education_set-MIN_NUM_FORMS': '0',
-        'education_set-MAX_NUM_FORMS': '1000',
-        'education_set-0-school_name': 'University A',
-        'education_set-0-degree': 'BSc Computer Science',
-        'education_set-0-start_date': '2016-01-01',
-        'education_set-0-end_date': '2020-01-01',
-        'education_set-0-description': 'Studied Computer Science'
+def test_education_formset_valid():
+    user = User.objects.create_user(username='testuser', password='securepassword123')
+    profile = FreelancerProfile.objects.create(user=user)
+    
+    formset_data = {
+        'form-0-institution': 'University A',
+        'form-0-degree': 'Bachelor',
+        'form-0-start_date': '2015-09-01',
+        'form-0-end_date': '2019-06-01',
+        'form-TOTAL_FORMS': '1',
+        'form-INITIAL_FORMS': '0',
+        'form-MAX_NUM_FORMS': ''
     }
-
-    formset = EducationFormSet(data, instance=freelancer_profile)
-
-    if not formset.is_valid():
-        print(formset.errors)  # Imprimir los errores si el formset no es válido
+    
+    formset = EducationFormSet(data=formset_data, instance=profile)
     assert formset.is_valid()
+    formset.save()
+    assert Education.objects.filter(institution='University A').exists()
 
 @pytest.mark.django_db
-def test_certification_formset_valid(freelancer_profile):
-    data = {
-        'certification_set-TOTAL_FORMS': '1',
-        'certification_set-INITIAL_FORMS': '0',
-        'certification_set-MIN_NUM_FORMS': '0',
-        'certification_set-MAX_NUM_FORMS': '1000',
-        'certification_set-0-title': 'Certification A',
-        'certification_set-0-organization': 'Certifying Body',
-        'certification_set-0-date_awarded': '2021-01-01'
+def test_certification_formset():
+    user = User.objects.create_user(username='testuser', password='securepassword123')
+    profile = FreelancerProfile.objects.create(user=user)
+    
+    formset_data = {
+        'form-0-certification_name': 'Certification A',
+        'form-0-issuing_organization': 'Organization A',
+        'form-0-issue_date': '2022-01-01',
+        'form-0-expiration_date': '2025-01-01',
+        'form-TOTAL_FORMS': '1',
+        'form-INITIAL_FORMS': '0',
+        'form-MAX_NUM_FORMS': ''
     }
-
-    formset = CertificationFormSet(data, instance=freelancer_profile)
-
+    
+    formset = CertificationFormSet(data=formset_data, instance=profile)
     assert formset.is_valid()
+    formset.save()
+    assert Certification.objects.filter(certification_name='Certification A').exists()
+
 
 @pytest.mark.django_db
 def test_portfolio_formset_valid(freelancer_profile):
@@ -203,7 +209,61 @@ def test_portfolio_formset_valid(freelancer_profile):
 #Not valid cases
 ##########
 
+@pytest.mark.django_db
+def test_freelancer_signup_form_invalid_missing_field():
+    form_data = {
+        'username': 'testuser',
+        'email': 'test@example.com',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+        # Missing 'country' field
+    }
+    form = FreelancerSignUpForm(data=form_data)
+    assert not form.is_valid()
+    assert 'country' in form.errors
 
+@pytest.mark.django_db
+def test_client_signup_form_invalid_email():
+    form_data = {
+        'username': 'testclient',
+        'email': 'invalid-email',
+        'first_name': 'Jane',
+        'last_name': 'Smith',
+        'password1': 'anotherpassword123',
+        'password2': 'anotherpassword123',
+        'country': 'US',
+        'city': 'San Francisco',
+        'phone': '9876543210',
+        'address': '5678 Client Ave',
+        'company_name': 'Tech Co.',
+        'company_website': 'http://techco.com'
+    }
+    form = ClientSignUpForm(data=form_data)
+    assert not form.is_valid()
+    assert 'email' in form.errors
+
+@pytest.mark.django_db
+def test_freelancer_sign_up_saves_data():
+    form_data = {
+        'username': 'testuser',
+        'email': 'test@example.com',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+        'country': 'US',
+        'city': 'New York',
+        'phone': '1234567890',
+        'address': '1234 Test St.'
+    }
+    form = FreelancerSignUpForm(data=form_data)
+    assert form.is_valid()
+    user = form.save()
+    assert User.objects.filter(username='testuser').exists()
+    freelancer_profile = FreelancerProfile.objects.get(user=user)
+    assert freelancer_profile.city == 'New York'
 
 @pytest.mark.django_db
 def test_freelancer_signup_form_invalid_missing_username():
@@ -295,37 +355,92 @@ def test_client_signup_form_invalid_website_format():
     assert not form.is_valid()
     assert 'company_website' in form.errors
 
+@pytest.mark.django_db
 def test_work_experience_formset_missing_required_fields():
-    data = {
+    user = User.objects.create_user(username='testuser', password='securepassword123')
+    profile = FreelancerProfile.objects.create(user=user)
+    
+    formset_data = {
+        'form-0-company_name': '',  # Missing required field
+        'form-0-position': 'Developer',
+        'form-0-start_date': '2020-01-01',
+        'form-0-end_date': '2022-01-01',
+        'form-0-description': 'Developed software',
         'form-TOTAL_FORMS': '1',
         'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '2024-09-10',
-        'form-0-end_date': '2024-09-20',
-        'form-0-company': '',  # Campo obligatorio vacío
-        'form-0-position': '',  # Campo obligatorio vacío
+        'form-MAX_NUM_FORMS': ''
     }
-    formset = WorkExperienceFormSet(data)
+    
+    formset = WorkExperienceFormSet(data=formset_data, instance=profile)
     assert not formset.is_valid()
-    assert 'company' in formset.forms[0].errors  # Verificar que hay un error en el campo `company`
-    assert 'position' in formset.forms[0].errors  # Verificar que hay un error en el campo `position`
+    assert 'company_name' in formset.errors[0]  # Check for specific field errors
 
 @pytest.mark.django_db
-def test_work_experience_formset_missing_required_fields(freelancer_profile):
-    # Datos simulados faltando campos requeridos
-    data = {
-        'workexperience_set-TOTAL_FORMS': '1',
-        'workexperience_set-INITIAL_FORMS': '0',
-        'workexperience_set-MIN_NUM_FORMS': '0',
-        'workexperience_set-MAX_NUM_FORMS': '1000',
-        'workexperience_set-0-company_name': '',  # Campo requerido faltante
-        'workexperience_set-0-position': 'Developer',
-        'workexperience_set-0-start_date': '2020-01-01',
-        'workexperience_set-0-end_date': '2021-01-01',
-        'workexperience_set-0-description': 'Developed cool stuff'
+def test_certification_formset():
+    user = User.objects.create_user(username='testuser', password='securepassword123')
+    profile = FreelancerProfile.objects.create(user=user)
+    
+    formset_data = {
+        'form-0-certification_name': 'Certification 1',
+        'form-0-issuing_organization': 'Organization A',
+        'form-0-issue_date': '2023-01-01',
+        'form-0-expiration_date': '2024-01-01',
+        'form-0-short_description': 'Description A',
+        'form-TOTAL_FORMS': '1',
+        'form-INITIAL_FORMS': '0',
+        'form-MAX_NUM_FORMS': ''
     }
+    
+    formset = CertificationFormSet(data=formset_data, instance=profile)
+    assert formset.is_valid()
+    formset.save()
+    assert Certification.objects.filter(certification_name='Certification 1').exists()
 
-    formset = WorkExperienceFormSet(data, instance=freelancer_profile)
+@pytest.mark.django_db
+def test_freelancer_signup_redirect():
+    client = Client()
+    form_data = {
+        'username': 'testuser',
+        'email': 'test@example.com',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+        'country': 'US',
+        'city': 'New York',
+        'phone': '1234567890',
+        'address': '1234 Test St.'
+    }
+    response = client.post(reverse('register_freelancer'), data=form_data)
+    assert response.status_code == 302  # Redirection status code
+    assert response.url == reverse('home_freelancer')  # Expected redirect URL
 
-    # Verificar que el formulario no sea válido debido a los campos faltantes
-    assert not formset.is_valid()
-    assert 'company_name' in formset.forms[0].errors  # Verifica que hay un error en el campo 'company_name'
+@pytest.mark.django_db
+def test_freelancer_signup_with_certification_formset():
+    client = Client()
+    form_data = {
+        'username': 'testuser',
+        'email': 'test@example.com',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+        'country': 'US',
+        'city': 'New York',
+        'phone': '1234567890',
+        'address': '1234 Test St.'
+    }
+    formset_data = {
+        'form-0-certification_name': 'Certification A',
+        'form-0-issuing_organization': 'Organization A',
+        'form-0-issue_date': '2023-01-01',
+        'form-0-expiration_date': '2024-01-01',
+        'form-TOTAL_FORMS': '1',
+        'form-INITIAL_FORMS': '0',
+        'form-MAX_NUM_FORMS': ''
+    }
+    
+    response = client.post(reverse('register_freelancer'), data={**form_data, **formset_data})
+    assert response.status_code == 302
+    user = User.objects.get(username='testuser')
+    assert Certification.objects.filter(certification_name='Certification A').exists()
