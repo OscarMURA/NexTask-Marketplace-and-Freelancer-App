@@ -149,6 +149,7 @@ AUTH_USER_MODEL = 'Users.User'
 # social app custom settings
 
 AUTHENTICATION_BACKENDS = [
+
     'django.contrib.auth.backends.ModelBackend',
 ]
 

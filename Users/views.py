@@ -9,6 +9,8 @@ from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
 from .forms import FreelancerProfileForm 
+from django.shortcuts import get_object_or_404
+
 
 
 
@@ -259,28 +261,37 @@ def profile_settings(request):
     return render(request, 'Users/profileSettings.html', {'form': form, 'user': user, 'freelancer': freelancer})
 
 
+
 def search_freelancers(request):
-    form = FreelancerSearchForm()
+    form = FreelancerSearchForm(request.GET or None)
     freelancers = FreelancerProfile.objects.all()
 
-    if request.GET:
-        form = FreelancerSearchForm(request.GET)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            city = form.cleaned_data.get('city')
-            skills = form.cleaned_data.get('skills')
-            languages = form.cleaned_data.get('languages')
+    if form.is_valid():
+        keyword = form.cleaned_data.get('keyword')
+        skills = form.cleaned_data.get('skills')
+        languages = form.cleaned_data.get('languages')
 
-            if username:
-                freelancers = freelancers.filter(user__username__icontains=username)
-            if city:
-                freelancers = freelancers.filter(city__icontains=city)
-            if skills:
-                freelancers = freelancers.filter(skills__in=skills).distinct()
-            if languages:
-                freelancers = freelancers.filter(languages__in=languages).distinct()
+        if keyword:
+            freelancers = freelancers.filter(
+                Q(user__username__icontains=keyword) |
+                Q(user__first_name__icontains=keyword) |
+                Q(user__last_name__icontains=keyword) |
+                Q(city__icontains=keyword) |
+                Q(country__icontains=keyword) |
+                Q(skills__name__icontains=keyword) |
+                Q(languages__language__icontains=keyword)
+            ).distinct()
 
-    return render(request, 'Users/search_freelancers.html', {'form': form, 'freelancers': freelancers})
+        if skills:
+            freelancers = freelancers.filter(skills__in=skills).distinct()
+
+        if languages:
+            freelancers = freelancers.filter(languages__in=languages).distinct()
+
+    return render(request, 'Users/search_freelancers.html', {
+        'form': form,
+        'freelancers': freelancers
+    })
 
 def freelancer_profile(request, id):
     freelancer = get_object_or_404(FreelancerProfile, user__id=id)

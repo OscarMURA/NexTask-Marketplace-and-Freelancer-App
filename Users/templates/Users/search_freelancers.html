@@ -1,22 +1,152 @@
 {% extends 'NextTask/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
 {% block content %}
-<div class="container">
-    <h2>Freelancer Results</h2>
+<!-- Estilos CSS incluidos directamente en el archivo HTML -->
+<style>
+    .banner {
+        background-color: #f7f7f7;
+        padding: 40px 0;
+        margin-bottom: 20px;
+    }
+
+    .banner h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .form-inline .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .search-bar {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .search-bar select,
+    .search-bar input {
+        margin-right: 10px;
+        width: 100%;
+    }
+
+    .search-bar button {
+        padding: 10px 20px;
+    }
+
+    .card {
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 300px; /* Increased width for each card */
+        margin: auto;
+    }
+
+    .card img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        object-fit: cover;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .container .row {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around; /* Ensures even spacing between cards */
+    }
+
+    .col-md-4 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="banner">
+    <h1 class="text-center">Freelancer Results</h1>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="container mt-4">
+    <form method="GET" class="search-bar">
+        <!-- Barra de búsqueda por palabra clave -->
+        <div class="form-group mx-2" style="flex: 2;">
+            <input type="text" name="q" class="form-control" placeholder="Search by username, skills, country, languages..." value="{{ request.GET.q }}">
+        </div>
+
+        <div class="form-group mx-2">
+            <select name="skills" class="form-control">
+                <option value="">Skills</option>
+                {% for skill in skills %}
+                    <option value="{{ skill.id }}" {% if request.GET.skills == skill.id %}selected{% endif %}>{{ skill.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mx-2">
+            <select name="languages" class="form-control">
+                <option value="">Languages</option>
+                {% for language in languages %}
+                    <option value="{{ language.id }}" {% if request.GET.languages == language.id %}selected{% endif %}>{{ language.language }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mx-2">
+            <select name="country" class="form-control">
+                <option value="">Country</option>
+                {% for country in countries %}
+                    <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mx-2">Find Freelancer</button>
+    </form>
+</div>
+
+<!-- Resultados de Freelancers -->
+<div class="container mt-5">
     <div class="row">
         {% for freelancer in freelancers %}
         <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <!-- Mostrar el avatar del freelancer si está disponible -->
+            <div class="card mb-4 shadow-sm text-center">
+                <!-- Mostrar avatar o imagen predeterminada -->
                 {% if freelancer.avatar %}
-                    <img class="card-img-top" src="{{ freelancer.avatar.url }}" alt="Freelancer Avatar" style="width:100%; height:auto;">
+                    <img src="{{ freelancer.avatar.url }}" alt="Profile Picture">
                 {% else %}
-                    <img class="card-img-top" src="{% static 'img/default-avatar.png' %}" alt="Freelancer Avatar" style="width:100%; height:auto;">
+                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Avatar">
                 {% endif %}
-                
                 <div class="card-body">
                     <h5 class="card-title">{{ freelancer.user.username }}</h5>
                     <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
-                    <p class="card-text"><strong>Location:</strong> {{ freelancer.city }}, {{ freelancer.country }}</p>
+                    <p class="card-text"><strong>Country:</strong> {{ freelancer.country }}</p>
                     <p class="card-text"><strong>Skills:</strong> 
                         {% for skill in freelancer.skills.all %}
                             <span class="badge badge-primary">{{ skill.name }}</span>

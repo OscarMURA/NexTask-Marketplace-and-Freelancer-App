@@ -1,4 +1,6 @@
 {% extends 'NextTask/base.html' %}
+{% load static %}
+
 {% block content %}
 <div class="container">
     <div class="profile-header">
@@ -13,10 +15,10 @@
             <div class="col-md-4">
                 <!-- Mostrar el avatar cargado del freelancer -->
                 {% if freelancer.avatar %}
-                    <img class="profile-avatar img-fluid rounded-circle" src="{{ freelancer.avatar.url }}" alt="Freelancer Avatar" style="width: 150px; height: 150px;">
-                {% else %}
-                    <img class="profile-avatar img-fluid rounded-circle" src="{% static 'img/default-avatar.png' %}" alt="Freelancer Avatar" style="width: 150px; height: 150px;">
-                {% endif %}
+                    <img src="{{ freelancer.avatar.url }}" alt="Profile Picture" class="img-thumbnail" style="max-width: 150px; border-radius: 50%;">
+                 {% else %}
+                 <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Avatar" class="img-thumbnail" style="max-width: 150px; border-radius: 50%;">
+               {% endif %}
             </div>
         </div>
     </div>

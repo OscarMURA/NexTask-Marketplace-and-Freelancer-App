@@ -32,7 +32,7 @@ class FreelancerProfile(models.Model):
     address = models.CharField(max_length=255, blank=True)  # Dirección
     skills = models.ManyToManyField(Skill, blank=True)
     languages = models.ManyToManyField('Language', blank=True)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True) 
+    avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
 
 
 class ClientProfile(models.Model):

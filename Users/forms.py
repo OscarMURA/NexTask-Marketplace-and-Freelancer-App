@@ -195,8 +195,12 @@ class LanguageForm(forms.ModelForm):
         fields = ['languages']
 
 class FreelancerSearchForm(forms.Form):
-    username = forms.CharField(required=False, max_length=100, label="Username")
-    city = forms.CharField(required=False, max_length=255, label="City")
+    keyword = forms.CharField(
+        required=False,
+        max_length=255,
+        label="Search by keyword (username, city, skills, languages)",
+        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})
+    )
     skills = forms.ModelMultipleChoiceField(
         queryset=Skill.objects.all(),
         required=False,
