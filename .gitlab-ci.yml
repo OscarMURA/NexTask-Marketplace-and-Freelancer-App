@@ -1,16 +1,30 @@
-stages:
-  - test
+name: Django CI
 
-test:
-  image: python:3.12
-  stage: test
-  services:
-    - postgres:latest  # Ajusta esto según tu base de datos si es necesario
-  variables:
-    DJANGO_SETTINGS_MODULE: 'myproject.settings'
-    DATABASE_URL: 'postgres://postgres:@postgres:5432/mydatabase'
-  before_script:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
-  script:
-    - pytest
+on:
+  push:
+    branches:
+      - '*'  # Ejecutar en todos los push a cualquier rama
+  pull_request:
+    branches:
+      - '*'  # Ejecutar en todas las solicitudes de extracción a cualquier rama
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest
