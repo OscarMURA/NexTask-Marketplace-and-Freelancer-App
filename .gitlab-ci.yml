@@ -1,0 +1,16 @@
+stages:
+  - test
+
+test:
+  image: python:3.12
+  stage: test
+  services:
+    - postgres:latest  # Ajusta esto según tu base de datos si es necesario
+  variables:
+    DJANGO_SETTINGS_MODULE: 'myproject.settings'
+    DATABASE_URL: 'postgres://postgres:@postgres:5432/mydatabase'
+  before_script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+  script:
+    - pytest
