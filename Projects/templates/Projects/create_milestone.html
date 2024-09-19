@@ -1,0 +1,34 @@
+{% extends 'Users/baseClient.html' %}
+{% block content %}
+<h2>Create Milestone for {{ project.title }}</h2>
+
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Milestone</button>
+</form>
+
+<a href="{% url 'project_detail' project.id %}">Back to Project</a>
+
+<style>
+    .ql-container {
+        border: 2px solid #ccc; /* Borde personalizado */
+        border-radius: 10px;    /* Bordes redondeados */
+        min-height: 300px;      /* Ajustar altura del área de texto */
+        padding: 10px;          /* Espacio dentro del editor */
+    }
+
+    .ql-editor {
+        min-height: 280px;      /* Ajustar la altura del área de escritura */
+        font-size: 16px;        /* Tamaño de fuente dentro del editor */
+        border: 2px solid #ccc; /* Borde personalizado */
+        border-radius: 10px;    /* Bordes redondeados */
+    }
+</style>
+
+{% endblock %}

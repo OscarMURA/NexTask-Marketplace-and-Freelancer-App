@@ -75,7 +75,14 @@
                                         <div class="error text-danger">{{ form.budget.errors }}</div>
                                     {% endif %}
                                 </div>
-                            </div>                            
+                            </div>
+                            <!-- Campo del Categoria -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    {{ form.category }} <!-- Esto cargará el <select> con las opciones de categorías del formulario -->
+                                </div>
+                            </div>                           
                             <!-- Description with Quill -->
                             <div class="col-12">
                                 <label for="id_description" class="form-label">Description*</label>

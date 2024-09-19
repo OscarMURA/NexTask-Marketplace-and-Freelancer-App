@@ -42,6 +42,13 @@ class ClientProfile(models.Model):
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
+    
+    # Método para calcular el presupuesto total de los proyectos del cliente
+    def get_total_budget(self):
+        return self.projects.aggregate(total_budget=models.Sum('budget'))['total_budget'] or 0
+    
+    def get_all_projects(self):
+        return self.projects.all()
 
 # Historial académico
 class Education(models.Model):

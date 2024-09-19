@@ -13,12 +13,39 @@
     <p><strong>Fecha de inicio:</strong> {{ project.start_date }}</p>
     <p><strong>Fecha de vencimiento:</strong> {{ project.due_date }}</p>
     <p><strong>Fecha de finalización real:</strong> {{ project.actual_end_date|default:"No disponible" }}</p>
+    <!-- Mostrar la categoría del proyecto -->
+    <p><strong>Categoría:</strong> {{ project.get_category_display }}</p>
+
+    <!-- Descripción del Proyecto -->
     <div>
         <strong>Descripción:</strong>
         <div>{{ project.description.html|safe }}</div>
-      </div>
+    </div>
+
+    <!-- Sección de Hitos -->
+    <div class="milestones-section">
+        <h3>Hitos del Proyecto</h3>
+        <ul>
+            {% for milestone in project.milestones.all %}
+            <li>
+                <strong>{{ milestone.title }}</strong> - Due: {{ milestone.due_date }} <br>
+                <strong>Descripción:</strong> {{ milestone.description.html|safe }} <br>
+                {% if milestone.deliverable %}
+                    <a href="{{ milestone.deliverable.url }}">Download</a>
+                {% endif %}
+                <!-- Enlace para editar el hito -->
+                <a href="{% url 'edit_milestone' milestone.id %}" class="btn btn-primary">Edit</a>
+            </li>
+            <hr>
+            {% empty %}
+            <p>No hay hitos definidos para este proyecto.</p>
+            {% endfor %}
+        </ul>
+        <!-- Botón para añadir un nuevo hito -->
+        <a href="{% url 'add_milestone' project.id %}" class="btn btn-success">Añadir Hito</a>
+    </div>
     
-    <a href="{% url 'home_client' %}">Volver al panel</a>
+    <a href="{% url 'home_client' %}" class="btn btn-secondary">Volver al panel</a>
 </div>
 
 {% endblock %}

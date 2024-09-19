@@ -454,7 +454,12 @@
               <i class="fa-solid fa-bars"></i>
             </button>
           </div>
-          <span class="welcome-message">Welcome, {{ user.username }}</span>
+          <span
+           class="welcome-message">
+            <h3>
+              Welcome, {{ user.first_name }}  {{user.last_name}}
+            </h3>
+          </span>
           <div>
             <div class="dashboard-header-btns d-flex gap-3">
               <div>

@@ -8,3 +8,5 @@ crispy-bootstrap4
 pytest-django
 pytest
 django-extensions
+django-quill-editor
+django-select2
