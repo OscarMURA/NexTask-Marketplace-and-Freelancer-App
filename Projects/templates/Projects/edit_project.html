@@ -5,24 +5,14 @@
     <!-- django-quill-editor Media -->
     {% include 'django_quill/media.html' %}
 </head>
-<!-- Page Header -->
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Create a Project</h3>
-    <ul class="d-flex align-items-center gap-2">
-        <li class="text-dark-200 fs-6">Dashboard</li>
-        <li>
-            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
-                <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </li>
-        <li class="text-lime-300 fs-6">Create a Project</li>
-    </ul>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">Edit Project: {{ project.title }}</h3>
 </div>
 
 <!-- Form Section -->
 <div class="row justify-content-center">
     <div class="col-xl-8">
-        <form method="post" enctype="multipart/form-data" id="buyer_create_job_post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="d-flex flex-column gap-4">
                 <!-- Project Info -->
@@ -32,70 +22,75 @@
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
+                            <!-- Título -->
                             <div class="col-12">
                                 <div class="form-container">
                                     <label for="id_title" class="form-label">Project Title <span class="text-lime-300">*</span></label>
-                                    <!-- Campo del título -->
-                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Title name here">
-                                    <!-- Mostrar errores si los hay -->
+                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}">
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
+                            <!-- Fecha de inicio -->
                             <div class="col-md-6">
                                 <div class="form-container">
                                     <label for="id_start_date" class="form-label">Start Date</label>
-                                    <!-- Campo de la fecha de inicio -->
-                                    <input type="date" class="form-control shadow-none" name="start_date" id="id_start_date" value="{{ form.start_date.value|default_if_none:'' }}">
+                                    {{ form.start_date }}
                                     <div id="start-date-error" class="error text-danger"></div>
                                     {% if form.start_date.errors %}
                                         <div class="error text-danger">{{ form.start_date.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
+                            <!-- Fecha de vencimiento -->
                             <div class="col-md-6">
                                 <div class="form-container">
                                     <label for="id_due_date" class="form-label">Due Date</label>
-                                    <!-- Campo de la fecha de vencimiento -->
-                                    <input type="date" class="form-control shadow-none" name="due_date" id="id_due_date" value="{{ form.due_date.value|default_if_none:'' }}">
+                                    {{ form.due_date }}
                                     <div id="due-date-error" class="error text-danger"></div>
                                     {% if form.due_date.errors %}
                                         <div class="error text-danger">{{ form.due_date.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
+                            <!-- Presupuesto -->
                             <div class="col-md-6">
                                 <div class="form-container">
                                     <label for="id_budget" class="form-label">Budget</label>
-                                    <!-- Campo del presupuesto -->
-                                    <input type="text" class="form-control shadow-none" name="budget" id="id_budget" value="{{ form.budget.value|default_if_none:'' }}" placeholder="Budget here">
+                                    <input type="text" class="form-control shadow-none" name="budget" id="id_budget" value="{{ form.budget.value|default_if_none:'' }}">
                                     <div id="budget-error" class="error text-danger"></div>
                                     {% if form.budget.errors %}
                                         <div class="error text-danger">{{ form.budget.errors }}</div>
                                     {% endif %}
                                 </div>
-                            </div>                            
-                            <!-- Description with Quill -->
+                            </div>
+
+                            <!-- Descripción usando Quill -->
                             <div class="col-12">
                                 <label for="id_description" class="form-label">Description*</label>
                                 {{ form.description }}  <!-- Renderiza el campo de Quill aquí -->
                             </div>
-                            <!-- Mostrar errores si los hay -->
                             {% if form.description.errors %}
                                 <div class="error text-danger">{{ form.description.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
-                <!-- Submit Button -->
-                <div>
+                <!-- Botón de enviar -->
+                <div class="button-group">
                     <button type="submit" class="w-btn-secondary-lg">
-                        Publish Project
+                        Save Changes
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
+                    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg">
+                        Cancel
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
                 </div>
             </div>
         </form>
@@ -104,17 +99,17 @@
 
 <style>
     .ql-container {
-        border: 2px solid #ccc; /* Borde personalizado */
-        border-radius: 10px;    /* Bordes redondeados */
-        min-height: 300px;      /* Ajustar altura del área de texto */
-        padding: 10px;          /* Espacio dentro del editor */
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        min-height: 300px;
+        padding: 10px;
     }
 
     .ql-editor {
-        min-height: 280px;      /* Ajustar la altura del área de escritura */
-        font-size: 16px;        /* Tamaño de fuente dentro del editor */
-        border: 2px solid #ccc; /* Borde personalizado */
-        border-radius: 10px;    /* Bordes redondeados */
+        min-height: 280px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 10px;
     }
 </style>
 
@@ -130,36 +125,27 @@
         document.getElementById('due-date-error').textContent = '';
         document.getElementById('budget-error').textContent = '';
 
-        let isValid = true;
-
-        // Validación de la fecha de inicio (no debe ser en el pasado)
-        if (startDate < today) {
+        // Validación de la fecha de inicio
+        if ((startDate+2) <= (today-2)) {
             document.getElementById('start-date-error').textContent = 'The start date cannot be in the past.';
-            isValid = false;
+            event.preventDefault();
         }
 
-        // Validación de la fecha de vencimiento (al menos un mes después de la fecha de inicio)
+        // Validación de la fecha de vencimiento
         const minDueDate = new Date(startDate);
         minDueDate.setMonth(minDueDate.getMonth() + 1);
-        if (dueDate < minDueDate) {
+        if (dueDate <= minDueDate) {
             document.getElementById('due-date-error').textContent = 'The due date must be at least one month after the start date.';
-            isValid = false;
+            event.preventDefault();
         }
 
-        // Validación del presupuesto (no debe ser negativo)
-        if (isNaN(budget) || budget < 0) {
-            document.getElementById('budget-error').textContent = 'The budget cannot be negative or empty.';
-            isValid = false;
-        }
-
-        // Si alguna validación falla, prevenir que el formulario se envíe
-        if (!isValid) {
-            alert('Please correct the errors in the form before submitting.');
+        // Validación del presupuesto
+        if (budget < 0) {
+            document.getElementById('budget-error').textContent = 'The budget cannot be negative.';
             event.preventDefault();
         }
     });
 </script>
-
 
 
 {% endblock %}

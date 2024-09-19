@@ -36,3 +36,30 @@
 
 
 })(window.jQuery);
+
+
+
+document.querySelector('form').addEventListener('submit', function(event) {
+	const startDate = new Date(document.getElementById('id_start_date').value);
+	const dueDate = new Date(document.getElementById('id_due_date').value);
+	const today = new Date();
+	
+	if (startDate < today) {
+		alert('The start date cannot be in the past.');
+		event.preventDefault();
+	}
+
+	const minDueDate = new Date(startDate);
+	minDueDate.setMonth(minDueDate.getMonth() + 1);
+
+	if (dueDate < minDueDate) {
+		alert('The expiration date must be at least one month after the start date.');
+		event.preventDefault();
+	}
+
+	const budget = document.getElementById('id_budget').value;
+	if (budget < 0) {
+		alert('The budget cannot be negative.');
+		event.preventDefault();
+	}
+});

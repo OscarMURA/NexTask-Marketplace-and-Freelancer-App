@@ -1,9 +1,11 @@
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
-from .models import Project  # Asegúrate de que Project esté importado
-
+from .models import Project  
+from django.urls import reverse
+from django.contrib import messages
+from .models import Project
 
 
 def create_project(request):
@@ -24,4 +26,36 @@ def create_project(request):
     return render(request, 'Projects/createProject.html', {'form': form})
 
 def home_client(request):
-    return render(request, 'Projects/homeClient.html')
+    # Supongamos que el cliente está autenticado y puedes acceder a su perfil
+    client_profile = request.user.clientprofile  # Asumiendo que el usuario tiene un perfil de cliente
+    projects = client_profile.projects.all()  # Obtiene todos los proyectos asociados al cliente
+
+    return render(request, 'Projects/homeClient.html', {'projects': projects})
+
+def project_detail(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'Projects/project_detail.html', {'project': project})
+
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('project_detail', project_id=project.id)  # Redirige a la página de detalles del proyecto
+    else:
+        form = ProjectForm(instance=project)
+        
+    return render(request, 'Projects/edit_project.html', {'form': form, 'project': project})
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, "Proyecto eliminado exitosamente")
+        return redirect('home_client') 
+
+    return redirect(reverse('home_client'))
+

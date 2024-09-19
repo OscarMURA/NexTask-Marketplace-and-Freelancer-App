@@ -11,6 +11,6 @@ class ProjectForm(forms.ModelForm):
         fields = ['title', 'start_date', 'due_date', 'description', 'budget']
         
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'due_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+            'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
         }
