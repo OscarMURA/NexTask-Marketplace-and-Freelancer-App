@@ -1,0 +1,25 @@
+{% extends 'NextTask/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <section class="py-110 bg-offWhite">
+        <div class="container bg-white rounded-3 p-3">
+            <h2 class="section-title mb-2">Skill Register</h2>
+            <form method="POST" id="skillsForm">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <div class="d-grid mt-4">
+                    <div class="d-flex justify-content-between">
+                        <!-- Botón Anterior: redirige a la vista de registro de idiomas -->
+                        <a href="{% url 'register_languages' %}" class="btn btn-outline-secondary">Previous</a>
+                        <!-- Botón Guardar y Continuar: redirige al dashboard -->
+                        <button type="submit" class="w-btn-secondary-lg">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}

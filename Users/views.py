@@ -35,6 +35,7 @@ def client_signup(request):
         form = ClientSignUpForm()
     return render(request, 'Users/client_signup.html', {'form': form})
 
+
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -167,11 +168,11 @@ def portfolio_register_view(request):
     freelancer = request.user.freelancerprofile
     if request.method == "POST":
         if 'skip' in request.POST:
-            return redirect('welcome')
+            return redirect('register_languages')
         formset = PortfolioFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
             formset.save()
-            return redirect('welcome')
+            return redirect('register_languages')
     else:
         formset = PortfolioFormSet(instance=freelancer)
 
@@ -190,6 +191,37 @@ def profile_settings(request):
 
 
 
+
+@login_required
+def register_skills_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        form = SkillsForm(request.POST, instance=freelancer)
+        if form.is_valid():
+            form.save()
+            return redirect('home_freelancer')  # Redirigir al final del flujo, página de bienvenida
+    else:
+        form = SkillsForm(instance=freelancer)
+
+    return render(request, 'Users/register_skills.html', {'form': form})
+
+@login_required
+def register_languages_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        form = LanguageForm(request.POST, instance=freelancer)
+        if form.is_valid():
+            form.save()
+            return redirect('register_skills')  # Redirect to the next step
+    else:
+        form = LanguageForm(instance=freelancer)
+
+    return render(request, 'Users/register_languages.html', {'form': form})
+
+
+def home_client(request):
+    return render(request, 'Users/homeClient.html')
+
 def home_freelancer(request):
     return render(request, 'Users/homeFreelancer.html')
 
@@ -198,4 +230,39 @@ def createProject(request):
 
 def change_password(request):
     return render(request, 'Users/changePassword.html')
+
+@login_required
+def profile_settings(request):
+   user = request.user
+   try:
+        freelancer = FreelancerProfile.objects.get(user=user)
+   except FreelancerProfile.DoesNotExist:
+        freelancer = FreelancerProfile(user=user)
+        freelancer.save()  # Crea el perfil si no existe
+
+   if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        city = request.POST.get('city') 
+        country = request.POST.get('country')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+
+        user.username = username
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        freelancer.city = city
+        freelancer.country = country
+        freelancer.phone = phone
+        freelancer.address = address
+        freelancer.save()
+
+        messages.success(request, 'Your profile has been updated successfully.')
+     
+   return render(request, 'Users/profileSettings.html', {'user': user, 'freelancer': freelancer})
 

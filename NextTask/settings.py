@@ -39,16 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_countries',
+    'django_select2',
+    'django_quill',
     'crispy_forms',
     'crispy_bootstrap4',
     'social_django',
+    'languages',
     'Users',
     'Messaging',
     'Notifications',
     'Payments',
     'Projects',
     'Reports', 
-    'django_quill',
+    
 ]
 
 MIDDLEWARE = [
@@ -60,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware', #Agregamos esta línea
+     
 ]
 
 
@@ -162,6 +166,13 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET= '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'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('es', 'Spanish'), 
+]
+
+
 QUILL_CONFIGS = {
     'default':{
         'theme': 'snow',
@@ -189,3 +200,4 @@ QUILL_CONFIGS = {
         }
     }
 }
+

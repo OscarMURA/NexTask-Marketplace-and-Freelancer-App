@@ -1,12 +1,14 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience
+from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience, Language
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
+from django_select2.forms import Select2MultipleWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django_select2.forms import *
 
 # Base class for User Signup
 class UserSignUpForm(UserCreationForm):
@@ -160,3 +162,39 @@ class WorkExperienceFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
+        
+
+
+class SkillsForm(forms.ModelForm):
+    new_skill = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu habilidad, agrégala aquí.")
+
+    class Meta:
+        model = FreelancerProfile
+        fields = ['skills']
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        new_skill = self.cleaned_data.get('new_skill')
+
+        if new_skill:
+            skill, created = Skill.objects.get_or_create(name=new_skill)
+            profile.skills.add(skill)
+
+        if commit:
+            profile.save()
+            self.save_m2m()
+
+        return profile
+
+
+
+class LanguageForm(forms.ModelForm):
+    languages = forms.ModelMultipleChoiceField(
+        queryset=Language.objects.all(),
+        widget=forms.CheckboxSelectMultiple,  # Use checkboxes instead of dropdown
+        required=True
+    )
+
+    class Meta:
+        model = FreelancerProfile
+        fields = ['languages']
