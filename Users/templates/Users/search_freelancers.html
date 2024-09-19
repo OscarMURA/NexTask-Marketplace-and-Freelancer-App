@@ -1,0 +1,39 @@
+{% extends 'NextTask/base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Freelancer Results</h2>
+    <div class="row">
+        {% for freelancer in freelancers %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <!-- Mostrar el avatar del freelancer si está disponible -->
+                {% if freelancer.avatar %}
+                    <img class="card-img-top" src="{{ freelancer.avatar.url }}" alt="Freelancer Avatar" style="width:100%; height:auto;">
+                {% else %}
+                    <img class="card-img-top" src="{% static 'img/default-avatar.png' %}" alt="Freelancer Avatar" style="width:100%; height:auto;">
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ freelancer.user.username }}</h5>
+                    <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
+                    <p class="card-text"><strong>Location:</strong> {{ freelancer.city }}, {{ freelancer.country }}</p>
+                    <p class="card-text"><strong>Skills:</strong> 
+                        {% for skill in freelancer.skills.all %}
+                            <span class="badge badge-primary">{{ skill.name }}</span>
+                        {% endfor %}
+                    </p>
+                    <p class="card-text"><strong>Languages:</strong> 
+                        {% for language in freelancer.languages.all %}
+                            <span class="badge badge-secondary">{{ language.language }}</span>
+                        {% endfor %}
+                    </p>
+                    <a href="{% url 'freelancer_profile' freelancer.user.id %}" class="btn btn-primary">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No freelancers found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

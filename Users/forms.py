@@ -31,11 +31,14 @@ class UserSignUpForm(UserCreationForm):
 
 # Form for Freelancer Signup
 class FreelancerSignUpForm(UserSignUpForm):
+    avatar = forms.ImageField(required=False, label="Profile Picture", help_text="Optional. Upload an image for your profile.")  # Avatar field added
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up as Freelancer'))
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.user_type = 'freelancer'
@@ -46,6 +49,7 @@ class FreelancerSignUpForm(UserSignUpForm):
             freelancer_profile.city = self.cleaned_data.get('city')
             freelancer_profile.phone = self.cleaned_data.get('phone')
             freelancer_profile.address = self.cleaned_data.get('address')
+            freelancer_profile.avatar = self.cleaned_data.get('avatar')  # Save avatar
             freelancer_profile.save()
             print("Freelancer creado")
         return user
@@ -90,13 +94,11 @@ CertificationFormSet = inlineformset_factory(
     can_delete=True
 )
 
-
 class CertificationFormHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form_method = 'post'
         self.render_required_fields = True
-
 
 # Portfolio Formset
 PortfolioFormSet = inlineformset_factory(
@@ -138,9 +140,6 @@ class EducationFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
-        
-        
-
 
 # Work Experience Formset
 WorkExperienceFormSet = inlineformset_factory(
@@ -162,8 +161,6 @@ class WorkExperienceFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
-        
-
 
 class SkillsForm(forms.ModelForm):
     new_skill = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu habilidad, agrégala aquí.")
@@ -186,8 +183,6 @@ class SkillsForm(forms.ModelForm):
 
         return profile
 
-
-
 class LanguageForm(forms.ModelForm):
     languages = forms.ModelMultipleChoiceField(
         queryset=Language.objects.all(),
@@ -198,3 +193,24 @@ class LanguageForm(forms.ModelForm):
     class Meta:
         model = FreelancerProfile
         fields = ['languages']
+
+class FreelancerSearchForm(forms.Form):
+    username = forms.CharField(required=False, max_length=100, label="Username")
+    city = forms.CharField(required=False, max_length=255, label="City")
+    skills = forms.ModelMultipleChoiceField(
+        queryset=Skill.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Skills"
+    )
+    languages = forms.ModelMultipleChoiceField(
+        queryset=Language.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Languages"
+    )
+
+class FreelancerProfileForm(forms.ModelForm):
+    class Meta:
+        model = FreelancerProfile
+        fields = ['avatar', 'country', 'city', 'phone', 'address']  

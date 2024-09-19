@@ -1,0 +1,59 @@
+{% extends 'NextTask/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="profile-header">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</h1>
+                <p>{{ freelancer.city }}, {{ freelancer.country }}</p>
+                <p><strong>Job Success Rate:</strong> 98%</p>
+                <p><strong>Total Jobs:</strong> 921</p>
+                <p><strong>Hourly Rate:</strong> $29/hour</p>
+            </div>
+            <div class="col-md-4">
+                <!-- Mostrar el avatar cargado del freelancer -->
+                {% if freelancer.avatar %}
+                    <img class="profile-avatar img-fluid rounded-circle" src="{{ freelancer.avatar.url }}" alt="Freelancer Avatar" style="width: 150px; height: 150px;">
+                {% else %}
+                    <img class="profile-avatar img-fluid rounded-circle" src="{% static 'img/default-avatar.png' %}" alt="Freelancer Avatar" style="width: 150px; height: 150px;">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="profile-details">
+        <h2>Description</h2>
+        <p>{{ freelancer.description }}</p>
+
+        <h2>Education</h2>
+        <ul>
+            {% for education in freelancer.educations.all %}
+                <li>{{ education.degree_obtained }} - {{ education.institution_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Work Experience</h2>
+        <ul>
+            {% for work in freelancer.work_experiences.all %}
+                <li>{{ work.position }} - {{ work.company_name }} ({{ work.start_date }} - {{ work.end_date }})</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Certifications</h2>
+        <ul>
+            {% for cert in freelancer.certifications.all %}
+                <li>{{ cert.certification_name }} - {{ cert.issuing_organization }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Portfolio</h2>
+        <ul>
+            {% for portfolio in freelancer.portfolio_set.all %}
+                <li><a href="{{ portfolio.url }}" target="_blank">{{ portfolio.url }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

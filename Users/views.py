@@ -7,21 +7,29 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.backends import ModelBackend 
+from .forms import FreelancerProfileForm 
+
 
 
 @never_cache
 def freelancer_signup(request):
     if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST)
+        form = FreelancerSignUpForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('education_register')  # Redirige al registro de educación
+
+            # Explicitly pass the backend
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            messages.success(request, 'Account created successfully. Welcome!')
+            return redirect('work_experience_register')
+        else:
+            messages.error(request, "Please fix the errors below.")
     else:
         form = FreelancerSignUpForm()
+
     return render(request, 'Users/freelancer_signup.html', {'form': form})
-
-
 @never_cache
 def client_signup(request):
     if request.method == 'POST':
@@ -73,20 +81,13 @@ from django.contrib.auth import get_backends
 @never_cache
 def freelancer_signup(request):
     if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST)
+        form = FreelancerSignUpForm(request.POST, request.FILES)  # Añadir request.FILES
         if form.is_valid():
             user = form.save()
-            
-            # Get the default authentication backend (ModelBackend)
-            backend = get_backends()[0]  # This assumes the first backend is the correct one
-            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
-            return redirect('work_experience_register')  # Redirect after sign-up
-        else:
-            print("Form errors:", form.errors)  # Debugging: print form errors to console
+            auth_login(request, user)  # Usamos auth_login para evitar conflicto
+            return redirect('education_register')  # Redirige al registro de educación
     else:
         form = FreelancerSignUpForm()
-        
     return render(request, 'Users/freelancer_signup.html', {'form': form})
 
 
@@ -233,36 +234,54 @@ def change_password(request):
 
 @login_required
 def profile_settings(request):
-   user = request.user
-   try:
+    user = request.user
+    try:
         freelancer = FreelancerProfile.objects.get(user=user)
-   except FreelancerProfile.DoesNotExist:
+    except FreelancerProfile.DoesNotExist:
         freelancer = FreelancerProfile(user=user)
         freelancer.save()  # Crea el perfil si no existe
 
-   if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        city = request.POST.get('city') 
-        country = request.POST.get('country')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
+    if request.method == 'POST':
+        form = FreelancerProfileForm(request.POST, request.FILES, instance=freelancer)  # Añadir request.FILES
+        if form.is_valid():
+            form.save()
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.save()
 
-        user.username = username
-        user.email = email
-        user.first_name = first_name
-        user.last_name = last_name
-        user.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('profile_settings')
+    else:
+        form = FreelancerProfileForm(instance=freelancer)
 
-        freelancer.city = city
-        freelancer.country = country
-        freelancer.phone = phone
-        freelancer.address = address
-        freelancer.save()
+    return render(request, 'Users/profileSettings.html', {'form': form, 'user': user, 'freelancer': freelancer})
 
-        messages.success(request, 'Your profile has been updated successfully.')
-     
-   return render(request, 'Users/profileSettings.html', {'user': user, 'freelancer': freelancer})
 
+def search_freelancers(request):
+    form = FreelancerSearchForm()
+    freelancers = FreelancerProfile.objects.all()
+
+    if request.GET:
+        form = FreelancerSearchForm(request.GET)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            city = form.cleaned_data.get('city')
+            skills = form.cleaned_data.get('skills')
+            languages = form.cleaned_data.get('languages')
+
+            if username:
+                freelancers = freelancers.filter(user__username__icontains=username)
+            if city:
+                freelancers = freelancers.filter(city__icontains=city)
+            if skills:
+                freelancers = freelancers.filter(skills__in=skills).distinct()
+            if languages:
+                freelancers = freelancers.filter(languages__in=languages).distinct()
+
+    return render(request, 'Users/search_freelancers.html', {'form': form, 'freelancers': freelancers})
+
+def freelancer_profile(request, id):
+    freelancer = get_object_or_404(FreelancerProfile, user__id=id)
+    return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})
