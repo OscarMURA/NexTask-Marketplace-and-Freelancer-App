@@ -12,7 +12,7 @@
     </ul>
   </div>
   <div>
-    <a href="" class="w-btn-secondary-lg">
+    <a href="{% url 'createProject' %}" class="w-btn-secondary-lg">
       Create Project</a
     >
   </div>
@@ -23,7 +23,7 @@
       class="p-4 d-flex align-items-center dashobard-widget justify-content-between bg-white rounded-4"
     >
       <div>
-        <h3 class="dashboard-widget-title fw-bold text-dark-300">$52</h3>
+        <h5 class="dashboard-widget-title fw-bold text-dark-300">{{ total_balance }}</h5>
         <p class="text-18 text-dark-200">Total Balance</p>
       </div>
       <div class="dashboard-widget-icon">
@@ -36,8 +36,8 @@
       class="p-4 d-flex align-items-center dashobard-widget justify-content-between bg-white rounded-4"
     >
       <div>
-        <h3 class="dashboard-widget-title fw-bold text-dark-300">50</h3>
-        <p class="text-18 text-dark-200">Total Job</p>
+        <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ total_projects }}</h3>
+        <p class="text-18 text-dark-200">Total Projects</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-2.png' %}" alt="" />
@@ -95,10 +95,19 @@
             <tr  >  
               <td onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;" >
                 <div class="d-flex gap-3 align-items-center project-name">
-                  <div>
-                    <p class="text-dark-200">{{ project.title }}</p>
+                  <!-- Imagen de la categoría -->
+                  <div class="rounded-3">
+                      <img
+                          src="{% static 'img/category/' %}{{ project.category }}.png"
+                          alt="{{ project.category }}"
+                          class="img-fluid"
+                      />
                   </div>
-                </div>
+                  <!-- Nombre del proyecto -->
+                  <div>
+                      <p class="text-dark-200">{{ project.title }}</p>
+                  </div>
+              </div>
               </td>
               <td onclick="window.location.href='{% url 'project_detail' project.id %}'" style="cursor: pointer;" class="text-dark-200">
                 ${{ project.budget }}</td> 

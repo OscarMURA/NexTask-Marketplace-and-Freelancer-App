@@ -65,6 +65,16 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            <!-- Categoría  -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    {{ form.category }} <!-- Esto cargará el <select> con la opción actual del proyecto -->
+                                    {% if form.category.errors %}
+                                        <div class="error text-danger">{{ form.category.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
 
                             <!-- Descripción usando Quill -->
                             <div class="col-12">
