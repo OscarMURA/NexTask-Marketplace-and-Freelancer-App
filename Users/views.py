@@ -34,7 +34,6 @@ def client_signup(request):
         form = ClientSignUpForm()
     return render(request, 'Users/client_signup.html', {'form': form})
 
-# Renombramos la función login a user_login
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)

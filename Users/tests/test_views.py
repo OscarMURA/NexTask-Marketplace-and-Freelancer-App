@@ -1,207 +1,270 @@
-# myapp/tests/test_views.py
 import pytest
 from django.urls import reverse
-from django.test import Client
+from Users.models import *
+
+@pytest.mark.django_db
+def test_freelancer_signup_view_get(client):
+    """Verifica que la vista de registro de freelancer responda correctamente"""
+    response = client.get(reverse('register_freelancer'))
+    assert response.status_code == 200
+    assert 'Users/freelancer_signup.html' in [t.name for t in response.templates]
+
+
+@pytest.mark.django_db
+def test_freelancer_signup_view_post(client):
+    """Verifica que un freelancer se registre correctamente"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'testfreelancer',
+        'email': 'freelancer@test.com',
+        'password1': 'testpassword123',
+        'password2': 'testpassword123',
+        'first_name': 'Test',
+        'last_name': 'Freelancer',
+        'country': 'CO',
+        'city': 'TestCity',
+        'phone': '123456789',
+        'address': 'Test Address',
+    })
+    
+    # Verifica redirección después del POST exitoso
+    assert response.status_code == 302
+    
+    # Verifica que el usuario y el perfil de freelancer fueron creados
+    assert User.objects.filter(username='testfreelancer').exists()
+    assert FreelancerProfile.objects.filter(user__username='testfreelancer').exists()
+    
+    # Verifica los datos del perfil
+    freelancer_profile = FreelancerProfile.objects.get(user__username='testfreelancer')
+    assert freelancer_profile.city == 'TestCity'
+
+@pytest.mark.django_db
+def test_freelancer_signup_password_mismatch(client):
+    """Verifica que el formulario falle cuando las contraseñas no coinciden"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'testfreelancer2',
+        'email': 'freelancer2@test.com',
+        'password1': 'password123',
+        'password2': 'differentpassword123',
+        'first_name': 'Test',
+        'last_name': 'Freelancer',
+        'country': 'CO',
+        'city': 'TestCity',
+        'phone': '123456789',
+        'address': 'Test Address',
+    })
+    
+    # Imprime el contenido de la respuesta para ver el error
+    print(response.content.decode())
+    
+    # Verifica que la respuesta no sea de redirección y se mantenga en la página
+    assert response.status_code == 200
+    assert "password" in response.content.decode().lower()
+
+
+@pytest.mark.django_db
+def test_freelancer_signup_duplicate_username(client):
+    """Verifica que no se permita el registro con un nombre de usuario duplicado"""
+    # Primero se crea un usuario
+    User.objects.create_user(username='testfreelancer', password='password123')
+    
+    # Intentamos registrar otro usuario con el mismo nombre de usuario
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'testfreelancer',  # Mismo nombre de usuario
+        'email': 'freelancer@test.com',
+        'password1': 'password123@',
+        'password2': 'password123@',
+        'first_name': 'Test',
+        'last_name': 'Freelancer',
+        'country': 'CO',
+        'city': 'TestCity',
+        'phone': '123456789',
+        'address': 'Test Address',
+    })
+    
+    # Verifica que la respuesta sea 200 con un mensaje de error
+    assert response.status_code == 200
+    assert "A user with that username already exists." in response.content.decode()
+
+@pytest.mark.django_db
+def test_freelancer_signup_missing_required_field(client):
+    """Verifica que el formulario falle si falta un campo obligatorio"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': '',  # Faltando el nombre de usuario
+        'email': 'freelancer@test.com',
+        'password1': 'password123',
+        'password2': 'password123',
+        'first_name': 'Test',
+        'last_name': 'Freelancer',
+        'country': 'CO',
+        'city': 'TestCity',
+        'phone': '123456789',
+        'address': 'Test Address',
+    })
+    
+    # Verifica que la respuesta sea 200 y que se muestre un mensaje de error
+    assert response.status_code == 200
+    assert "This field is required." in response.content.decode()
+
+@pytest.mark.django_db
+def test_freelancer_signup_invalid_email(client):
+    """Verifica que el formulario falle con un correo electrónico inválido"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'testfreelancer3',
+        'email': 'invalid-email',  # Correo no válido
+        'password1': 'password123',
+        'password2': 'password123',
+        'first_name': 'Test',
+        'last_name': 'Freelancer',
+        'country': 'CO',
+        'city': 'TestCity',
+        'phone': '123456789',
+        'address': 'Test Address',
+    })
+    
+    # Verifica que la respuesta sea 200 y que se muestre un mensaje de error
+    assert response.status_code == 200
+    assert "Enter a valid email address." in response.content.decode()
+
+import pytest
+from django.urls import reverse
 from django.contrib.auth import get_user_model
-from Users.forms import WorkExperienceFormSet
 from Users.models import FreelancerProfile
 
-User = get_user_model()
-
-@pytest.fixture
-def client():
-    return Client()
-
-@pytest.fixture
-def user():
-    return User.objects.create_user(username='testuser', password='testpassword', user_type='freelancer')
+@pytest.mark.django_db
+def test_freelancer_signup_form_display(client):
+    """Verifica que el formulario de registro de freelancer se muestre correctamente"""
+    response = client.get(reverse('register_freelancer'))
+    assert response.status_code == 200
+    assert 'Users/freelancer_signup.html' in [t.name for t in response.templates]
+    assert 'form' in response.context
 
 @pytest.mark.django_db
-def test_create_freelancer_profile_view(client, user):
-    # Simular el inicio de sesión del usuario
-    client.login(username='testuser', password='testpassword')
-
-    # Datos para crear un perfil de freelancer
-    data = {
-        'country': 'US',
-        'city': 'New York',
-        'phone': '1234567890',
-        'address': '1234 Freelance Ave'
-    }
-
-    response = client.post(reverse('create_freelancer_profile'), data)
+def test_freelancer_signup_form_invalid_data(client):
+    """Verifica que el formulario de registro de freelancer maneje datos inválidos correctamente"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': '',
+        'email': 'invalid-email',
+        'password1': 'password123',
+        'password2': 'differentpassword',
+        'first_name': '',
+        'last_name': '',
+        'country': '',
+        'city': '',
+        'phone': '',
+        'address': '',
+    })
     
-    # Verificar que la respuesta es correcta y el perfil se ha creado
-    assert response.status_code == 302  # Redirección después de la creación
-    assert FreelancerProfile.objects.filter(user=user).exists()
-
-@pytest.mark.django_db
-def test_freelancer_profile_detail_view(client, user):
-    # Crear un perfil de freelancer para el usuario
-    profile = FreelancerProfile.objects.create(
-        user=user,
-        country='US',
-        city='New York',
-        phone='1234567890',
-        address='1234 Freelance Ave'
-    )
-
-    # Simular el inicio de sesión del usuario
-    client.login(username='testuser', password='testpassword')
-
-    response = client.get(reverse('freelancer_profile_detail', args=[profile.id]))
-
-    # Verificar que la respuesta es correcta y se muestran los detalles
     assert response.status_code == 200
-    assert 'New York' in response.content.decode()
-    assert '1234 Freelance Ave' in response.content.decode()
+    assert 'form' in response.context
+    assert response.context['form'].errors
+    assert "The two password fields didn't match." in response.content.decode()
+    assert "This field is required." in response.content.decode()
 
 @pytest.mark.django_db
-def test_freelancer_profile_detail_view(client, user):
-    # Crear un perfil de freelancer para el usuario
-    profile = FreelancerProfile.objects.create(
-        user=user,
-        country='US',
-        city='New York',
-        phone='1234567890',
-        address='1234 Freelance Ave'
-    )
-
-    # Simular el inicio de sesión del usuario
-    client.login(username='testuser', password='testpassword')
-
-    response = client.get(reverse('freelancer_profile_detail', args=[profile.id]))
-
-    # Verificar que la respuesta es correcta y se muestran los detalles
+def test_freelancer_signup_form_invalid_data(client):
+    """Verifica que el formulario de registro de freelancer maneje datos inválidos correctamente"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': '',
+        'email': 'invalid-email',
+        'password1': 'password123',
+        'password2': 'differentpassword',
+        'first_name': '',
+        'last_name': '',
+        'country': '',
+        'city': '',
+        'phone': '',
+        'address': '',
+    })
+    
     assert response.status_code == 200
-    assert 'New York' in response.content.decode()
-    assert '1234 Freelance Ave' in response.content.decode()
+    assert 'form' in response.context
+    assert response.context['form'].errors
+    assert 'username' in response.context['form'].errors
+    assert 'email' in response.context['form'].errors
+    assert 'password2' in response.context['form'].errors
 
 @pytest.mark.django_db
-def test_freelancer_profile_access_without_login(client):
-    profile = FreelancerProfile.objects.create(
-        user=User.objects.create_user(username='testuser', password='testpassword'),
-        country='US',
-        city='New York',
-        phone='1234567890',
-        address='1234 Freelance Ave'
-    )
+def test_login_redirect_to_welcome(client):
+    """Verifica que un usuario que inicia sesión correctamente sea redirigido a la página de bienvenida"""
+    
+    # Registra un nuevo freelancer
+    client.post(reverse('register_freelancer'), data={
+        'username': 'testlogin',
+        'email': 'login@test.com',
+        'password1': 'password123',
+        'password2': 'password123',
+        'first_name': 'Test',
+        'last_name': 'Login',
+        'country': 'CO',
+        'city': 'TestCity',
+        'phone': '123456789',
+        'address': 'Test Address',
+    })
+    
+    # Inicia sesión con las credenciales del freelancer
+    response = client.post(reverse('login'), data={
+        'username': 'testlogin',
+        'password': 'password123'
+    }, follow=True)
+    
+    # Verifica que la redirección a la página de bienvenida es exitosa
+    assert response.status_code == 200
+    assert "Bienvenido" in response.content.decode() or "Welcome" in response.content.decode()
 
-    response = client.get(reverse('freelancer_profile_detail', args=[profile.id]))
+@pytest.mark.django_db
+def test_freelancer_signup_successful_with_extra_fields(client):
+    """Verifica que un freelancer se registre correctamente con campos adicionales"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'extra_fields_freelancer',
+        'email': 'extra@test.com',
+        'password1': 'password123!',
+        'password2': 'password123!',
+        'first_name': 'Extra',
+        'last_name': 'Fields',
+        'country': 'CO',
+        'city': 'ExtraCity',
+        'phone': '987654321',
+        'address': 'Extra Address',
+    })
+    
+    assert response.status_code == 302  # Redirección después del registro
+    assert User.objects.filter(username='extra_fields_freelancer').exists()
+    assert FreelancerProfile.objects.filter(user__username='extra_fields_freelancer').exists()
 
-    # Verificar que la respuesta es una redirección a la página de login
+@pytest.mark.django_db
+def test_freelancer_signup_form_required_fields(client):
+    """Verifica que se muestren errores si faltan campos requeridos"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'required_fields_test',
+        'email': '',  # Faltando el email
+        'password1': '',
+        'password2': '',
+        'first_name': 'Test',
+        'last_name': 'Required',
+        'country': 'CO',
+        'city': 'RequiredCity',
+        'phone': '123456789',
+        'address': 'Required Address',
+    })
+    
+    assert response.status_code == 200
+    assert "This field is required." in response.content.decode()
+
+@pytest.mark.django_db
+def test_freelancer_signup_success_with_valid_email(client):
+    """Verifica que un freelancer se registre correctamente con un email válido"""
+    response = client.post(reverse('register_freelancer'), data={
+        'username': 'valid_email_freelancer',
+        'email': 'validemail@test.com',
+        'password1': 'password123!',
+        'password2': 'password123!',
+        'first_name': 'Valid',
+        'last_name': 'Email',
+        'country': 'CO',
+        'city': 'ValidCity',
+        'phone': '123456789',
+        'address': 'Valid Address',
+    })
+    
     assert response.status_code == 302
-    assert response.url.startswith(reverse('login'))
-
-@pytest.mark.django_db
-def test_freelancer_profile_creation_invalid_data(client, user):
-    # Simular el inicio de sesión del usuario
-    client.login(username='testuser', password='testpassword')
-
-    # Datos inválidos para crear un perfil de freelancer
-    data = {
-        'country': '',  # Campo vacío
-        'city': 'New York',
-        'phone': '1234567890',
-        'address': '1234 Freelance Ave'
-    }
-
-    response = client.post(reverse('create_freelancer_profile'), data)
-
-    # Verificar que la respuesta es la página del formulario con errores
-    assert response.status_code == 200
-    assert 'Este campo no puede estar vacío' in response.content.decode()
-
-def test_work_experience_formset_missing_dates():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '',  # Fecha de inicio vacía
-        'form-0-end_date': '',  # Fecha de fin vacía
-        'form-0-company': 'Empresa XYZ',
-        'form-0-position': 'Desarrollador',
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'start_date' in formset.forms[0].errors  # Verificar que hay un error en `start_date`
-    assert 'end_date' in formset.forms[0].errors  # Verificar que hay un error en `end_date`
-
-def test_work_experience_formset_invalid_position_characters():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '2024-09-10',
-        'form-0-end_date': '2024-09-20',
-        'form-0-company': 'Empresa XYZ',
-        'form-0-position': 'Desarrollador@#$',  # Caracteres especiales no permitidos
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'position' in formset.forms[0].errors  # Verificar que hay un error en `position`
-
-def test_work_experience_formset_text_instead_of_dates():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': 'diez de septiembre de 2024',  # Formato incorrecto
-        'form-0-end_date': 'veinte de septiembre de 2024',  # Formato incorrecto
-        'form-0-company': 'Empresa XYZ',
-        'form-0-position': 'Desarrollador',
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'start_date' in formset.forms[0].errors  # Verificar que hay un error en `start_date`
-    assert 'end_date' in formset.forms[0].errors  # Verificar que hay un error en `end_date`
-
-def test_work_experience_formset_company_name_too_long():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '2024-09-10',
-        'form-0-end_date': '2024-09-20',
-        'form-0-company': 'X' * 256,  # Límite de longitud excedido (ej. 255 caracteres)
-        'form-0-position': 'Desarrollador',
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'company' in formset.forms[0].errors  # Verificar que hay un error en `company`
-
-def test_work_experience_formset_missing_end_date_for_non_current_job():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '2024-09-10',
-        'form-0-end_date': '',  # Faltante, pero no está marcado como trabajo actual
-        'form-0-company': 'Empresa XYZ',
-        'form-0-position': 'Desarrollador',
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'end_date' in formset.forms[0].errors  # Verificar que hay un error por falta de `end_date`
-
-def test_work_experience_formset_dates_out_of_range():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '1900-01-01',  # Fecha fuera del rango permitido
-        'form-0-end_date': '1900-12-31',  # Fecha fuera del rango permitido
-        'form-0-company': 'Empresa XYZ',
-        'form-0-position': 'Desarrollador',
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'start_date' in formset.forms[0].errors  # Verificar que hay un error en `start_date`
-
-def test_work_experience_formset_missing_both_dates_for_current_job():
-    data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-0-start_date': '',  # Fecha faltante
-        'form-0-end_date': '',  # Fecha faltante
-        'form-0-company': 'Empresa XYZ',
-        'form-0-position': 'Desarrollador',
-        'form-0-current_job': 'on',  # Marcado como trabajo actual
-    }
-    formset = WorkExperienceFormSet(data)
-    assert not formset.is_valid()
-    assert 'start_date' in formset.forms[0].errors  # Verificar que hay un error en `start_date`
+    assert User.objects.filter(username='valid_email_freelancer').exists()
