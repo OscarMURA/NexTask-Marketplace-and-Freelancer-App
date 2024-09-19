@@ -2,60 +2,241 @@
 {% load static %}
 
 {% block content %}
+<!-- Estilos CSS incluidos directamente en el archivo HTML -->
+<style>
+    .profile-header {
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .profile-header h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .profile-header p {
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    .profile-header img {
+        max-width: 150px;
+        border-radius: 50%;
+        border: 3px solid #007bff;
+    }
+
+    .profile-details {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-details h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+
+    .profile-details ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .profile-details ul li {
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .profile-details a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .profile-details a:hover {
+        text-decoration: underline;
+    }
+
+    .no-info {
+        color: #888;
+        font-style: italic;
+    }
+
+    /* Botón de regreso estilizado */
+    .btn-back {
+        margin-bottom: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: inline-block;
+        transition: background-color 0.3s, transform 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-header img {
+            margin-top: 20px;
+        }
+    }
+</style>
+
 <div class="container">
+    <!-- Botón de regreso a la búsqueda -->
+  
+
     <div class="profile-header">
-        <div class="row">
-            <div class="col-md-8">
-                <h1>{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</h1>
-                <p>{{ freelancer.city }}, {{ freelancer.country }}</p>
-                <p><strong>Job Success Rate:</strong> 98%</p>
-                <p><strong>Total Jobs:</strong> 921</p>
-                <p><strong>Hourly Rate:</strong> $29/hour</p>
-            </div>
-            <div class="col-md-4">
-                <!-- Mostrar el avatar cargado del freelancer -->
-                {% if freelancer.avatar %}
-                    <img src="{{ freelancer.avatar.url }}" alt="Profile Picture" class="img-thumbnail" style="max-width: 150px; border-radius: 50%;">
-                 {% else %}
-                 <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Avatar" class="img-thumbnail" style="max-width: 150px; border-radius: 50%;">
-               {% endif %}
-            </div>
+        <div class="col-md-8">
+            <h1>{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</h1>
+            <p><strong>Username:</strong> {{ freelancer.user.username }}</p>
+            <p>{{ freelancer.city }}, {{ freelancer.country }}</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <!-- Mostrar el avatar cargado del freelancer -->
+            {% if freelancer.avatar %}
+                <img src="{{ freelancer.avatar.url }}" alt="Profile Picture" class="img-thumbnail">
+            {% else %}
+                <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Avatar" class="img-thumbnail">
+            {% endif %}
         </div>
     </div>
 
-    <hr>
+    <!-- Descripción -->
+    {% if freelancer.description %}
+        <div class="profile-details">
+            <h2>Description</h2>
+            <p>{{ freelancer.description }}</p>
+        </div>
+    {% endif %}
 
-    <div class="profile-details">
-        <h2>Description</h2>
-        <p>{{ freelancer.description }}</p>
+    <!-- Historial académico -->
+    {% if freelancer.educations.all %}
+        <div class="profile-details">
+            <h2>Education</h2>
+            <ul>
+                {% for education in freelancer.educations.all %}
+                    <li>{{ education.degree_obtained }} - {{ education.institution_name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Education</h2>
+            <p class="no-info">No education details available.</p>
+        </div>
+    {% endif %}
 
-        <h2>Education</h2>
-        <ul>
-            {% for education in freelancer.educations.all %}
-                <li>{{ education.degree_obtained }} - {{ education.institution_name }}</li>
-            {% endfor %}
-        </ul>
+    <!-- Historial laboral -->
+    {% if freelancer.work_experiences.all %}
+        <div class="profile-details">
+            <h2>Work Experience</h2>
+            <ul>
+                {% for work in freelancer.work_experiences.all %}
+                    <li>{{ work.position }} - {{ work.company_name }} ({{ work.start_date }} - {{ work.end_date }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Work Experience</h2>
+            <p class="no-info">No work experience available.</p>
+        </div>
+    {% endif %}
 
-        <h2>Work Experience</h2>
-        <ul>
-            {% for work in freelancer.work_experiences.all %}
-                <li>{{ work.position }} - {{ work.company_name }} ({{ work.start_date }} - {{ work.end_date }})</li>
-            {% endfor %}
-        </ul>
+    <!-- Certificaciones -->
+    {% if freelancer.certifications.all %}
+        <div class="profile-details">
+            <h2>Certifications</h2>
+            <ul>
+                {% for cert in freelancer.certifications.all %}
+                    <li>{{ cert.certification_name }} - {{ cert.issuing_organization }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Certifications</h2>
+            <p class="no-info">No certifications available.</p>
+        </div>
+    {% endif %}
 
-        <h2>Certifications</h2>
-        <ul>
-            {% for cert in freelancer.certifications.all %}
-                <li>{{ cert.certification_name }} - {{ cert.issuing_organization }}</li>
-            {% endfor %}
-        </ul>
+    <!-- Portfolio -->
+    {% if freelancer.portfolio_set.all %}
+        <div class="profile-details">
+            <h2>Portfolio</h2>
+            <ul>
+                {% for portfolio in freelancer.portfolio_set.all %}
+                    <li><a href="{{ portfolio.url }}" target="_blank">{{ portfolio.url }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Portfolio</h2>
+            <p class="no-info">No portfolio available.</p>
+        </div>
+    {% endif %}
 
-        <h2>Portfolio</h2>
-        <ul>
-            {% for portfolio in freelancer.portfolio_set.all %}
-                <li><a href="{{ portfolio.url }}" target="_blank">{{ portfolio.url }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+    <!-- Skills -->
+    {% if freelancer.skills.all %}
+        <div class="profile-details">
+            <h2>Skills</h2>
+            <ul>
+                {% for skill in freelancer.skills.all %}
+                    <li>{{ skill.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Skills</h2>
+            <p class="no-info">No skills available.</p>
+        </div>
+    {% endif %}
+
+    <!-- Languages -->
+    {% if freelancer.languages.all %}
+        <div class="profile-details">
+            <h2>Languages</h2>
+            <ul>
+                {% for language in freelancer.languages.all %}
+                    <li>{{ language.language }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Languages</h2>
+            <p class="no-info">No languages available.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div>
+    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; Back to Freelancer Search</a>
 </div>
 {% endblock %}
