@@ -36,7 +36,8 @@
                             <div class="col-md-6">
                                 <div class="form-container">
                                     <label for="id_start_date" class="form-label">Start Date</label>
-                                    {{ form.start_date }}  <!-- Renderiza el campo de inicio directamente desde el formulario -->
+                                    {{ form.start_date }}
+                                    <div id="start-date-error" class="error text-danger"></div>
                                     {% if form.start_date.errors %}
                                         <div class="error text-danger">{{ form.start_date.errors }}</div>
                                     {% endif %}
@@ -46,7 +47,8 @@
                             <div class="col-md-6">
                                 <div class="form-container">
                                     <label for="id_due_date" class="form-label">Due Date</label>
-                                    {{ form.due_date }}  <!-- Renderiza el campo de vencimiento directamente desde el formulario -->
+                                    {{ form.due_date }}
+                                    <div id="due-date-error" class="error text-danger"></div>
                                     {% if form.due_date.errors %}
                                         <div class="error text-danger">{{ form.due_date.errors }}</div>
                                     {% endif %}
@@ -57,11 +59,13 @@
                                 <div class="form-container">
                                     <label for="id_budget" class="form-label">Budget</label>
                                     <input type="text" class="form-control shadow-none" name="budget" id="id_budget" value="{{ form.budget.value|default_if_none:'' }}">
+                                    <div id="budget-error" class="error text-danger"></div>
                                     {% if form.budget.errors %}
                                         <div class="error text-danger">{{ form.budget.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
+
                             <!-- Descripción usando Quill -->
                             <div class="col-12">
                                 <label for="id_description" class="form-label">Description*</label>
@@ -108,4 +112,40 @@
         border-radius: 10px;
     }
 </style>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const startDate = new Date(document.getElementById('id_start_date').value);
+        const dueDate = new Date(document.getElementById('id_due_date').value);
+        const today = new Date();
+        const budget = parseFloat(document.getElementById('id_budget').value);
+
+        // Limpieza de mensajes previos
+        document.getElementById('start-date-error').textContent = '';
+        document.getElementById('due-date-error').textContent = '';
+        document.getElementById('budget-error').textContent = '';
+
+        // Validación de la fecha de inicio
+        if ((startDate+2) <= (today-2)) {
+            document.getElementById('start-date-error').textContent = 'The start date cannot be in the past.';
+            event.preventDefault();
+        }
+
+        // Validación de la fecha de vencimiento
+        const minDueDate = new Date(startDate);
+        minDueDate.setMonth(minDueDate.getMonth() + 1);
+        if (dueDate <= minDueDate) {
+            document.getElementById('due-date-error').textContent = 'The due date must be at least one month after the start date.';
+            event.preventDefault();
+        }
+
+        // Validación del presupuesto
+        if (budget < 0) {
+            document.getElementById('budget-error').textContent = 'The budget cannot be negative.';
+            event.preventDefault();
+        }
+    });
+</script>
+
+
 {% endblock %}
