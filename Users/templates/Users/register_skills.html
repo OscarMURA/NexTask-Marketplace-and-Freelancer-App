@@ -6,15 +6,40 @@
     <section class="py-110 bg-offWhite">
         <div class="container bg-white rounded-3 p-3">
             <h2 class="section-title mb-2">Skill Register</h2>
+            
+            <!-- Mostrar habilidades seleccionadas -->
+            <h3>Selected Skills</h3>
+            <ul id="skill-list">
+                <li id="no-skills">No skills selected yet.</li>
+                {% for skill in form.instance.skills.all %}
+                    <li>{{ skill.name }}</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Formulario para agregar habilidades -->
             <form method="POST" id="skillsForm">
                 {% csrf_token %}
-                {{ form|crispy }}
+                
+                <!-- Selector múltiple para habilidades existentes -->
+                <div class="mb-3">
+                    <label for="skillsSelect">Choose existing skills</label>
+                    <select id="skillsSelect" name="skills" class="form-select" multiple>
+                        {% for skill in all_skills %}
+                            <option value="{{ skill.id }}">{{ skill.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
+                <!-- Input para agregar nueva habilidad -->
+                <div class="input-group mb-3">
+                    <input type="text" id="newSkillInput" class="form-control" placeholder="Enter a new skill">
+                    <button class="btn btn-primary" type="button" id="addSkillBtn">Add Skill</button>
+                </div>
+
+                <!-- Submit button -->
                 <div class="d-grid mt-4">
                     <div class="d-flex justify-content-between">
-                        <!-- Botón Anterior: redirige a la vista de registro de idiomas -->
                         <a href="{% url 'register_languages' %}" class="btn btn-outline-secondary">Previous</a>
-                        <!-- Botón Guardar y Continuar: redirige al dashboard -->
                         <button type="submit" class="w-btn-secondary-lg">Submit</button>
                     </div>
                 </div>
@@ -22,4 +47,33 @@
         </div>
     </section>
 </div>
+
+<!-- Script para añadir habilidades dinámicamente -->
+<script>
+    document.getElementById('addSkillBtn').addEventListener('click', function() {
+        var newSkill = document.getElementById('newSkillInput').value;
+        if (newSkill.trim() !== '') {
+            var skillList = document.getElementById('skill-list');
+            var newListItem = document.createElement('li');
+            newListItem.textContent = newSkill;
+            skillList.appendChild(newListItem);
+
+            // Eliminar el mensaje "No skills selected yet"
+            var noSkillsMessage = document.getElementById('no-skills');
+            if (noSkillsMessage) {
+                noSkillsMessage.remove();
+            }
+
+            // Añadir campo oculto para enviar la nueva habilidad con el formulario
+            var newSkillInput = document.createElement('input');
+            newSkillInput.type = 'hidden';
+            newSkillInput.name = 'new_skill';
+            newSkillInput.value = newSkill;
+            document.getElementById('skillsForm').appendChild(newSkillInput);
+
+            // Limpiar el input de la nueva habilidad
+            document.getElementById('newSkillInput').value = '';
+        }
+    });
+</script>
 {% endblock %}
