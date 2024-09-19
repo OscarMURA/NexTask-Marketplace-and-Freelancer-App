@@ -76,16 +76,6 @@
 <div class="projects-section container">
     <h2 class="text-20 fw-semibold text-dark-300 mb-3">Latest Projects</h2>
 
-    <!-- Botón para añadir un nuevo proyecto -->
-    <div class="text mt-4">
-      <div class="button-group">
-        <button type="submit" class="w-btn-plus-lg">Add Project</button>
-        <a href="{% url 'home_client' %}" class="w-btn-danger-lg">Back</a>
-      </div>
-      <p>.</p>
-      <p></p>
-    </div>
-
     <!-- Proyectos en formato de tarjetas -->
     <div class="row justify-content-center" style="gap: 20px;">
       {% for project in projects %}
@@ -106,7 +96,8 @@
             <p class="card-text text-dark-200">Days until due: {{ project.days_until_due }}</p>
             <p class="card-text text-dark-200">{{ project.get_category_display }}</p>
 
-            <div class="d-flex justify-content-end gap-2">
+            <div class="button-group">
+              
               <a href="{% url 'project_detail' project.id %}">
               <button class="dashboard-action-btn">
                 <!-- Icono de acción view -->

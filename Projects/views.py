@@ -100,3 +100,14 @@ def edit_milestone(request, milestone_id):
 def milestone_detail_view(request, pk):
     milestone = get_object_or_404(Milestone, pk=pk)
     return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})
+
+def delete_milestone(request, milestone_id):
+    milestone = get_object_or_404(Milestone, id=milestone_id)
+    project_id = milestone.project.id
+
+    if request.method == "POST":
+        milestone.delete()
+        messages.success(request, "Milestone eliminado exitosamente")
+        return redirect('project_detail', project_id=project_id)
+
+    return redirect(reverse('home_client'))
