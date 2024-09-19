@@ -1,0 +1,10 @@
+django
+django-countries
+psycopg2
+psycopg2-binary
+social-auth-app-django
+django-crispy-forms
+crispy-bootstrap4
+pytest-django
+pytest
+django-extensions

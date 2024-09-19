@@ -28,13 +28,14 @@ def client_signup(request):
         form = ClientSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('home')
+            print("Usuario creado:", user)  # Imprimir el usuario creado
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('home_client')
     else:
         form = ClientSignUpForm()
     return render(request, 'Users/client_signup.html', {'form': form})
 
-# Renombramos la función login a user_login
+
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -44,15 +45,16 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             
             if user is not None:
-                login(request, user)
-                return redirect('home_freelancer')  # Redirige a la página de bienvenida
+                auth_login(request, user)  # Usamos auth_login para iniciar sesión
+                # Redirigir según el tipo de usuario
+                if user.user_type == 'freelancer':
+                    return redirect('home_freelancer')
+                elif user.user_type == 'client':
+                    return redirect('home_client')
             else:
-                
-                messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
+                messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
         else:
-            
-            messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
-
+            messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
     else:
         form = AuthenticationForm()
 
@@ -63,19 +65,6 @@ def welcome(request):
 
 def home(request):
     return render(request, 'users/home.html')
-
-
-@never_cache
-def client_signup(request):
-    if request.method == 'POST':
-        form = ClientSignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('home')
-    else:
-        form = ClientSignUpForm()
-    return render(request, 'Users/client_signup.html', {'form': form})
 
 
 from django.contrib.auth import login as auth_login
@@ -196,25 +185,10 @@ def portfolio_register_view(request):
         'back_url': 'certification_register',
         'next_url': 'welcome',
     })
+@login_required
+def profile_settings(request):
+    return render(request, 'Users/changePassword.html')
 
-
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('welcome')
-            else:
-                messages.error(request, 'Invalid username or password.')
-        else:
-            messages.error(request, 'Invalid username or password.')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'Users/login.html', {'form': form})
 
 
 
