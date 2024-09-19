@@ -45,7 +45,7 @@ def user_login(request):
             
             if user is not None:
                 login(request, user)
-                return redirect('welcome')  # Redirige a la página de bienvenida
+                return redirect('home_freelancer')  # Redirige a la página de bienvenida
             else:
                 
                 messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
@@ -256,4 +256,39 @@ def createProject(request):
 
 def change_password(request):
     return render(request, 'Users/changePassword.html')
+
+@login_required
+def profile_settings(request):
+   user = request.user
+   try:
+        freelancer = FreelancerProfile.objects.get(user=user)
+   except FreelancerProfile.DoesNotExist:
+        freelancer = FreelancerProfile(user=user)
+        freelancer.save()  # Crea el perfil si no existe
+
+   if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        city = request.POST.get('city') 
+        country = request.POST.get('country')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+
+        user.username = username
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        freelancer.city = city
+        freelancer.country = country
+        freelancer.phone = phone
+        freelancer.address = address
+        freelancer.save()
+
+        messages.success(request, 'Your profile has been updated successfully.')
+     
+   return render(request, 'Users/profileSettings.html', {'user': user, 'freelancer': freelancer})
 

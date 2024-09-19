@@ -37,5 +37,7 @@ urlpatterns = [
     
     path("ChangePassword/", views.change_password, name="change_password"),
 
+    path("profileSettings/", views.profile_settings, name="profile_settings"),
+
 ]
 
