@@ -43,7 +43,11 @@ class ClientProfile(models.Model):
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
-    avatar = models.ImageField(upload_to='avatars/', default='img/defaultClientProfileImage.png', blank=True, null=True)  # New avatar field for client
+    avatar = models.ImageField(upload_to='avatars/', default='img/defaultClientProfileImage.jpg', blank=True, null=True)
+
+    
+    
+   
 
 # Historial académico
 class Education(models.Model):
