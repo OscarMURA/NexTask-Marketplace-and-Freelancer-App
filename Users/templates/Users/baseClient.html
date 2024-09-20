@@ -454,6 +454,12 @@
               <i class="fa-solid fa-bars"></i>
             </button>
           </div>
+          <span
+           class="welcome-message">
+            <h3>
+              Welcome, {{ user.first_name }}  {{user.last_name}}
+            </h3>
+          </span>
           <div>
             <div class="dashboard-header-btns d-flex gap-3">
               <div>
@@ -634,7 +640,7 @@
               <h4 class="text-18 fw-normal text-center mb-2">
                 Are you sure you want to Logout
               </h4>
-              <p class="text-dark-300">Workzone.</p>
+              <p class="text-dark-300"></p>
               <div class="d-flex gap-3 mt-30">
                 <button
                   onclick="location.href='{% url 'home' %}'"

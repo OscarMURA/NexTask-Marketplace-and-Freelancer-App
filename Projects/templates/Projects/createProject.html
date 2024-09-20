@@ -1,0 +1,196 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+<!-- Page Header -->
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">Create a Project</h3>
+    <ul class="d-flex align-items-center gap-2">
+        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
+                <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </li>
+        <li class="text-lime-300 fs-6">Create a Project</li>
+    </ul>
+</div>
+
+<!-- Form Section -->
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <form method="post" enctype="multipart/form-data" id="buyer_create_job_post">
+            {% csrf_token %}
+            <div class="d-flex flex-column gap-4">
+                <!-- Project Info -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">Project Info</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-container">
+                                    <label for="id_title" class="form-label">Project Title <span class="text-lime-300">*</span></label>
+                                    <!-- Campo del título con maxlength de 75 -->
+                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Title name here" maxlength="75">
+                                    <!-- Mostrar errores si los hay -->
+                                    {% if form.title.errors %}
+                                        <div class="error text-danger">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_start_date" class="form-label">Start Date</label>
+                                    <!-- Campo de la fecha de inicio -->
+                                    <input type="date" class="form-control shadow-none" name="start_date" id="id_start_date" value="{{ form.start_date.value|default_if_none:'' }}">
+                                    <div id="start-date-error" class="error text-danger"></div>
+                                    {% if form.start_date.errors %}
+                                        <div class="error text-danger">{{ form.start_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_due_date" class="form-label">Due Date</label>
+                                    <!-- Campo de la fecha de vencimiento -->
+                                    <input type="date" class="form-control shadow-none" name="due_date" id="id_due_date" value="{{ form.due_date.value|default_if_none:'' }}">
+                                    <div id="due-date-error" class="error text-danger"></div>
+                                    {% if form.due_date.errors %}
+                                        <div class="error text-danger">{{ form.due_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_budget" class="form-label">Budget</label>
+                                    <!-- Campo del presupuesto -->
+                                    <input type="text" class="form-control shadow-none" name="budget" id="id_budget" value="{{ form.budget.value|default_if_none:'' }}" placeholder="Budget here">
+                                    <div id="budget-error" class="error text-danger"></div>
+                                    {% if form.budget.errors %}
+                                        <div class="error text-danger">{{ form.budget.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Campo del Categoria -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    {{ form.category }} <!-- Esto cargará el <select> con las opciones de categorías del formulario -->
+                                </div>
+                            </div>                           
+                            <!-- Description with Quill -->
+                            <div class="col-12">
+                                <label for="id_description" class="form-label">Description*</label>
+                                {{ form.description }}  <!-- Renderiza el campo de Quill aquí -->
+                            </div>
+                            <!-- Mostrar errores si los hay -->
+                            {% if form.description.errors %}
+                                <div class="error text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Botón de enviar -->
+                <div class="button-group">
+                    <button type="submit" class="w-btn-secondary-lg">
+                        Save Project
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <a href="{% url 'home_client' %}" class="w-btn-danger-lg">
+                        Cancel
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .ql-container {
+        border: 2px solid #ccc; /* Borde personalizado */
+        border-radius: 10px;    /* Bordes redondeados */
+        min-height: 300px;      /* Ajustar altura del área de texto */
+        padding: 10px;          /* Espacio dentro del editor */
+    }
+
+    .ql-editor {
+        min-height: 280px;      /* Ajustar la altura del área de escritura */
+        font-size: 16px;        /* Tamaño de fuente dentro del editor */
+        border: 2px solid #ccc; /* Borde personalizado */
+        border-radius: 10px;    /* Bordes redondeados */
+    }
+</style>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const startDate = new Date(document.getElementById('id_start_date').value);
+        const dueDate = new Date(document.getElementById('id_due_date').value);
+        const today = new Date();
+        const budget = parseFloat(document.getElementById('id_budget').value);
+        const title = document.getElementById('id_title').value.trim();
+        const maxTitleLength = 75;
+
+        // Limpieza de mensajes previos
+        document.getElementById('start-date-error').textContent = '';
+        document.getElementById('due-date-error').textContent = '';
+        document.getElementById('budget-error').textContent = '';
+        
+        // Si no existe el contenedor de errores del título, lo creamos
+        let titleError = document.getElementById('title-error');
+        if (!titleError) {
+            titleError = document.createElement('div');
+            titleError.id = 'title-error';
+            titleError.classList.add('error', 'text-danger');
+            document.getElementById('id_title').parentElement.appendChild(titleError);
+        }
+        titleError.textContent = '';
+
+        let isValid = true;
+
+        // Validación de la fecha de inicio (no debe ser en el pasado)
+        if (startDate < today) {
+            document.getElementById('start-date-error').textContent = 'The start date cannot be in the past.';
+            isValid = false;
+        }
+
+        // Validación de la fecha de vencimiento (al menos un mes después de la fecha de inicio)
+        const minDueDate = new Date(startDate);
+        minDueDate.setMonth(minDueDate.getMonth() + 1);
+        if (dueDate < minDueDate) {
+            document.getElementById('due-date-error').textContent = 'The due date must be at least one month after the start date.';
+            isValid = false;
+        }
+
+        // Validación del presupuesto (no debe ser negativo)
+        if (isNaN(budget) || budget < 0) {
+            document.getElementById('budget-error').textContent = 'The budget cannot be negative or empty.';
+            isValid = false;
+        }
+
+        // Validación del título (no debe exceder 75 caracteres)
+        if (title.length > maxTitleLength) {
+            titleError.textContent = `The title cannot exceed ${maxTitleLength} characters.`;
+            isValid = false;
+        }
+
+        // Si alguna validación falla, prevenir que el formulario se envíe
+        if (!isValid) {
+            alert('Please correct the errors in the form before submitting.');
+            event.preventDefault();
+        }
+    });
+</script>
+
+
+
+{% endblock %}

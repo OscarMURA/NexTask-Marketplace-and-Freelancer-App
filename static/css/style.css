@@ -3741,8 +3741,52 @@ body {
 .header-hidden {
   transform: translateY(-100%);
 }
+.w-btn-danger-lg {
+  color: #ffffff;
+  background-color: #ff5959; /* Rojo claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
 
+.w-btn-danger-lg:hover {
+  background-color: #fb1c1c; /* Rojo oscuro */
+}
+.button-group {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  align-items: center; /* Alinea los botones verticalmente */
+  gap: 10px; /* Espacio entre los botones */
+}
 
+.w-btn-plus-lg {
+  color: #ffffff;
+  background-color: #71ea41; /* Verde claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
+
+.w-btn-plus-lg:hover {
+  background-color: #32ac0d; /* Rojo oscuro */
+}
+
+.title-group {
+  display: flex;
+  justify-content: space-between; /* Coloca los títulos en los extremos */
+  align-items: center; /* Alinea los títulos verticalmente */
+  width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+}
 /*******************
 Footer   End
 ********************/

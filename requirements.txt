@@ -9,6 +9,9 @@ defusedxml==0.8.0rc2
 Django==5.1
 django-countries==7.6.1
 django-crispy-forms==2.3
+django-extensions  # from development
+django-quill-editor  # from development
+django-select2  # from development
 Faker==12.0.1
 idna==3.10
 iniconfig==2.0.0
@@ -17,6 +20,7 @@ oauthlib==3.2.2
 packaging==24.1
 pluggy==1.5.0
 psycopg2==2.9.9
+psycopg2-binary  # from development
 pycparser==2.22
 PyJWT==2.9.0
 pytest==8.3.3

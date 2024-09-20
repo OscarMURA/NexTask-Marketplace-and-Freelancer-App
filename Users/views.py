@@ -28,11 +28,13 @@ def client_signup(request):
         form = ClientSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('home')
+            print("Usuario creado:", user)  # Imprimir el usuario creado
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('home_client')
     else:
         form = ClientSignUpForm()
     return render(request, 'Users/client_signup.html', {'form': form})
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -43,15 +45,16 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             
             if user is not None:
-                login(request, user)
-                return redirect('welcome')  # Redirige a la página de bienvenida
+                auth_login(request, user)  # Usamos auth_login para iniciar sesión
+                # Redirigir según el tipo de usuario
+                if user.user_type == 'freelancer':
+                    return redirect('home_freelancer')
+                elif user.user_type == 'client':
+                    return redirect('home_client')
             else:
-                
-                messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
+                messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
         else:
-            
-            messages.error(request, 'El nombre de usuario o la contraseña es incorrecto.')
-
+            messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
     else:
         form = AuthenticationForm()
 
@@ -62,19 +65,6 @@ def welcome(request):
 
 def home(request):
     return render(request, 'users/home.html')
-
-
-@never_cache
-def client_signup(request):
-    if request.method == 'POST':
-        form = ClientSignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('home')
-    else:
-        form = ClientSignUpForm()
-    return render(request, 'Users/client_signup.html', {'form': form})
 
 
 from django.contrib.auth import login as auth_login
@@ -178,11 +168,11 @@ def portfolio_register_view(request):
     freelancer = request.user.freelancerprofile
     if request.method == "POST":
         if 'skip' in request.POST:
-            return redirect('welcome')
+            return redirect('register_languages')
         formset = PortfolioFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
             formset.save()
-            return redirect('welcome')
+            return redirect('register_languages')
     else:
         formset = PortfolioFormSet(instance=freelancer)
 
@@ -195,25 +185,38 @@ def portfolio_register_view(request):
         'back_url': 'certification_register',
         'next_url': 'welcome',
     })
+@login_required
+def profile_settings(request):
+    return render(request, 'Users/changePassword.html')
 
 
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+
+
+@login_required
+def register_skills_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        form = SkillsForm(request.POST, instance=freelancer)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('welcome')
-            else:
-                messages.error(request, 'Invalid username or password.')
-        else:
-            messages.error(request, 'Invalid username or password.')
+            form.save()
+            return redirect('home_freelancer')  # Redirigir al final del flujo, página de bienvenida
     else:
-        form = AuthenticationForm()
-    return render(request, 'Users/login.html', {'form': form})
+        form = SkillsForm(instance=freelancer)
+
+    return render(request, 'Users/register_skills.html', {'form': form})
+
+@login_required
+def register_languages_view(request):
+    freelancer = request.user.freelancerprofile
+    if request.method == "POST":
+        form = LanguageForm(request.POST, instance=freelancer)
+        if form.is_valid():
+            form.save()
+            return redirect('register_skills')  # Redirect to the next step
+    else:
+        form = LanguageForm(instance=freelancer)
+
+    return render(request, 'Users/register_languages.html', {'form': form})
 
 
 def home_client(request):
@@ -227,4 +230,39 @@ def createProject(request):
 
 def change_password(request):
     return render(request, 'Users/changePassword.html')
+
+@login_required
+def profile_settings(request):
+   user = request.user
+   try:
+        freelancer = FreelancerProfile.objects.get(user=user)
+   except FreelancerProfile.DoesNotExist:
+        freelancer = FreelancerProfile(user=user)
+        freelancer.save()  # Crea el perfil si no existe
+
+   if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        city = request.POST.get('city') 
+        country = request.POST.get('country')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+
+        user.username = username
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        freelancer.city = city
+        freelancer.country = country
+        freelancer.phone = phone
+        freelancer.address = address
+        freelancer.save()
+
+        messages.success(request, 'Your profile has been updated successfully.')
+     
+   return render(request, 'Users/profileSettings.html', {'user': user, 'freelancer': freelancer})
 

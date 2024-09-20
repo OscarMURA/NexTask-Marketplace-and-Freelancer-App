@@ -39,15 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_countries',
+    'django_select2',
+    'django_quill',
     'crispy_forms',
     'crispy_bootstrap4',
     'social_django',
+    'languages',
     'Users',
     'Messaging',
     'Notifications',
     'Payments',
     'Projects',
-    'Reports',  
+    'Reports', 
+    
 ]
 
 MIDDLEWARE = [
@@ -59,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-]
 
 
 
@@ -159,3 +162,39 @@ LOGOUT_REDIRECT_URL = 'login'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '569234682481-mm7phcliiq88jdkqpk9mantpkum71n52.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET= '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'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('es', 'Spanish'), 
+]
+
+
+QUILL_CONFIGS = {
+    'default':{
+        'theme': 'snow',
+        'modules': {
+            'syntax': True,
+            'toolbar': [
+                ['bold', 'italic', 'underline', 'strike'], 
+                ['blockquote', 'code-block', 'link'],
+
+                [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+
+                [{ 'size': ['small', True, 'large', 'huge'] }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, False] }],
+
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+
+                ['clean']
+            ]
+        }
+    }
+}
