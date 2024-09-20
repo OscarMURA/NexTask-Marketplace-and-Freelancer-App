@@ -96,6 +96,7 @@
             <p class="card-text text-dark-200">Days until due: {{ project.days_until_due }}</p>
             <p class="card-text text-dark-200">{{ project.get_category_display }}</p>
 
+
             <div class="button-group">
               
               <a href="{% url 'project_detail' project.id %}">

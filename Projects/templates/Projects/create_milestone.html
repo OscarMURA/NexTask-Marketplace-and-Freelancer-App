@@ -38,12 +38,13 @@
                             <div class="col-12">
                                 <div class="form-container">
                                     <label for="id_title" class="form-label">Milestone Title <span class="text-lime-300">*</span></label>
-                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Milestone title here">
+                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Milestone title here" maxlength="70">
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
+
                             <!-- Fecha de vencimiento -->
                             <div class="col-md-6">
                                 <div class="form-container">
@@ -80,19 +81,25 @@
                         </div>
                     </div>
                 </div>
+                
                 <!-- Submit Button -->
-                <div>
+                <div class="button-group">
                     <button type="submit" class="w-btn-secondary-lg">
                         Save Milestone
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
+                    <a href="{% url 'project_detail' project.id  %}" class="w-btn-danger-lg">
+                        Cancel
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
                 </div>
             </div>
         </form>
-        <!-- Botón para volver al proyecto -->
-        <a href="{% url 'project_detail' project.id %}" class="btn btn-secondary">Back to Project</a>
+    
     </div>
 </div>
 
@@ -116,13 +123,40 @@
     document.querySelector('form').addEventListener('submit', function(event) {
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
+        const title = document.getElementById('id_title').value.trim();
+        const maxTitleLength = 70;
         
+        // Crear espacio para errores si no existe
+        let titleError = document.getElementById('title-error');
+        if (!titleError) {
+            titleError = document.createElement('div');
+            titleError.id = 'title-error';
+            titleError.classList.add('error', 'text-danger');
+            document.getElementById('id_title').parentElement.appendChild(titleError);
+        }
+        titleError.textContent = '';
+
+        let isValid = true;
+
         // Validación básica para la fecha de vencimiento
         if (dueDate < today) {
             alert('The due date cannot be in the past.');
             event.preventDefault();
+            isValid = false;
+        }
+
+        // Validación del título del hito (no debe exceder 70 caracteres)
+        if (title.length > maxTitleLength) {
+            titleError.textContent = `The milestone title cannot exceed ${maxTitleLength} characters.`;
+            isValid = false;
+        }
+
+        // Si alguna validación falla, prevenir que el formulario se envíe
+        if (!isValid) {
+            event.preventDefault(); // Prevenir envío del formulario si hay errores
         }
     });
 </script>
+
 
 {% endblock %}

@@ -3781,6 +3781,12 @@ body {
   background-color: #32ac0d; /* Rojo oscuro */
 }
 
+.title-group {
+  display: flex;
+  justify-content: space-between; /* Coloca los títulos en los extremos */
+  align-items: center; /* Alinea los títulos verticalmente */
+  width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+}
 /*******************
 Footer   End
 ********************/
