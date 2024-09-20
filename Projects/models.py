@@ -48,11 +48,21 @@ class Project(models.Model):
 
 
 class Milestone(models.Model):
+    CATEGORY_CHOICES = [
+        ('normal', 'Normal'),
+        ('planning', 'Planning'),
+        ('development', 'Development'),
+        ('review', 'Review'),
+        ('delivery', 'Delivery'),
+        ('documentation', 'Documentation'),  
+    ]
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="milestones")
     title = models.CharField(max_length=255)
     description = QuillField()
     due_date = models.DateField()
     file = models.FileField(upload_to='milestone_files/', null=True, blank=True)  # Archivo relacionado con el hito, opcional
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='development')
+
 
     def __str__(self):
         return f"{self.title} - {self.project.title}"
