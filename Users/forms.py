@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience, Language
+from .models import *
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
@@ -56,6 +56,7 @@ class FreelancerSignUpForm(UserSignUpForm):
 
 # Form for Client Signup
 class ClientSignUpForm(UserSignUpForm):
+    avatar = forms.ImageField(required=False, label="Profile Picture", help_text="Optional. Upload an image for your profile.")  # Avatar field added
     company_name = forms.CharField(max_length=255, required=True)
     company_website = forms.URLField(required=False)
 
@@ -77,6 +78,7 @@ class ClientSignUpForm(UserSignUpForm):
             client_profile.city = self.cleaned_data.get('city')
             client_profile.phone = self.cleaned_data.get('phone')
             client_profile.address = self.cleaned_data.get('address')
+            client_profile.avatar = self.cleaned_data.get('avatar')  # Save avatar
             client_profile.save()
         return user
 
@@ -214,7 +216,20 @@ class FreelancerSearchForm(forms.Form):
         label="Languages"
     )
 
-class FreelancerProfileForm(forms.ModelForm):
+class ClientProfileForm(forms.ModelForm):
     class Meta:
-        model = FreelancerProfile
-        fields = ['avatar', 'country', 'city', 'phone', 'address']  
+        model = ClientProfile
+        fields = ['avatar', 'company_name', 'company_website', 'country', 'city', 'phone', 'address']
+
+
+class ClientSearchForm(forms.Form):
+    keyword = forms.CharField(
+        required=False,
+        max_length=255,
+        label="Search by keyword (company name, city, country)",
+        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})
+    )
+    country = CountryField().formfield(
+        required=False,
+        widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})
+    )

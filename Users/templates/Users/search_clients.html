@@ -1,0 +1,156 @@
+{% extends 'NextTask/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Estilos CSS incluidos directamente en el archivo HTML -->
+<style>
+    .banner {
+        background-color: #f7f7f7;
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+
+    .banner h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-left: 15px;
+        text-align: left;
+    }
+
+    .form-inline .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .search-bar {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .search-bar .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .search-bar input, .search-bar select {
+        width: 100%;
+    }
+
+    .search-bar button {
+        padding: 10px 20px;
+    }
+
+    .container {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .no-results {
+        text-align: left;
+        padding: 20px;
+    }
+
+    .card {
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: 300px;
+        margin: auto;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        object-fit: cover;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .col-md-4 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="banner">
+    <!-- Cambia el título de Client Results a Search Clients y lo alineamos a la izquierda -->
+    <h1>Search Clients</h1>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="container">
+    <form method="GET" class="search-bar">
+        <!-- Barra de búsqueda por nombre de la empresa -->
+        <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Search by company name, city..." value="{{ request.GET.q }}">
+        </div>
+        <!-- Filtro por país -->
+        <div class="form-group">
+            <select name="country" class="form-control">
+                <option value="">Country</option>
+                {% for country in countries %}
+                    <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Find Client</button>
+    </form>
+</div>
+
+<!-- Resultados de Clientes -->
+<div class="container">
+    <div class="row">
+        {% if clients %}
+            {% for client in clients %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm text-center">
+                        <!-- Mostrar avatar del cliente si existe, si no mostrar imagen por defecto -->
+                        {% if client.avatar %}
+                            <img src="{{ client.avatar.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img src="{% static 'img/defaultClientProfileImage.jpg' %}" alt="Default Avatar">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ client.company_name }}</h5>
+                            <p class="card-text"><strong>Country:</strong> {{ client.country }}</p>
+                            <a href="{% url 'client_profile' client.id %}" class="btn btn-primary">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-results">No clients found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

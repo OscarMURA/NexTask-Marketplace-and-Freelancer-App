@@ -26,9 +26,11 @@
     }
 
     .profile-header img {
-        max-width: 150px;
-        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%; /* Hace que la imagen sea circular */
         border: 3px solid #007bff;
+        object-fit: cover;
     }
 
     .profile-details {
@@ -74,7 +76,6 @@
 
     /* Botón de regreso estilizado */
     .btn-back {
-        margin-bottom: 20px;
         background-color: #007bff;
         color: #fff;
         border: none;
@@ -82,9 +83,12 @@
         border-radius: 5px;
         cursor: pointer;
         font-size: 1rem;
-        display: inline-block;
-        transition: background-color 0.3s, transform 0.3s;
+        display: block; /* Ajusta el botón al centro */
+        margin: 20px auto;
+        width: fit-content;
+        text-align: center;
         text-decoration: none;
+        transition: background-color 0.3s, transform 0.3s;
     }
 
     .btn-back:hover {
@@ -106,9 +110,7 @@
 </style>
 
 <div class="container">
-    <!-- Botón de regreso a la búsqueda -->
-  
-
+    <!-- Encabezado del perfil -->
     <div class="profile-header">
         <div class="col-md-8">
             <h1>{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</h1>
@@ -236,6 +238,7 @@
     {% endif %}
 </div>
 
+<!-- Botón para regresar a la búsqueda de freelancers -->
 <div>
     <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; Back to Freelancer Search</a>
 </div>

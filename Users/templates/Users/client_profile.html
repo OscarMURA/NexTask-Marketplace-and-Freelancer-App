@@ -1,0 +1,156 @@
+{% extends 'NextTask/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .profile-header {
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .profile-header h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .profile-header p {
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    .profile-header img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 3px solid #007bff;
+        object-fit: cover;
+    }
+
+    .profile-details {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-details h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+
+    .profile-details p {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .profile-details a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .profile-details a:hover {
+        text-decoration: underline;
+    }
+
+    .no-info {
+        color: #888;
+        font-style: italic;
+    }
+
+    /* Botón de regreso estilizado */
+    .btn-back {
+        margin-bottom: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: inline-block;
+        transition: background-color 0.3s, transform 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-header img {
+            margin-top: 20px;
+        }
+    }
+</style>
+
+<div class="container">
+    <!-- Botón de regreso a la búsqueda -->
+    <div>
+        <a href="{% url 'search_clients' %}" class="btn-back">&larr; Back to Client Search</a>
+    </div>
+
+    <div class="profile-header">
+        <div class="col-md-8">
+            <h1>{{ client.company_name }}</h1>
+            <p><strong>Contact Name:</strong> {{ client.user.first_name }} {{ client.user.last_name }}</p>
+            <p><strong>Location:</strong> {{ client.city }}, {{ client.country }}</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <!-- Mostrar el avatar cargado del cliente -->
+            {% if client.avatar %}
+                <img src="{{ client.avatar.url }}" alt="Profile Picture" class="img-thumbnail">
+            {% else %}
+                <img src="{% static 'img/defaultClientProfileImage.jpg' %}" alt="Default Avatar" class="img-thumbnail">
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Descripción del cliente -->
+    {% if client.description %}
+        <div class="profile-details">
+            <h2>Description</h2>
+            <p>{{ client.description }}</p>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Description</h2>
+            <p class="no-info">No description available.</p>
+        </div>
+    {% endif %}
+
+    <!-- Proyectos del cliente -->
+    {% if client.projects.all %}
+        <div class="profile-details">
+            <h2>Projects</h2>
+            <ul>
+                {% for project in client.projects.all %}
+                    <li><strong>{{ project.title }}</strong> - {{ project.description }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="profile-details">
+            <h2>Projects</h2>
+            <p class="no-info">No projects available.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -8,7 +8,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
-from .forms import FreelancerProfileForm 
 from django.shortcuts import get_object_or_404
 
 
@@ -35,7 +34,7 @@ def freelancer_signup(request):
 @never_cache
 def client_signup(request):
     if request.method == 'POST':
-        form = ClientSignUpForm(request.POST)
+        form = ClientSignUpForm(request.POST, request.FILES)  # Include request.FILES to handle file uploads
         if form.is_valid():
             user = form.save()
             print("Usuario creado:", user)  # Imprimir el usuario creado
@@ -237,14 +236,19 @@ def change_password(request):
 @login_required
 def profile_settings(request):
     user = request.user
-    try:
-        freelancer = FreelancerProfile.objects.get(user=user)
-    except FreelancerProfile.DoesNotExist:
-        freelancer = FreelancerProfile(user=user)
-        freelancer.save()  # Crea el perfil si no existe
+
+    # Check if the user is a freelancer or a client
+    if user.user_type == 'freelancer':
+        profile = get_object_or_404(FreelancerProfile, user=user)
+        form_class = FreelancerProfileForm
+    elif user.user_type == 'client':
+        profile = get_object_or_404(ClientProfile, user=user)
+        form_class = ClientProfileForm  # Use a ClientProfileForm to handle client profile edits
+    else:
+        profile = None
 
     if request.method == 'POST':
-        form = FreelancerProfileForm(request.POST, request.FILES, instance=freelancer)  # Añadir request.FILES
+        form = form_class(request.POST, request.FILES, instance=profile)  # Handle file uploads
         if form.is_valid():
             form.save()
             user.username = request.POST.get('username')
@@ -256,9 +260,9 @@ def profile_settings(request):
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('profile_settings')
     else:
-        form = FreelancerProfileForm(instance=freelancer)
+        form = form_class(instance=profile)
 
-    return render(request, 'Users/profileSettings.html', {'form': form, 'user': user, 'freelancer': freelancer})
+    return render(request, 'Users/profileSettings.html', {'form': form, 'user': user, 'profile': profile})
 
 
 
@@ -296,3 +300,35 @@ def search_freelancers(request):
 def freelancer_profile(request, id):
     freelancer = get_object_or_404(FreelancerProfile, user__id=id)
     return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})
+
+
+
+def search_clients(request):
+    form = ClientSearchForm(request.GET or None)
+    clients = ClientProfile.objects.all()
+
+    if form.is_valid():
+        keyword = form.cleaned_data.get('keyword')
+        country = form.cleaned_data.get('country')
+
+        if keyword:
+            clients = clients.filter(
+                Q(company_name__icontains=keyword) |
+                Q(city__icontains=keyword) |
+                Q(country__icontains=keyword)
+            ).distinct()
+
+        if country:
+            clients = clients.filter(country=country)
+
+    return render(request, 'Users/search_clients.html', {
+        'form': form,
+        'clients': clients
+    })
+    
+    
+
+
+def client_profile(request, id):
+    client = get_object_or_404(ClientProfile, user__id=id)
+    return render(request, 'Users/client_profile.html', {'client': client})

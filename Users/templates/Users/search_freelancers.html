@@ -55,19 +55,20 @@
         flex-direction: column;
         justify-content: space-between;
         width: 100%;
-        max-width: 300px; /* Increased width for each card */
+        max-width: 300px;
         margin: auto;
     }
 
     .card img {
-        max-width: 150px;
-        max-height: 150px;
-        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%; /* Asegura que la imagen sea un círculo */
         margin-bottom: 15px;
         object-fit: cover;
         margin-left: auto;
         margin-right: auto;
         display: block;
+        border: 2px solid #ddd; /* Añade un borde para resaltar la imagen */
     }
 
     .card-body {
@@ -78,13 +79,21 @@
         margin-top: 20px;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around; /* Ensures even spacing between cards */
+        justify-content: space-around; /* Asegura un buen espaciado entre las tarjetas */
     }
 
     .col-md-4 {
         display: flex;
         justify-content: center;
         margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        width: 100%; /* Asegura que el botón ocupe todo el ancho dentro de la tarjeta */
+        max-width: 200px;
+        margin: 10px auto; /* Centra el botón */
     }
 </style>
 
