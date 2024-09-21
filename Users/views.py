@@ -220,6 +220,7 @@ def register_skills_view(request):
 
     else:
         form = SkillsForm(instance=freelancer)
+        form.fields['skills'].queryset = Skill.objects.all().order_by('name')[:10]  # Limitar a las primeras 8 habilidades
         return render(request, 'Users/register_skills.html', {'form': form})
 
 @login_required
