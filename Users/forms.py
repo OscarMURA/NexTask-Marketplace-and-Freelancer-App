@@ -166,25 +166,41 @@ class WorkExperienceFormHelper(FormHelper):
 
 
 class SkillsForm(forms.ModelForm):
-    new_skill = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu habilidad, agrégala aquí.")
-
+    skills = forms.ModelMultipleChoiceField(
+        queryset=Skill.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control shadow-none'}),
+        required=False
+    )
+    
+    new_skill = forms.CharField(
+        max_length=100, 
+        required=False, 
+        help_text="If you don't see your skill, add it here",
+        widget=forms.TextInput(attrs={'class': 'form-control shadow-none'})
+    )
+    
     class Meta:
         model = FreelancerProfile
-        fields = ['skills']
+        fields = ['skills', 'new_skill']  
 
     def save(self, commit=True):
         profile = super().save(commit=False)
-        new_skill = self.cleaned_data.get('new_skill')
-
-        if new_skill:
-            skill, created = Skill.objects.get_or_create(name=new_skill)
-            profile.skills.add(skill)
-
+        
+        # Guarda las habilidades predefinidas seleccionadas en el perfil del freelancer
         if commit:
+            profile.save()
+            self.cleaned_data['skills'] = profile.skills.set(self.cleaned_data['skills'])
+            
+            # Agregar una nueva habilidad si se proporciona y no existe en las predefinidas
+            new_skill = self.cleaned_data.get('new_skill')
+            if new_skill:
+                skill, created = Skill.objects.get_or_create(name=new_skill)
+                profile.skills.add(skill)
             profile.save()
             self.save_m2m()
 
         return profile
+
 
 
 
