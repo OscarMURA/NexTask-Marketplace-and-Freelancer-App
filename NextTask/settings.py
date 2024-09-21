@@ -60,12 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-<<<<<<< HEAD
     'social_django.middleware.SocialAuthExceptionMiddleware',  # Agregamos esta línea
 ]
-=======
-    'social_django.middleware.SocialAuthExceptionMiddleware',
->>>>>>> development
 
 ROOT_URLCONF = 'NextTask.urls'
 
