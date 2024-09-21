@@ -47,7 +47,7 @@
                         {% endif %}
                         
                         <!-- Formulario -->
-                        <form method="POST" action="{% url 'register_freelancer' %}">
+                        <form method="POST" enctype="multipart/form-data" action="{% url 'register_freelancer' %}">  <!-- Add enctype for file upload -->
                             {% csrf_token %}
                             <div class="form-container">
                                 <div class="row gy-3">
@@ -83,6 +83,13 @@
                                         <label for="address" the form-label>Address <span class="text-lime-300">*</span></label>
                                         <input type="text" class="form-control shadow-none" id="address" name="address" placeholder="Address" required />
                                     </div>
+
+                                    <!-- Avatar Upload Field -->
+                                    <div class="form-input col-lg-12">
+                                        <label for="avatar" class="form-label">Profile Picture (optional)</label>
+                                        <input type="file" class="form-control shadow-none" id="avatar" name="avatar" />
+                                    </div>
+
                                     <div class="form-input col-lg-12">
                                         <label for="password1" the form-label>Password <span class="text-lime-300">*</span></label>
                                         <input type="password" class="form-control shadow-none" id="password1" name="password1" placeholder="Password" required />

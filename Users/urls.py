@@ -37,6 +37,14 @@ urlpatterns = [
     path("ChangePassword/", views.change_password, name="change_password"),
 
     path("profileSettings/", views.profile_settings, name="profile_settings"),
+    
+    path('search/', views.search_freelancers, name='search_freelancers'),
+    
+    path('freelancer/<int:id>/', views.freelancer_profile, name='freelancer_profile'),
+    
+    path('search_clients/', views.search_clients, name='search_clients'),
+    
+    path('client/<int:id>/', views.client_profile, name='client_profile'),
 
 ]
 
