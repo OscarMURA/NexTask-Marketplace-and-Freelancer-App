@@ -18,4 +18,8 @@ urlpatterns = [
     path('task/<int:task_id>/edit/', views.edit_task, name='edit_task'),
     path('task/<int:task_id>/delete/', views.delete_task, name='delete_task'),
     path('task/<int:task_id>/', views.task_detail, name='task_detail'),
+    path('search_projects/', views.search_projects, name='search_projects'),  # Nueva URL para búsqueda de proyectos
+    path('project/view/<int:project_id>/', views.view_project_search, name='view_project_search'),
+
+
 ]

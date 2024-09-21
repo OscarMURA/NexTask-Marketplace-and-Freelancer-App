@@ -168,3 +168,33 @@ def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     return render(request, 'Projects/task_detail.html', {'task': task})
 
+from django.db.models import Q
+from .models import Project
+from django.shortcuts import render
+
+def search_projects(request):
+    query = request.GET.get('q')
+    category_filter = request.GET.get('category')
+    projects = Project.objects.all()
+
+    if query:
+        projects = projects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(client__user__username__icontains=query)
+        )
+
+    if category_filter and category_filter != 'all':
+        projects = projects.filter(category=category_filter)
+
+    return render(request, 'Projects/search_projects.html', {
+        'projects': projects,
+        'categories': Project.CATEGORY_CHOICES,  # Pasar las categorías al template
+        'selected_category': category_filter,  # Para mostrar la categoría seleccionada
+    })
+
+def view_project_search(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'Projects/view_project_search.html', {'project': project})
+
+
