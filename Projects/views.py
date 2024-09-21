@@ -8,6 +8,8 @@ from django.contrib import messages
 from .models import Project, Milestone
 from .forms import MilestoneForm
 from django.core.paginator import Paginator
+from .models import Project, Milestone,Task
+from .forms import MilestoneForm, TaskForm
 
 def create_project(request):
     if request.method == 'POST':
@@ -116,3 +118,53 @@ def delete_milestone(request, milestone_id):
         return redirect('project_detail', project_id=project_id)
 
     return redirect(reverse('home_client'))
+
+
+# Vista para crear una nueva tarea
+def create_task(request, milestone_id):
+    milestone = get_object_or_404(Milestone, id=milestone_id)
+    
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.milestone = milestone  # Asociar la tarea con el hito
+            task.save()
+            return redirect('milestone_detail', pk=milestone.id)
+    else:
+        form = TaskForm()
+
+    # Pasar el hito al contexto
+    return render(request, 'Projects/create_task.html', {'form': form, 'milestone': milestone})
+
+
+# Vista para editar una tarea existente
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('milestone_detail', pk=task.milestone.id)
+    else:
+        form = TaskForm(instance=task)
+
+    return render(request, 'Projects/edit_task.html', {'form': form, 'task': task})
+
+def delete_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    milestone_id = task.milestone.id
+
+    if request.method == 'POST':
+        task.delete()
+        messages.success(request, "Task deleted successfully.")
+        return redirect('milestone_detail', pk=milestone_id)
+
+    return redirect('milestone_detail', pk=milestone_id)
+
+
+def task_detail(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    return render(request, 'Projects/task_detail.html', {'task': task})
+

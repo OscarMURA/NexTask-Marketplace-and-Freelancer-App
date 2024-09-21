@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience, Language
+from .models import *
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm, inlineformset_factory
@@ -31,11 +31,14 @@ class UserSignUpForm(UserCreationForm):
 
 # Form for Freelancer Signup
 class FreelancerSignUpForm(UserSignUpForm):
+    avatar = forms.ImageField(required=False, label="Profile Picture", help_text="Optional. Upload an image for your profile.")  # Avatar field added
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up as Freelancer'))
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.user_type = 'freelancer'
@@ -46,12 +49,14 @@ class FreelancerSignUpForm(UserSignUpForm):
             freelancer_profile.city = self.cleaned_data.get('city')
             freelancer_profile.phone = self.cleaned_data.get('phone')
             freelancer_profile.address = self.cleaned_data.get('address')
+            freelancer_profile.avatar = self.cleaned_data.get('avatar')  # Save avatar
             freelancer_profile.save()
             print("Freelancer creado")
         return user
 
 # Form for Client Signup
 class ClientSignUpForm(UserSignUpForm):
+    avatar = forms.ImageField(required=False, label="Profile Picture", help_text="Optional. Upload an image for your profile.")  # Avatar field added
     company_name = forms.CharField(max_length=255, required=True)
     company_website = forms.URLField(required=False)
 
@@ -73,6 +78,7 @@ class ClientSignUpForm(UserSignUpForm):
             client_profile.city = self.cleaned_data.get('city')
             client_profile.phone = self.cleaned_data.get('phone')
             client_profile.address = self.cleaned_data.get('address')
+            client_profile.avatar = self.cleaned_data.get('avatar')  # Save avatar
             client_profile.save()
         return user
 
@@ -90,13 +96,11 @@ CertificationFormSet = inlineformset_factory(
     can_delete=True
 )
 
-
 class CertificationFormHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form_method = 'post'
         self.render_required_fields = True
-
 
 # Portfolio Formset
 PortfolioFormSet = inlineformset_factory(
@@ -138,9 +142,6 @@ class EducationFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
-        
-        
-
 
 # Work Experience Formset
 WorkExperienceFormSet = inlineformset_factory(
@@ -162,31 +163,42 @@ class WorkExperienceFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
-        
-
 
 class SkillsForm(forms.ModelForm):
-    new_skill = forms.CharField(max_length=100, required=False, help_text="Si no encuentras tu habilidad, agrégala aquí.")
-
+    skills = forms.ModelMultipleChoiceField(
+        queryset=Skill.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control shadow-none'}),
+        required=False
+    )
+    
+    new_skill = forms.CharField(
+        max_length=100, 
+        required=False, 
+        help_text="If you don't see your skill, add it here",
+        widget=forms.TextInput(attrs={'class': 'form-control shadow-none'})
+    )
+    
     class Meta:
         model = FreelancerProfile
-        fields = ['skills']
+        fields = ['skills', 'new_skill']  
 
     def save(self, commit=True):
         profile = super().save(commit=False)
-        new_skill = self.cleaned_data.get('new_skill')
-
-        if new_skill:
-            skill, created = Skill.objects.get_or_create(name=new_skill)
-            profile.skills.add(skill)
-
+        
+        # Guarda las habilidades predefinidas seleccionadas en el perfil del freelancer
         if commit:
+            profile.save()
+            self.cleaned_data['skills'] = profile.skills.set(self.cleaned_data['skills'])
+            
+            # Agregar una nueva habilidad si se proporciona y no existe en las predefinidas
+            new_skill = self.cleaned_data.get('new_skill')
+            if new_skill:
+                skill, created = Skill.objects.get_or_create(name=new_skill)
+                profile.skills.add(skill)
             profile.save()
             self.save_m2m()
 
         return profile
-
-
 
 class LanguageForm(forms.ModelForm):
     languages = forms.ModelMultipleChoiceField(
@@ -198,3 +210,41 @@ class LanguageForm(forms.ModelForm):
     class Meta:
         model = FreelancerProfile
         fields = ['languages']
+
+class FreelancerSearchForm(forms.Form):
+    keyword = forms.CharField(
+        required=False,
+        max_length=255,
+        label="Search by keyword (username, city, skills, languages)",
+        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})
+    )
+    skills = forms.ModelMultipleChoiceField(
+        queryset=Skill.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Skills"
+    )
+    languages = forms.ModelMultipleChoiceField(
+        queryset=Language.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Languages"
+    )
+
+class ClientProfileForm(forms.ModelForm):
+    class Meta:
+        model = ClientProfile
+        fields = ['avatar', 'company_name', 'company_website', 'country', 'city', 'phone', 'address']
+
+
+class ClientSearchForm(forms.Form):
+    keyword = forms.CharField(
+        required=False,
+        max_length=255,
+        label="Search by keyword (company name, city, country)",
+        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})
+    )
+    country = CountryField().formfield(
+        required=False,
+        widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})
+    )

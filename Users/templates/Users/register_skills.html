@@ -8,18 +8,147 @@
             <h2 class="section-title mb-2">Skill Register</h2>
             <form method="POST" id="skillsForm">
                 {% csrf_token %}
-                {{ form|crispy }}
-
+                
+                <!-- Lista de habilidades predefinidas como botones -->
+                <div id="skills-list">
+                    {% for skill in form.skills.field.queryset %}
+                    <button type="button" class="btn btn-outline-primary m-2 skill-button" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.name }}">
+                        {{ skill.name }}
+                    </button>
+                    {% endfor %}
+                </div>
+            
+                <!-- Campo para agregar una nueva habilidad -->
+                <input type="text" id="new-skill" class="form-control mt-4" placeholder="Add new skill if not listed">
+                <br>
+                <button type="button" class="w-btn-secondary-lg mt-2" id="add-new-skill">Add Skill</button>
+            
+                <!-- Visualización de habilidades seleccionadas -->
+                <div id="selected-skills-display" class="mt-4">
+                    <strong>Selected Skills:</strong>
+                    <div id="selected-skills-list"></div> 
+                </div>
+            
+                <!-- Campo oculto para habilidades seleccionadas (IDs de habilidades predefinidas) -->
+                <input type="hidden" name="skills" id="selected-skills" value="">
+            
+                <!-- Campo oculto para las nuevas habilidades (nombres) -->
+                <input type="hidden" name="new_skills" id="new-skills" value="">
+                
                 <div class="d-grid mt-4">
                     <div class="d-flex justify-content-between">
-                        <!-- Botón Anterior: redirige a la vista de registro de idiomas -->
                         <a href="{% url 'register_languages' %}" class="btn btn-outline-secondary">Previous</a>
-                        <!-- Botón Guardar y Continuar: redirige al dashboard -->
                         <button type="submit" class="w-btn-secondary-lg">Submit</button>
                     </div>
                 </div>
             </form>
+            
         </div>
     </section>
 </div>
+
+<style>
+    .skill-chip {
+        display: inline-block;
+        padding: 0.5em 0.75em;
+        font-size: 0.875rem;
+        color: #ffffff;
+        background-color: #635FD9;
+        border-radius: 15px;
+        margin: 0.25em;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .skill-chip:hover {
+        background-color: #939597;
+    }
+
+    .skill-chip .remove-skill {
+        color: #111111;
+        padding-left: 5px;
+        cursor: pointer;
+    }
+
+    #selected-skills-list .skill-chip {
+        margin-right: 5px;
+    }
+
+    .btn-outline-primary {
+    color: #635FD9; /* Cambia el color del texto */
+    border-color: #635FD9; /* Cambia el color del borde */
+    }
+    
+    .btn-outline-primary:hover {
+    color: #fff; /* Color del texto al pasar el ratón */
+    background-color: #635FD9; /* Fondo al pasar el ratón */
+    border-color: #635FD9; /* Borde al pasar el ratón */
+    }
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectedSkills = new Set();
+        const newSkills = new Set();
+    
+        document.querySelectorAll('.skill-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const skillId = this.getAttribute('data-skill-id');
+                const skillName = this.getAttribute('data-skill-name');
+                if (selectedSkills.has(skillId)) {
+                    selectedSkills.delete(skillId);
+                    removeSkillFromList(skillId);
+                } else {
+                    selectedSkills.add(skillId);
+                    addSkillToList(skillId, skillName);
+                }
+                document.getElementById('selected-skills').value = Array.from(selectedSkills).join(',');
+            });
+        });
+    
+        document.getElementById('add-new-skill').addEventListener('click', function() {
+            const newSkillInput = document.getElementById('new-skill');
+            const newSkillName = newSkillInput.value.trim();
+            if (newSkillName) {
+                // Agregamos la nueva habilidad a la lista visual y al conjunto de nuevas habilidades
+                newSkills.add(newSkillName);
+                addSkillToList(new-${Date.now()}, newSkillName);
+                document.getElementById('new-skills').value = Array.from(newSkills).join(',');  // Actualizamos el input oculto con los nombres de nuevas habilidades
+                newSkillInput.value = '';  // Limpiar el input
+            }
+        });
+    
+        function addSkillToList(skillId, skillName) {
+            const list = document.getElementById('selected-skills-list');
+            const entry = document.createElement('span');
+            entry.className = 'skill-chip';
+            entry.textContent = skillName;
+            entry.setAttribute('data-skill-id', skillId);
+            const removeButton = document.createElement('span');
+            removeButton.textContent = '×';
+            removeButton.className = 'remove-skill';
+            removeButton.onclick = function() {
+                removeSkillFromList(skillId);
+            };
+            entry.appendChild(removeButton);
+            list.appendChild(entry);
+        }
+    
+        function removeSkillFromList(skillId) {
+            const list = document.getElementById('selected-skills-list');
+            const entry = list.querySelector([data-skill-id="${skillId}"]);
+            if (entry) {
+                list.removeChild(entry);
+            }
+            if (skillId.startsWith('new-')) {
+                newSkills.delete(skillId);  // Si es una habilidad nueva, eliminar del set de nuevas habilidades
+            } else {
+                selectedSkills.delete(skillId);  // Si es predefinida, eliminar del set de habilidades seleccionadas
+            }
+            document.getElementById('selected-skills').value = Array.from(selectedSkills).join(',');
+            document.getElementById('new-skills').value = Array.from(newSkills).join(',');
+        }
+    });
+    </script>
 {% endblock %}
