@@ -454,12 +454,7 @@
               <i class="fa-solid fa-bars"></i>
             </button>
           </div>
-          <span
-           class="welcome-message">
-            <h3>
-              Welcome, {{ user.first_name }}  {{user.last_name}}
-            </h3>
-          </span>
+          <span class="welcome-message">Welcome, {{ user.username }}</span>
           <div>
             <div class="dashboard-header-btns d-flex gap-3">
               <div>
@@ -653,7 +648,7 @@
                 <button
                   class="text-decoration-underline text-danger"
                   data-bs-dismiss="modal"
-                  aria-label="Close"
+                  aria-label="Close"  
                 >
                   Cancel
                 </button>

@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib import messages
 from .models import Project, Milestone
 from .forms import MilestoneForm
-
+from django.core.paginator import Paginator
 
 def create_project(request):
     if request.method == 'POST':
@@ -28,16 +28,21 @@ def create_project(request):
     return render(request, 'Projects/createProject.html', {'form': form})
 
 def home_client(request):
-    # Supongamos que el cliente está autenticado y puedes acceder a su perfil
     client_profile = request.user.clientprofile  # Asumiendo que el usuario tiene un perfil de cliente
-    projects = client_profile.projects.all()  # Obtiene todos los proyectos asociados al cliente
-    total_projects = projects.count()  # Número total de proyectos
-    total_balance = client_profile.get_total_budget()  # Presupuesto total
 
+    # Obtiene todos los proyectos asociados al cliente y los ordena
+    projects = client_profile.projects.all().order_by('-created_at')
+    
+    # Paginación
+    paginator = Paginator(projects, 5)  # 10 proyectos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Solo se necesita pasar 'page_obj' para la paginación junto con cualquier otra variable necesaria
     return render(request, 'Projects/homeClient.html', {
-        'projects': projects,
-        'total_projects': total_projects,
-        'total_balance': total_balance,
+        'page_obj': page_obj,
+        'total_projects': projects.count(),  # Número total de proyectos
+        'total_balance': client_profile.get_total_budget()  # Presupuesto total
     })
 
 def project_detail(request, project_id):
