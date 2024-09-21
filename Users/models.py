@@ -46,8 +46,15 @@ class ClientProfile(models.Model):
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultClientProfileImage.jpg', blank=True, null=True)
 
     
+
     
-   
+    # Método para calcular el presupuesto total de los proyectos del cliente
+    def get_total_budget(self):
+        return self.projects.aggregate(total_budget=models.Sum('budget'))['total_budget'] or 0
+    
+    def get_all_projects(self):
+        return self.projects.all()
+
 
 # Historial académico
 class Education(models.Model):
