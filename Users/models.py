@@ -19,7 +19,7 @@ class Language(models.Model):
         return self.language
 
 class Skill(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -30,7 +30,7 @@ class FreelancerProfile(models.Model):
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
-    skills = models.ManyToManyField(Skill, blank=True)
+    skills = models.ManyToManyField(Skill, related_name='freelancers', blank=True)
     languages = models.ManyToManyField('Language', blank=True)
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
 
