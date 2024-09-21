@@ -1,0 +1,28 @@
+{% extends 'Users/baseClient.html' %}
+
+{% block content %}
+
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+<h2>Edit Task: {{ task.title }}</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <div class="text mt-4">
+        <div class="button-group">
+          <button type="submit" class="w-btn-secondary-lg">Save Changes</button>
+          <a href="{% url 'milestone_detail' task.milestone.id %}" class="w-btn-danger-lg"> Back </a>
+        </div>
+        <p>.</p>
+        <p></p>
+      </div>
+
+</form>
+
+
+
+{% endblock %}

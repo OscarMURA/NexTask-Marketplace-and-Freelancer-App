@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Project,Milestone
+from .models import Project,Milestone, Task
 from django_quill.forms import QuillFormField
 
 
@@ -29,4 +29,18 @@ class MilestoneForm(forms.ModelForm):
             'file': forms.FileInput(attrs={'class': 'form-control shadow-none'}),
             'title': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
 
+        }
+
+class TaskForm(forms.ModelForm):
+    description = QuillFormField()
+
+    class Meta:
+        model = Task
+        fields = ['title', 'description', 'due_date', 'priority', 'status', 'assigned_to']
+        widgets = {
+            'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
+            'priority': forms.Select(attrs={'class': 'form-select shadow-none'}),
+            'status': forms.Select(attrs={'class': 'form-select shadow-none'}),
+            'assigned_to': forms.Select(attrs={'class': 'form-select shadow-none'}),
+            'title': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
         }

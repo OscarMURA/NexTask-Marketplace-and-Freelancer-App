@@ -1,0 +1,52 @@
+{% extends 'Users/baseClient.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Task Details: {{ task.title }}</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <!-- Título de la tarea -->
+            <h4 class="card-title">{{ task.title }}</h4>
+
+            <!-- Descripción de la tarea (con Quill editor) -->
+            <p class="card-text"><strong>Description:</strong></p>
+            <div class="quill-content">
+                {{ task.description|safe }}
+            </div>
+
+            <!-- Información adicional de la tarea -->
+            <p class="card-text"><strong>Due Date:</strong> {{ task.due_date }}</p>
+            <p class="card-text"><strong>Priority:</strong> {{ task.get_priority_display }}</p>
+            <p class="card-text"><strong>Status:</strong> {{ task.get_status_display }}</p>
+
+            <!-- Asignación de tarea -->
+            {% if task.assigned_to %}
+                <p class="card-text"><strong>Assigned to:</strong> {{ task.assigned_to.user.username }}</p>
+            {% else %}
+                <p class="card-text"><strong>Assigned to:</strong> Not assigned</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Botón de edición -->
+    <a href="{% url 'edit_task' task.id %}" class="btn btn-primary mt-3">Edit Task</a>
+
+    <!-- Botón de eliminación (formulario con POST para seguridad) -->
+    <form action="{% url 'delete_task' task.id %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger mt-3">Delete Task</button>
+    </form>
+</div>
+
+<div class="text mt-4">
+    <div class="button-group">
+      <a href="{% url 'milestone_detail' task.milestone.id %}" class="w-btn-danger-lg"> Back </a>
+    </div>
+    <p>.</p>
+    <p></p>
+</div>
+
+<!-- Django Quill Media para mostrar correctamente la descripción enriquecida -->
+{% include 'django_quill/media.html' %}
+{% endblock %}

@@ -149,18 +149,67 @@
                 </div>
             </div>
 
-            <!-- Botones de navegación -->
-            <div class="button-group">
-                <a href="{% url 'project_detail' milestone.project.id %}" class="w-btn-danger-lg">
-                    Back to Project
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
-                        <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </a>
+            
+            <div class="text mt-4">
+                <div class="button-group">
+                  <a href="{% url  'create_task' milestone.id %}" class="w-btn-secondary-lg">Add Task</a>
+                  <a href="{% url 'project_detail' milestone.project.id %}" class="w-btn-danger-lg"> Back </a>
+                </div>
+                <p>.</p>
+                <p></p>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Lista de Tareas -->
+<div class="row mt-4">
+    <div class="col-xl-8">
+        <div class="d-flex flex-column gap-4">
+            <!-- Título para las tareas -->
+            <div class="gig-info-card">
+                <div class="gig-info-header">
+                    <h4 class="text-18 fw-semibold text-dark-300">Tasks</h4>
+                </div>
+                <div class="gig-info-body bg-white">
+                    <!-- Verifica si hay tareas -->
+                    {% if milestone.tasks.all %}
+                        <ul class="list-group">
+                            <!-- Itera sobre cada tarea asociada al hito -->
+                            {% for task in milestone.tasks.all %}
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <!-- Título de la tarea -->
+                                            <h5>{{ task.title }}</h5>
+                                            <p class="mb-0"><strong>Due date:</strong> {{ task.due_date }}</p>
+                                            <p class="mb-0"><strong>Status:</strong> {{ task.get_status_display }}</p>
+                                            <p class="mb-0"><strong>Priority:</strong> {{ task.get_priority_display }}</p>
+                                        </div>
+                                        <div>
+                                            <!-- Enlace para editar la tarea -->
+                                            <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                            <!-- Enlace para eliminar la tarea -->
+                                            <form action="{% url 'delete_task' task.id %}" method="POST" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <!-- Mensaje si no hay tareas -->
+                        <p>No tasks available for this milestone.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <style>
     .readonly-field {
