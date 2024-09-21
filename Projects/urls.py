@@ -13,4 +13,11 @@ urlpatterns = [
     path('milestones/<int:milestone_id>/edit/', views.edit_milestone, name='edit_milestone'),
     path('milestone/<int:pk>/', views.milestone_detail_view, name='milestone_detail'),
     path('deñete_milestone/<int:milestone_id>/', views.delete_milestone, name='delete_milestone'),
+    
+    path('milestone/<int:milestone_id>/add_task/', views.create_task, name='create_task'),
+    path('task/<int:task_id>/edit/', views.edit_task, name='edit_task'),
+    path('task/<int:task_id>/delete/', views.delete_task, name='delete_task'),
+    path('task/<int:task_id>/', views.task_detail, name='task_detail'),
+
+
 ]

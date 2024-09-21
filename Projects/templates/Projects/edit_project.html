@@ -26,7 +26,7 @@
                             <div class="col-12">
                                 <div class="form-container">
                                     <label for="id_title" class="form-label">Project Title <span class="text-lime-300">*</span></label>
-                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" maxlength="75"> <!-- Limita a 75 caracteres -->
+                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" maxlength="50"> <!-- Limita a 50 caracteres -->
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
                                     {% endif %}
