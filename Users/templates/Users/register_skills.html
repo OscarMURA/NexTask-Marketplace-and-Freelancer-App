@@ -113,7 +113,7 @@
             if (newSkillName) {
                 // Agregamos la nueva habilidad a la lista visual y al conjunto de nuevas habilidades
                 newSkills.add(newSkillName);
-                addSkillToList(`new-${Date.now()}`, newSkillName);
+                addSkillToList(new-${Date.now()}, newSkillName);
                 document.getElementById('new-skills').value = Array.from(newSkills).join(',');  // Actualizamos el input oculto con los nombres de nuevas habilidades
                 newSkillInput.value = '';  // Limpiar el input
             }
@@ -137,7 +137,7 @@
     
         function removeSkillFromList(skillId) {
             const list = document.getElementById('selected-skills-list');
-            const entry = list.querySelector(`[data-skill-id="${skillId}"]`);
+            const entry = list.querySelector([data-skill-id="${skillId}"]);
             if (entry) {
                 list.removeChild(entry);
             }

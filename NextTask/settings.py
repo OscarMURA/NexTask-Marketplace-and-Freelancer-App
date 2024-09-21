@@ -49,8 +49,7 @@ INSTALLED_APPS = [
     'Notifications',
     'Payments',
     'Projects',
-    'Reports', 
-    
+    'Reports',
 ]
 
 MIDDLEWARE = [
@@ -61,9 +60,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+<<<<<<< HEAD
+    'social_django.middleware.SocialAuthExceptionMiddleware',  # Agregamos esta línea
+]
+=======
     'social_django.middleware.SocialAuthExceptionMiddleware',
-
-
+>>>>>>> development
 
 ROOT_URLCONF = 'NextTask.urls'
 
@@ -86,7 +88,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'NextTask.wsgi.application'
-
 
 
 # Database
@@ -138,7 +139,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
-
+# Media files (for user-uploaded content like profile pictures)
+MEDIA_URL = '/media/'  # URL base para acceder a archivos cargados por los usuarios
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Carpeta donde se almacenan los archivos multimedia cargados
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -146,10 +149,10 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'Users.User'
 
-#social app custom settings
+# social app custom settings
 
 AUTHENTICATION_BACKENDS = [
-    'social_core.backends.google.GoogleOAuth2',
+
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -159,41 +162,35 @@ LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'login'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '569234682481-mm7phcliiq88jdkqpk9mantpkum71n52.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET= '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-
 
 LANGUAGES = [
     ('en', 'English'),
-    ('es', 'Spanish'), 
+    ('es', 'Spanish'),
 ]
 
-
 QUILL_CONFIGS = {
-    'default':{
+    'default': {
         'theme': 'snow',
         'modules': {
             'syntax': True,
             'toolbar': [
-                ['bold', 'italic', 'underline', 'strike'], 
+                ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block', 'link'],
-
                 [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],
-                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }],
                 [{ 'direction': 'rtl' }],
-
                 [{ 'size': ['small', True, 'large', 'huge'] }],
                 [{ 'header': [1, 2, 3, 4, 5, 6, False] }],
-
                 [{ 'color': [] }, { 'background': [] }],
                 [{ 'font': [] }],
                 [{ 'align': [] }],
-
-                ['clean']
-            ]
-        }
-    }
+                ['clean'],
+            ],
+        },
+    },
 }
+

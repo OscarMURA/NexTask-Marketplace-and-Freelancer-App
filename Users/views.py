@@ -7,6 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.backends import ModelBackend 
+from django.shortcuts import get_object_or_404
 from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
 
 
@@ -14,20 +16,25 @@ from .models import FreelancerProfile, Skill, Certification, WorkExperience, Por
 @never_cache
 def freelancer_signup(request):
     if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST)
+        form = FreelancerSignUpForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('education_register')  # Redirige al registro de educación
+
+            # Explicitly pass the backend
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            messages.success(request, 'Account created successfully. Welcome!')
+            return redirect('work_experience_register')
+        else:
+            messages.error(request, "Please fix the errors below.")
     else:
         form = FreelancerSignUpForm()
+
     return render(request, 'Users/freelancer_signup.html', {'form': form})
-
-
 @never_cache
 def client_signup(request):
     if request.method == 'POST':
-        form = ClientSignUpForm(request.POST)
+        form = ClientSignUpForm(request.POST, request.FILES)  # Include request.FILES to handle file uploads
         if form.is_valid():
             user = form.save()
             print("Usuario creado:", user)  # Imprimir el usuario creado
@@ -75,20 +82,13 @@ from django.contrib.auth import get_backends
 @never_cache
 def freelancer_signup(request):
     if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST)
+        form = FreelancerSignUpForm(request.POST, request.FILES)  # Añadir request.FILES
         if form.is_valid():
             user = form.save()
-            
-            # Get the default authentication backend (ModelBackend)
-            backend = get_backends()[0]  # This assumes the first backend is the correct one
-            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
-            return redirect('work_experience_register')  # Redirect after sign-up
-        else:
-            print("Form errors:", form.errors)  # Debugging: print form errors to console
+            auth_login(request, user)  # Usamos auth_login para evitar conflicto
+            return redirect('education_register')  # Redirige al registro de educación
     else:
         form = FreelancerSignUpForm()
-        
     return render(request, 'Users/freelancer_signup.html', {'form': form})
 
 
@@ -252,6 +252,101 @@ def change_password(request):
 @login_required
 def profile_settings(request):
     user = request.user
+    # Check if the user is a freelancer or a client
+    if user.user_type == 'freelancer':
+        profile = get_object_or_404(FreelancerProfile, user=user)
+        form_class = FreelancerProfileForm
+    elif user.user_type == 'client':
+        profile = get_object_or_404(ClientProfile, user=user)
+        form_class = ClientProfileForm  # Use a ClientProfileForm to handle client profile edits
+    else:
+        profile = None
+
+    if request.method == 'POST':
+        form = form_class(request.POST, request.FILES, instance=profile)  # Handle file uploads
+        if form.is_valid():
+            form.save()
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.save()
+
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('profile_settings')
+    else:
+        form = form_class(instance=profile)
+
+    return render(request, 'Users/profileSettings.html', {'form': form, 'user': user, 'profile': profile})
+
+
+
+def search_freelancers(request):
+    form = FreelancerSearchForm(request.GET or None)
+    freelancers = FreelancerProfile.objects.all()
+
+    if form.is_valid():
+        keyword = form.cleaned_data.get('keyword')
+        skills = form.cleaned_data.get('skills')
+        languages = form.cleaned_data.get('languages')
+
+        if keyword:
+            freelancers = freelancers.filter(
+                Q(user__username__icontains=keyword) |
+                Q(user__first_name__icontains=keyword) |
+                Q(user__last_name__icontains=keyword) |
+                Q(city__icontains=keyword) |
+                Q(country__icontains=keyword) |
+                Q(skills__name__icontains=keyword) |
+                Q(languages__language__icontains=keyword)
+            ).distinct()
+
+        if skills:
+            freelancers = freelancers.filter(skills__in=skills).distinct()
+
+        if languages:
+            freelancers = freelancers.filter(languages__in=languages).distinct()
+
+    return render(request, 'Users/search_freelancers.html', {
+        'form': form,
+        'freelancers': freelancers
+    })
+
+def freelancer_profile(request, id):
+    freelancer = get_object_or_404(FreelancerProfile, user__id=id)
+    return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})
+
+
+
+def search_clients(request):
+    form = ClientSearchForm(request.GET or None)
+    clients = ClientProfile.objects.all()
+
+    if form.is_valid():
+        keyword = form.cleaned_data.get('keyword')
+        country = form.cleaned_data.get('country')
+
+        if keyword:
+            clients = clients.filter(
+                Q(company_name__icontains=keyword) |
+                Q(city__icontains=keyword) |
+                Q(country__icontains=keyword)
+            ).distinct()
+
+        if country:
+            clients = clients.filter(country=country)
+
+    return render(request, 'Users/search_clients.html', {
+        'form': form,
+        'clients': clients
+    })
+    
+    
+
+
+def client_profile(request, id):
+    client = get_object_or_404(ClientProfile, user__id=id)
+    return render(request, 'Users/client_profile.html', {'client': client})
     try:
         freelancer = FreelancerProfile.objects.get(user=user)
         educations = freelancer.educations.all()
