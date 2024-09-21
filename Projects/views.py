@@ -5,7 +5,8 @@ from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
 from .models import Project  
 from django.urls import reverse
 from django.contrib import messages
-from .models import Project
+from .models import Project, Milestone
+from .forms import MilestoneForm
 
 
 def create_project(request):
@@ -15,6 +16,7 @@ def create_project(request):
             project = form.save(commit=False)
             project.client = request.user.clientprofile  
             project.save()
+            print(project.category)
             print("Proyecto creado", project)  # Imprimir el proyecto creado
             return redirect('home_client')  # Redirigir a la lista de proyectos o a una página de éxito
         else:
@@ -29,8 +31,14 @@ def home_client(request):
     # Supongamos que el cliente está autenticado y puedes acceder a su perfil
     client_profile = request.user.clientprofile  # Asumiendo que el usuario tiene un perfil de cliente
     projects = client_profile.projects.all()  # Obtiene todos los proyectos asociados al cliente
+    total_projects = projects.count()  # Número total de proyectos
+    total_balance = client_profile.get_total_budget()  # Presupuesto total
 
-    return render(request, 'Projects/homeClient.html', {'projects': projects})
+    return render(request, 'Projects/homeClient.html', {
+        'projects': projects,
+        'total_projects': total_projects,
+        'total_balance': total_balance,
+    })
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
@@ -59,3 +67,47 @@ def delete_project(request, project_id):
 
     return redirect(reverse('home_client'))
 
+# Crear un nuevo hito para un proyecto específico
+def create_milestone(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.method == 'POST':
+        form = MilestoneForm(request.POST, request.FILES)
+        if form.is_valid():
+            milestone = form.save(commit=False)
+            milestone.project = project
+            milestone.save()
+            return redirect('project_detail', project_id=project.id)
+    else:
+        form = MilestoneForm()
+
+    return render(request, 'Projects/create_milestone.html', {'form': form, 'project': project})
+
+# Editar un hito existente
+def edit_milestone(request, milestone_id):
+    milestone = get_object_or_404(Milestone, id=milestone_id)
+
+    if request.method == 'POST':
+        form = MilestoneForm(request.POST, request.FILES, instance=milestone)
+        if form.is_valid():
+            form.save()
+            return redirect('project_detail', project_id=milestone.project.id)
+    else:
+        form = MilestoneForm(instance=milestone)
+
+    return render(request, 'Projects/edit_milestone.html', {'form': form, 'milestone': milestone})
+
+def milestone_detail_view(request, pk):
+    milestone = get_object_or_404(Milestone, pk=pk)
+    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})
+
+def delete_milestone(request, milestone_id):
+    milestone = get_object_or_404(Milestone, id=milestone_id)
+    project_id = milestone.project.id
+
+    if request.method == "POST":
+        milestone.delete()
+        messages.success(request, "Milestone eliminado exitosamente")
+        return redirect('project_detail', project_id=project_id)
+
+    return redirect(reverse('home_client'))

@@ -35,8 +35,8 @@
                             <div class="col-12">
                                 <div class="form-container">
                                     <label for="id_title" class="form-label">Project Title <span class="text-lime-300">*</span></label>
-                                    <!-- Campo del título -->
-                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Title name here">
+                                    <!-- Campo del título con maxlength de 75 -->
+                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Title name here" maxlength="75">
                                     <!-- Mostrar errores si los hay -->
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
@@ -75,7 +75,14 @@
                                         <div class="error text-danger">{{ form.budget.errors }}</div>
                                     {% endif %}
                                 </div>
-                            </div>                            
+                            </div>
+                            <!-- Campo del Categoria -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    {{ form.category }} <!-- Esto cargará el <select> con las opciones de categorías del formulario -->
+                                </div>
+                            </div>                           
                             <!-- Description with Quill -->
                             <div class="col-12">
                                 <label for="id_description" class="form-label">Description*</label>
@@ -88,14 +95,20 @@
                         </div>
                     </div>
                 </div>
-                <!-- Submit Button -->
-                <div>
+                <!-- Botón de enviar -->
+                <div class="button-group">
                     <button type="submit" class="w-btn-secondary-lg">
-                        Publish Project
+                        Save Project
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
+                    <a href="{% url 'home_client' %}" class="w-btn-danger-lg">
+                        Cancel
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
                 </div>
             </div>
         </form>
@@ -124,11 +137,23 @@
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
         const budget = parseFloat(document.getElementById('id_budget').value);
+        const title = document.getElementById('id_title').value.trim();
+        const maxTitleLength = 75;
 
         // Limpieza de mensajes previos
         document.getElementById('start-date-error').textContent = '';
         document.getElementById('due-date-error').textContent = '';
         document.getElementById('budget-error').textContent = '';
+        
+        // Si no existe el contenedor de errores del título, lo creamos
+        let titleError = document.getElementById('title-error');
+        if (!titleError) {
+            titleError = document.createElement('div');
+            titleError.id = 'title-error';
+            titleError.classList.add('error', 'text-danger');
+            document.getElementById('id_title').parentElement.appendChild(titleError);
+        }
+        titleError.textContent = '';
 
         let isValid = true;
 
@@ -149,6 +174,12 @@
         // Validación del presupuesto (no debe ser negativo)
         if (isNaN(budget) || budget < 0) {
             document.getElementById('budget-error').textContent = 'The budget cannot be negative or empty.';
+            isValid = false;
+        }
+
+        // Validación del título (no debe exceder 75 caracteres)
+        if (title.length > maxTitleLength) {
+            titleError.textContent = `The title cannot exceed ${maxTitleLength} characters.`;
             isValid = false;
         }
 
