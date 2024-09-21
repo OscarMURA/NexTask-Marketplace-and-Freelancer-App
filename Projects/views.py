@@ -156,9 +156,8 @@ def delete_task(request, task_id):
 
     return redirect('milestone_detail', pk=milestone_id)
 
-def task_detail(request, task_id):
-    # Obtiene la tarea especificada por su ID o devuelve un error 404 si no existe
-    task = get_object_or_404(Task, id=task_id)
 
-    # Renderiza la plantilla de detalle de la tarea, pasando la tarea como contexto
-    return render(request, 'tasks/task_detail.html', {'task': task})
+def task_detail(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    return render(request, 'Projects/task_detail.html', {'task': task})
+

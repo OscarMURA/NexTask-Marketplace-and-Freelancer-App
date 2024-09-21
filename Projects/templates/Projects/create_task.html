@@ -88,6 +88,14 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            <!-- Archivo -->
+                            <divclass="col-md-6">
+                                <label for="id_attachments" class="form-container">File (optional)</label>
+                                {{ form.attachments }}
+                                {% if form.attachments.errors %}
+                                    <div class="error text-danger">{{ form.attachments.errors }}</div>
+                                {% endif %}
+                            </div>
 
                             <!-- Descripción -->
                             <div class="col-12">

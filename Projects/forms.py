@@ -36,11 +36,12 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'priority', 'status', 'assigned_to']
+        fields = ['title', 'description', 'due_date', 'priority', 'status', 'assigned_to', 'attachments']
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
             'priority': forms.Select(attrs={'class': 'form-select shadow-none'}),
             'status': forms.Select(attrs={'class': 'form-select shadow-none'}),
             'assigned_to': forms.Select(attrs={'class': 'form-select shadow-none'}),
             'title': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
+            'attachments': forms.FileInput(attrs={'class': 'form-control shadow-none'}),
         }

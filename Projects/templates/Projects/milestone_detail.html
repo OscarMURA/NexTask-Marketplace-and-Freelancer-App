@@ -5,6 +5,22 @@
 <head>
     <!-- django-quill-editor Media -->
     {% include 'django_quill/media.html' %}
+
+    <style>
+        .quill-content {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .quill-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
 </head>
 
 <!-- Page Header -->
@@ -57,7 +73,9 @@
                         <div class="col-12">
                             <div class="form-container">
                                 <label class="form-label">Description</label>
-                                <div>{{ milestone.description.html|safe }}</div>
+                                <div class="quill-content">
+                                    {{ milestone.description.html|safe }}
+                                </div>
                             </div>
                         </div>
                         <!-- Archivo -->
@@ -179,8 +197,8 @@
                             <!-- Itera sobre cada tarea asociada al hito -->
                             {% for task in milestone.tasks.all %}
                                 <li class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
+                                    <div class="d-flex justify-content-between align-items-center"  >
+                                        <div onclick="window.location.href='{% url 'task_detail' task.id %}'" >
                                             <!-- Título de la tarea -->
                                             <h5>{{ task.title }}</h5>
                                             <p class="mb-0"><strong>Due date:</strong> {{ task.due_date }}</p>
@@ -211,32 +229,6 @@
 </div>
 
 
-<style>
-    .readonly-field {
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        padding: 10px;
-        background-color: #f5f5f5;
-        color: #333;
-        cursor: not-allowed;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-    }
 
-    .ql-container {
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        min-height: 300px;
-        padding: 10px;
-    }
-
-    .ql-editor {
-        min-height: 280px;
-        font-size: 16px;
-        border: 2px solid #ccc;
-        border-radius: 10px;
-    }
-</style>
 
 {% endblock %}
