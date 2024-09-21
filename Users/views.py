@@ -252,32 +252,48 @@ def change_password(request):
 @login_required
 def profile_settings(request):
     user = request.user
-    # Check if the user is a freelancer or a client
-    if user.user_type == 'freelancer':
-        profile = get_object_or_404(FreelancerProfile, user=user)
-        form_class = FreelancerProfileForm
-    elif user.user_type == 'client':
-        profile = get_object_or_404(ClientProfile, user=user)
-        form_class = ClientProfileForm  # Use a ClientProfileForm to handle client profile edits
-    else:
-        profile = None
+    try:
+        freelancer = FreelancerProfile.objects.get(user=user)
+        educations = freelancer.educations.all()
+        certifications = Certification.objects.filter(freelancer=freelancer)
+        work_experiences = WorkExperience.objects.filter(freelancer=freelancer)
+        portfolios = Portfolio.objects.filter(freelancer=freelancer)
+        skills = freelancer.skills.all()
+    except FreelancerProfile.DoesNotExist:
+        freelancer = FreelancerProfile.objects.create(user=user)
+        educations = None
+        certifications = None
+        work_experiences = None
+        portfolios = None
+        skills = []
 
     if request.method == 'POST':
-        form = form_class(request.POST, request.FILES, instance=profile)  # Handle file uploads
-        if form.is_valid():
-            form.save()
-            user.username = request.POST.get('username')
-            user.email = request.POST.get('email')
-            user.first_name = request.POST.get('first_name')
-            user.last_name = request.POST.get('last_name')
-            user.save()
+        selected_skills_ids = request.POST.getlist('skills')  # Asume que 'skills' es el nombre de tu campo en el formulario
+        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convierte los IDs a enteros
 
-            messages.success(request, 'Your profile has been updated successfully.')
-            return redirect('profile_settings')
-    else:
-        form = form_class(instance=profile)
+        new_skill_name = request.POST.get('new_skill', '').strip()
+        if new_skill_name:
+            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
+            freelancer.skills.add(new_skill)  # Agrega la nueva habilidad al perfil del freelancer
 
-    return render(request, 'Users/profileSettings.html', {'form': form, 'user': user, 'profile': profile})
+        if selected_skills_ids:
+            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades seleccionadas
+
+        # Guarda otros cambios del perfil
+        freelancer.save()
+        messages.success(request, 'Your profile has been updated successfully.')
+        return redirect('profile_settings')
+
+    return render(request, 'Users/profileSettings.html', {
+        'user': user,
+        'freelancer': freelancer,
+        'educations': educations,
+        'certifications': certifications,
+        'work_experiences': work_experiences,
+        'portfolios': portfolios,
+        'skills': skills,
+        'all_skills': Skill.objects.all()
+    })
 
 
 
