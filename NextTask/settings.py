@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'social_django',
-    'languages',
     'Users',
     'Messaging',
     'Notifications',
@@ -63,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-
+]
 
 
 ROOT_URLCONF = 'NextTask.urls'

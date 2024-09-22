@@ -39,4 +39,3 @@ urlpatterns = [
     path("profileSettings/", views.profile_settings, name="profile_settings"),
 
 ]
-
