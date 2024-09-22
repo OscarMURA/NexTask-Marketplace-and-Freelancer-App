@@ -249,8 +249,6 @@ def create_project_freelancer_association(request, project_id, freelancer_id):
 
 def manage_applications(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-
-    # Obtener todas las aplicaciones al proyecto
     applications = Application.objects.filter(project=project)
 
     if request.method == 'POST':
@@ -260,19 +258,28 @@ def manage_applications(request, project_id):
         # Obtener la aplicación correspondiente
         application = get_object_or_404(Application, id=application_id)
 
-        # Aceptar o rechazar la oferta
         if action == 'accept':
-            application.status = 'accepted'
-        elif action == 'reject':
-            application.status = 'rejected'
+            # Crear el contrato
+            Contract.objects.create(
+                project=application.project,
+                freelancer=application.freelancer
+            )
+            # Eliminar la aplicación después de aceptar
+            application.delete()
+            messages.success(request, f"Freelancer {application.freelancer.user.username} accepted and contract created.")
+            return redirect('home_client')
 
-        application.save()
-        return redirect('manage_applications', project_id=project_id)
+        elif action == 'reject':
+            # Eliminar la aplicación cuando se rechace
+            application.delete()
+            messages.info(request, f"Freelancer {application.freelancer.user.username} rejected.")
+            return redirect('home_client')
 
     return render(request, 'projects/manageApplications.html', {
         'project': project,
         'applications': applications,
     })
+
 
 
 @login_required

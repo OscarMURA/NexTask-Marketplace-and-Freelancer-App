@@ -2,6 +2,11 @@
 {% load static %}
 
 {% block content %}
+<div class="text mt-4">
+    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg"> Back </a>
+</div>
+
+
 <div>
     <h3 class="text-24 fw-bold text-dark-300 mb-2">Manage Applications for Project: {{ project.title }}</h3>
     <div class="overflow-x-auto">
@@ -39,14 +44,12 @@
                         <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;" class="text-dark-200">
                             {{ application.freelancer.user.email }}
                         </td>
-                        <td>
-                            <span class="status-badge {% if application.status == 'pending' %} pending {% elif application.status == 'accepted' %} accepted {% else %} rejected {% endif %}">
-                                {{ application.get_status_display }}
-                            </span>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;" class="text-dark-200">
+                           Pending 
                         </td>
                         <td>
                             <div class="d-flex justify-content-end gap-2">
-                                {% if application.status == 'pending' %}
+                               
                                 <form method="post" class="d-inline-block">
                                     {% csrf_token %}
                                     <input type="hidden" name="application_id" value="{{ application.id }}">
@@ -57,9 +60,7 @@
                                         Reject
                                     </button>
                                 </form>
-                                {% else %}
-                                <p>{{ application.get_status_display }}</p>
-                                {% endif %}
+                                                               
                             </div>
                         </td>
                     </tr>

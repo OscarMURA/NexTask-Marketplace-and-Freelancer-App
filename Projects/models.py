@@ -122,5 +122,17 @@ class Application(models.Model):
     def __str__(self):
         return f"{self.freelancer.user.username} applied to {self.project.title}"
     
+    
+class Contract(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
+    start_date = models.DateField(auto_now_add=True)
+    end_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=[('active', 'Active'), ('completed', 'Completed')], default='active')
+
+    def __str__(self):
+        return f"Contract for {self.freelancer.user.username} on project {self.project.title}"
+
+
 
 

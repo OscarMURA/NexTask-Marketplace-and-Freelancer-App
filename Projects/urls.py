@@ -34,6 +34,8 @@ urlpatterns = [
     path('project/view/<int:project_id>/', views.view_project_search, name='view_project_search'),
     path('project/apply/<int:project_id>/', views.apply_to_project, name='apply_to_project'),
     path('application-confirmation/', views.application_confirmation, name='application_confirmation')
+    
+    
 
 
 ]
