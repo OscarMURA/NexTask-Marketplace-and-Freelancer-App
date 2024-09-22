@@ -213,34 +213,8 @@ class LanguageForm(forms.ModelForm):
         fields = ['languages']
 
 class FreelancerSearchForm(forms.Form):
-    keyword = forms.CharField(
-        required=False,
-        max_length=255,
-        label="Search by keyword (username, city, skills, languages)",
-        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})
-    )
-    skills = forms.ModelMultipleChoiceField(
-        queryset=Skill.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple,
-        label="Skills"
-    )
-
-    languages = forms.ModelChoiceField(
-        queryset=Language.objects.annotate(
-            num_freelancers=Count('freelancerprofile')
-        ).filter(num_freelancers__gt=0),
-        required=False,
-        widget=forms.Select,
-        label="Languages"
-    )
-
-    country = forms.ChoiceField(
-        choices=[(c, c) for c in FreelancerProfile.objects.values_list('country', flat=True).distinct() if c],
-        required=False,
-        widget=forms.Select,
-        label="Country"
-    )
+    keyword = forms.CharField(required=False, label="Search by username")
+    skills = forms.ModelMultipleChoiceField(queryset=Skill.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
 
 class ClientProfileForm(forms.ModelForm):
     class Meta:

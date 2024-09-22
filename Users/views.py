@@ -302,49 +302,26 @@ def search_freelancers(request):
     form = FreelancerSearchForm(request.GET or None)
     freelancers = FreelancerProfile.objects.all()
 
-    # Inicializa las variables como None para evitar errores de variable no definida
-    keyword = None
-    skills = None
-    language = None
-    country = None
+    print("GET request:", request.GET)  # Verificar qué parámetros están siendo enviados
 
     if form.is_valid():
-        # Obtenemos los datos del formulario si están disponibles
-        keyword = form.cleaned_data.get('keyword', None)
-        skills = form.cleaned_data.get('skills', None)
-        language = form.cleaned_data.get('languages', None)
-        country = form.cleaned_data.get('country', None)
-
-        # Aplica el filtro de búsqueda por palabra clave (si se proporciona)
+        # Filtrar por keyword (username)
+        keyword = form.cleaned_data.get('keyword', '').strip()
+        print("Keyword recibido:", keyword)  # Depuración para ver si el campo keyword se está capturando correctamente
         if keyword:
-            freelancers = freelancers.filter(
-                Q(user__username__icontains=keyword) |
-                Q(user__first_name__icontains=keyword) |
-                Q(user__last_name__icontains=keyword) |
-                Q(city__icontains=keyword) |
-                Q(country__icontains=keyword) |
-                Q(skills__name__icontains=keyword) |
-                Q(languages__language__icontains=keyword)
-            ).distinct()
+            freelancers = freelancers.filter(user__username__icontains=keyword)
+            print(f"Freelancers filtrados por keyword '{keyword}':", freelancers.count())
 
-        # Aplica el filtro de skills (si se seleccionan habilidades)
-        if skills:
+        # Filtrar por skills si hay habilidades seleccionadas
+        skills = form.cleaned_data.get('skills')
+        print("Skills recibidas:", skills)  # Depuración para ver si el campo skills se está capturando correctamente
+        if skills and skills.exists():
             freelancers = freelancers.filter(skills__in=skills).distinct()
-
-        # Aplica el filtro de languages (si se selecciona un idioma)
-        if language:
-            freelancers = freelancers.filter(languages__id=language.id).distinct()
-
-        # Aplica el filtro de country (si se selecciona un país)
-        if country:
-            freelancers = freelancers.filter(country__iexact=country).distinct()
+            print(f"Freelancers filtrados por skills '{skills}':", freelancers.count())
 
     return render(request, 'Users/search_freelancers.html', {
         'form': form,
-        'freelancers': freelancers,
-        'selected_skills': skills,
-        'selected_language': language,
-        'selected_country': country
+        'freelancers': freelancers
     })
 
 def freelancer_profile(request, id):

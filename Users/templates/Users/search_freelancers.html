@@ -136,43 +136,36 @@
     }
 </style>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('form').addEventListener('submit', function(event) {
+            var skillsField = document.querySelector('select[name="skills"]');
+            console.log("Campo skills encontrado:", skillsField);  // Depurar si el campo skills es encontrado
+            if (skillsField && !skillsField.value) {
+                console.log("Skills está vacío, deshabilitando campo.");  // Depurar si skills está vacío
+                skillsField.disabled = true;  // Deshabilitar el campo skills si está vacío para que no se envíe en la URL
+            }
+        });
+    });
+</script>
+
 <div class="banner">
     <h1 class="text-left">Freelancer Results</h1>
 </div>
 
-<!-- Barra de búsqueda -->
+<!-- Formulario de búsqueda -->
 <form method="GET" class="search-bar">
-    <!-- Campo de búsqueda por palabra clave -->
+    <!-- Campo de búsqueda por palabra clave (username) -->
     <div class="form-group mx-2" style="flex: 2;">
-        <input type="text" name="q" class="form-control" placeholder="Search by username, skills, country, languages" value="{{ request.GET.q }}">
+        <input type="text" name="keyword" class="form-control" placeholder="Search by username" value="{{ request.GET.keyword }}">
     </div>
 
-    <!-- Botón para seleccionar habilidades (skills) -->
+    <!-- Campo de habilidades (skills) -->
     <div class="form-group mx-2">
         <select name="skills" class="form-control">
             <option value="">Select Skills</option>
             {% for skill in form.skills.field.queryset %}
-                <option value="{{ skill.id }}" {% if request.GET.skills == skill.id %}selected{% endif %}>{{ skill.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- Botón para seleccionar idiomas (languages) -->
-    <div class="form-group mx-2">
-        <select name="languages" class="form-control">
-            <option value="">Select Language</option>
-            {% for language in form.languages.field.queryset %}
-                <option value="{{ language.id }}" {% if request.GET.languages == language.id %}selected{% endif %}>{{ language.language }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <!-- Botón para seleccionar país (country) -->
-    <div class="form-group mx-2">
-        <select name="country" class="form-control">
-            <option value="">Select Country</option>
-            {% for value, name in form.country.field.choices %}
-                <option value="{{ value }}" {% if request.GET.country == value %}selected{% endif %}>{{ name }}</option>
+                <option value="{{ skill.id }}" {% if request.GET.skills == skill.id|stringformat:"s" %}selected{% endif %}>{{ skill.name }}</option>
             {% endfor %}
         </select>
     </div>
