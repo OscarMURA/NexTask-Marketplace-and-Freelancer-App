@@ -94,7 +94,7 @@ def freelancer_signup(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('education_register')  # Redirige al registro de educación
+            return redirect('work_experience_register')  # Redirige al registro de educación
     else:
         form = FreelancerSignUpForm()
     return render(request, 'Users/freelancer_signup.html', {'form': form})
@@ -382,47 +382,5 @@ def search_clients(request):
 def client_profile(request, id):
     client = get_object_or_404(ClientProfile, user__id=id)
     return render(request, 'Users/clientProfile.html', {'client': client})
-    try:
-        freelancer = FreelancerProfile.objects.get(user=user)
-        educations = freelancer.educations.all()
-        certifications = Certification.objects.filter(freelancer=freelancer)
-        work_experiences = WorkExperience.objects.filter(freelancer=freelancer)
-        portfolios = Portfolio.objects.filter(freelancer=freelancer)
-        skills = freelancer.skills.all()
-    except FreelancerProfile.DoesNotExist:
-        freelancer = FreelancerProfile.objects.create(user=user)
-        educations = None
-        certifications = None
-        work_experiences = None
-        portfolios = None
-        skills = []
-
-    if request.method == 'POST':
-        selected_skills_ids = request.POST.getlist('skills')  # Asume que 'skills' es el nombre de tu campo en el formulario
-        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convierte los IDs a enteros
-
-        new_skill_name = request.POST.get('new_skill', '').strip()
-        if new_skill_name:
-            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
-            freelancer.skills.add(new_skill)  # Agrega la nueva habilidad al perfil del freelancer
-
-        if selected_skills_ids:
-            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades seleccionadas
-
-        # Guarda otros cambios del perfil
-        freelancer.save()
-        messages.success(request, 'Your profile has been updated successfully.')
-        return redirect('profile_settings')
-
-    return render(request, 'Users/profileSettings.html', {
-        'user': user,
-        'freelancer': freelancer,
-        'educations': educations,
-        'certifications': certifications,
-        'work_experiences': work_experiences,
-        'portfolios': portfolios,
-        'skills': skills,
-        'all_skills': Skill.objects.all()
-    })
-
+    
 
