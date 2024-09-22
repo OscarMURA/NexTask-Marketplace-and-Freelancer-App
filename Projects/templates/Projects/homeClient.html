@@ -1,37 +1,5 @@
 {% extends 'Users/baseClient.html' %} {% load static %} 
 {% block content %}
-
-<style>
-  .page-links a {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      margin: 0 5px;
-      text-align: center;
-      text-decoration: none;
-      color: #333;
-      background-color: #f0f0f0;
-      border-radius: 50%;  /* Crea el círculo */
-  }
-  
-  .page-links a.current, .page-links a:hover {
-      background-color: #6C63FF;
-      color: white;
-  }
-  
-  .page-arrow {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      color: #333;
-      background-color: transparent;  /* Flechas sin fondo */
-      text-decoration: none;
-  }
-  </style>
-
 <title>Client Dashboard</title>
 <!-- Page Header -->
 <div
@@ -110,7 +78,7 @@
 
     <!-- Proyectos en formato de tarjetas -->
     <div class="row justify-content-center" style="gap: 20px;">
-      {% for project in page_obj %}
+      {% for project in projects %}
       <div 
         class="col-md-4" 
         style="max-width: 300px; flex-grow: 1;" 
@@ -221,6 +189,12 @@
                 </div>
               </div>                                      
             </div>
+            
+
+
+
+
+
           </div>
         </div>
       </div>
@@ -230,28 +204,7 @@
       <p class="text-center w-100">No projects available.</p>
       {% endfor %}
     </div>
-
-    <!-- Paginación -->
-    <div class="pagination d-flex justify-content-center mt-4">
-      <div class="page-links">
-        {% if page_obj.has_previous %}
-          <a href="?page=1" class="page-arrow">&#9664;&#9664;</a>
-          <a href="?page={{ page_obj.previous_page_number }}" class="page-arrow">&#9664;</a>
-        {% endif %}
-
-        {% for num in page_obj.paginator.page_range %}
-          {% if num == page_obj.number %}
-            <a href="?page={{ num }}" class="page-number current">{{ num }}</a>
-          {% else %}
-            <a href="?page={{ num }}" class="page-number">{{ num }}</a>
-          {% endif %}
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}" class="page-arrow">&#9654;</a>
-          <a href="?page={{ page_obj.paginator.num_pages }}" class="page-arrow">&#9654;&#9654;</a>
-        {% endif %}
-      </span>
-    </div>
 </div>
+
+
 {% endblock %}

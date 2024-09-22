@@ -1,0 +1,112 @@
+{% load static %}
+
+
+<!-- Descripción -->
+{% if freelancer.description %}
+    <div class="profile-details">
+        <h2>Description</h2>
+        <p>{{ freelancer.description }}</p>
+    </div>
+{% endif %}
+
+<!-- Historial académico -->
+{% if freelancer.educations.all %}
+    <div class="profile-details">
+        <h2>Education</h2>
+        <ul>
+            {% for education in freelancer.educations.all %}
+                <li>{{ education.degree_obtained }} - {{ education.institution_name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="profile-details">
+        <h2>Education</h2>
+        <p class="no-info">No education details available.</p>
+    </div>
+{% endif %}
+
+<!-- Historial laboral -->
+{% if freelancer.work_experiences.all %}
+    <div class="profile-details">
+        <h2>Work Experience</h2>
+        <ul>
+            {% for work in freelancer.work_experiences.all %}
+                <li>{{ work.position }} - {{ work.company_name }} ({{ work.start_date }} - {{ work.end_date }})</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="profile-details">
+        <h2>Work Experience</h2>
+        <p class="no-info">No work experience available.</p>
+    </div>
+{% endif %}
+
+<!-- Certificaciones -->
+{% if freelancer.certifications.all %}
+    <div class="profile-details">
+        <h2>Certifications</h2>
+        <ul>
+            {% for cert in freelancer.certifications.all %}
+                <li>{{ cert.certification_name }} - {{ cert.issuing_organization }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="profile-details">
+        <h2>Certifications</h2>
+        <p class="no-info">No certifications available.</p>
+    </div>
+{% endif %}
+
+<!-- Portfolio -->
+{% if freelancer.portfolio_set.all %}
+    <div class="profile-details">
+        <h2>Portfolio</h2>
+        <ul>
+            {% for portfolio in freelancer.portfolio_set.all %}
+                <li><a href="{{ portfolio.url }}" target="_blank">{{ portfolio.url }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="profile-details">
+        <h2>Portfolio</h2>
+        <p class="no-info">No portfolio available.</p>
+    </div>
+{% endif %}
+
+<!-- Skills -->
+{% if freelancer.skills.all %}
+    <div class="profile-details">
+        <h2>Skills</h2>
+        <ul>
+            {% for skill in freelancer.skills.all %}
+                <li>{{ skill.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="profile-details">
+        <h2>Skills</h2>
+        <p class="no-info">No skills available.</p>
+    </div>
+{% endif %}
+
+<!-- Languages -->
+{% if freelancer.languages.all %}
+    <div class="profile-details">
+        <h2>Languages</h2>
+        <ul>
+            {% for language in freelancer.languages.all %}
+                <li>{{ language.language }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="profile-details">
+        <h2>Languages</h2>
+        <p class="no-info">No languages available.</p>
+    </div>
+{% endif %}

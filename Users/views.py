@@ -12,6 +12,9 @@ from django.shortcuts import get_object_or_404
 from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
+from Projects.models import *
+from Projects.models import Application
+
 
 
 @never_cache
@@ -56,16 +59,21 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             
             if user is not None:
-                auth_login(request, user)  # Usamos auth_login para iniciar sesión
-                # Redirigir según el tipo de usuario
-                if user.user_type == 'freelancer':
-                    return redirect('home_freelancer')
-                elif user.user_type == 'client':
-                    return redirect('home_client')
+                auth_login(request, user)  # Iniciar sesión
+
+                # Redirigir al 'next' si está en los parámetros, de lo contrario, al dashboard
+                next_url = request.GET.get('next', None)
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    if user.user_type == 'freelancer':
+                        return redirect('home_freelancer')
+                    elif user.user_type == 'client':
+                        return redirect('home_client')
             else:
-                messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
+                messages.error(request, 'Invalid username or password.')
         else:
-            messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
+            messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
 
@@ -95,7 +103,7 @@ def freelancer_signup(request):
 
 
 def work_experience_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         formset = WorkExperienceFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
@@ -120,7 +128,7 @@ def work_experience_register_view(request):
 
 @login_required
 def education_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         formset = EducationFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
@@ -145,7 +153,7 @@ def education_register_view(request):
 
 @login_required
 def certification_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         if 'skip' in request.POST:
             return redirect('portfolio_register')
@@ -169,7 +177,7 @@ def certification_register_view(request):
 
 @login_required
 def portfolio_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         if 'skip' in request.POST:
             return redirect('register_languages')
@@ -195,7 +203,7 @@ def profile_settings(request):
 
 @login_required
 def register_skills_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         # Procesar habilidades predefinidas seleccionadas
         selected_skills_ids = request.POST.get('skills', '')
@@ -227,7 +235,7 @@ def register_skills_view(request):
 
 @login_required
 def register_languages_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         form = LanguageForm(request.POST, instance=freelancer)
         if form.is_valid():
@@ -243,7 +251,18 @@ def home_client(request):
     return render(request, 'Users/homeClient.html')
 
 def home_freelancer(request):
-    return render(request, 'Users/homeFreelancer.html')
+    freelancer_profile = request.user.freelancer_profile  # Obtener el perfil del freelancer
+    # Obtener los contratos activos asociados a este freelancer
+    active_contracts = Contract.objects.filter(freelancer=freelancer_profile, status='active')
+    # Obtener los proyectos asociados a esos contratos
+    projects = [contract.project for contract in active_contracts]
+    total_projects = len(projects)  # Contar proyectos
+
+    return render(request, 'Users/homeFreelancer.html', {
+        'projects': projects,
+        'total_projects': total_projects,
+
+    })
 
 def createProject(request):
     return render(request, 'Users/createProject.html')
@@ -479,46 +498,6 @@ def search_clients(request):
 
 def client_profile(request, id):
     client = get_object_or_404(ClientProfile, user__id=id)
-    return render(request, 'Users/client_profile.html', {'client': client})
-    try:
-        freelancer = FreelancerProfile.objects.get(user=user)
-        educations = freelancer.educations.all()
-        certifications = Certification.objects.filter(freelancer=freelancer)
-        work_experiences = WorkExperience.objects.filter(freelancer=freelancer)
-        portfolios = Portfolio.objects.filter(freelancer=freelancer)
-        skills = freelancer.skills.all()
-    except FreelancerProfile.DoesNotExist:
-        freelancer = FreelancerProfile.objects.create(user=user)
-        educations = None
-        certifications = None
-        work_experiences = None
-        portfolios = None
-        skills = []
+    return render(request, 'Users/clientProfile.html', {'client': client})
+    
 
-    if request.method == 'POST':
-        selected_skills_ids = request.POST.getlist('skills')  # Asume que 'skills' es el nombre de tu campo en el formulario
-        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convierte los IDs a enteros
-
-        new_skill_name = request.POST.get('new_skill', '').strip()
-        if new_skill_name:
-            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
-            freelancer.skills.add(new_skill)  # Agrega la nueva habilidad al perfil del freelancer
-
-        if selected_skills_ids:
-            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades seleccionadas
-
-        # Guarda otros cambios del perfil
-        freelancer.save()
-        messages.success(request, 'Your profile has been updated successfully.')
-        return redirect('profile_settings')
-
-    return render(request, 'Users/profileSettings.html', {
-        'user': user,
-        'freelancer': freelancer,
-        'educations': educations,
-        'certifications': certifications,
-        'work_experiences': work_experiences,
-        'portfolios': portfolios,
-        'skills': skills,
-        'all_skills': Skill.objects.all()
-    })

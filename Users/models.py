@@ -8,7 +8,15 @@ class User(AbstractUser):
         ('client', 'Client'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-    
+
+    @property
+    def is_freelancer(self):
+        return self.user_type == 'freelancer'
+
+    @property
+    def is_client(self):
+        return self.user_type == 'client'
+
 class Language(models.Model):
     language = models.CharField(max_length=100)  # Use CharField instead of LanguageField
 
@@ -23,7 +31,7 @@ class Skill(models.Model):
         return self.name
 
 class FreelancerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='freelancer_profile')
     country = CountryField()  # Campo para seleccionar país
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
@@ -31,6 +39,9 @@ class FreelancerProfile(models.Model):
     skills = models.ManyToManyField(Skill, related_name='freelancers', blank=True)
     languages = models.ManyToManyField('Language', blank=True)
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
 
     def __str__(self):
         return self.user.username
