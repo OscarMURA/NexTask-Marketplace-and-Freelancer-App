@@ -46,7 +46,6 @@ urlpatterns = [
     
     path('client/<int:id>/', views.client_profile, name='client_profile'),
 
-    
 
 ]
 

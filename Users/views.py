@@ -88,7 +88,7 @@ def freelancer_signup(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('education_register')  # Redirige al registro de educación
+            return redirect('work_experience_register')  # Redirige al registro de educación
     else:
         form = FreelancerSignUpForm()
     return render(request, 'Users/freelancer_signup.html', {'form': form})
@@ -270,33 +270,27 @@ def profile_settings(request):
         skills = []
 
     if request.method == 'POST':
-        # Actualizar los datos del usuario (nombre, email, etc.)
-        user.first_name = request.POST.get('first_name', user.first_name)
-        user.last_name = request.POST.get('last_name', user.last_name)
-        user.email = request.POST.get('email', user.email)
-        user.username = request.POST.get('username', user.username)
-        user.save()  # Guarda los datos actualizados del usuario
+        # Verificar qué formulario se está enviando para procesar solo esa sección
+        if 'update_user_info' in request.POST:
+            # Actualizar los datos del usuario (nombre, email, etc.)
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+            user.email = request.POST.get('email', user.email)
+            user.username = request.POST.get('username', user.username)
+            user.save()  # Guarda los datos actualizados del usuario
 
-        # Actualizar los datos del freelancer (teléfono, ciudad, país, etc.)
-        freelancer.phone = request.POST.get('phone', freelancer.phone)
-        freelancer.city = request.POST.get('city', freelancer.city)
-        freelancer.country = request.POST.get('country', freelancer.country)
-        freelancer.address = request.POST.get('address', freelancer.address)
+            # Actualizar los datos del freelancer (teléfono, ciudad, país, etc.)
+            freelancer.phone = request.POST.get('phone', freelancer.phone)
+            freelancer.city = request.POST.get('city', freelancer.city)
+            freelancer.country = request.POST.get('country', freelancer.country)
+            freelancer.address = request.POST.get('address', freelancer.address)
+            freelancer.save()  # Guarda los cambios del freelancer
 
-        # Actualizar las skills
-        selected_skills_ids = request.POST.getlist('skills')
-        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]
+            messages.success(request, "User information updated successfully.")
+            return redirect('profile_settings')
 
-        new_skill_name = request.POST.get('new_skill', '').strip()
-        if new_skill_name:
-            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
-            freelancer.skills.add(new_skill)
-
-        if selected_skills_ids:
-            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades seleccionadas
-
-        # Manejo de la acción según el botón que se presiona
-        if 'add_education' in request.POST:
+        elif 'add_education' in request.POST:
+            # Agregar nueva educación
             if request.POST.get('new_institution_name') and request.POST.get('new_degree_obtained'):
                 new_education = Education(
                     freelancer=freelancer,
@@ -308,7 +302,19 @@ def profile_settings(request):
                 )
                 new_education.save()
 
+        elif 'delete_education' in request.POST:
+            # Eliminar educación
+            education_id = request.POST.get('delete_education')
+            try:
+                education = Education.objects.get(id=education_id, freelancer=freelancer)
+                education.delete()
+                messages.success(request, 'Educational record deleted successfully.')
+            except Education.DoesNotExist:
+                messages.error(request, 'The education record could not be found.')
+            return redirect('profile_settings')
+
         elif 'add_certification' in request.POST:
+            # Agregar nueva certificación
             if request.POST.get('new_certification_name') and request.POST.get('new_issuing_organization'):
                 new_certification = Certification(
                     freelancer=freelancer,
@@ -320,7 +326,19 @@ def profile_settings(request):
                 )
                 new_certification.save()
 
+        elif 'delete_certification' in request.POST:
+            # Eliminar certificación
+            certification_id = request.POST.get('delete_certification')
+            try:
+                certification = Certification.objects.get(id=certification_id, freelancer=freelancer)
+                certification.delete()
+                messages.success(request, 'Certification deleted successfully.')
+            except Certification.DoesNotExist:
+                messages.error(request, 'The certification could not be found.')
+            return redirect('profile_settings')
+
         elif 'add_experience' in request.POST:
+            # Agregar nueva experiencia laboral
             if request.POST.get('new_company_name') and request.POST.get('new_position'):
                 new_experience = WorkExperience(
                     freelancer=freelancer,
@@ -332,7 +350,19 @@ def profile_settings(request):
                 )
                 new_experience.save()
 
+        elif 'delete_experience' in request.POST:
+            # Eliminar experiencia laboral
+            experience_id = request.POST.get('delete_experience')
+            try:
+                experience = WorkExperience.objects.get(id=experience_id, freelancer=freelancer)
+                experience.delete()
+                messages.success(request, 'Work experience deleted successfully.')
+            except WorkExperience.DoesNotExist:
+                messages.error(request, 'The work experience could not be found.')
+            return redirect('profile_settings')
+
         elif 'add_portfolio' in request.POST:
+            # Agregar nuevo portafolio
             if request.POST.get('new_portfolio_url') and request.POST.get('new_portfolio_description'):
                 new_portfolio = Portfolio(
                     freelancer=freelancer,
@@ -341,38 +371,8 @@ def profile_settings(request):
                 )
                 new_portfolio.save()
 
-        # Eliminar educación
-        elif 'delete_education' in request.POST:
-            education_id = request.POST.get('delete_education')
-            try:
-                education = Education.objects.get(id=education_id, freelancer=freelancer)
-                education.delete()
-                messages.success(request, 'Educational record deleted successfully.')
-            except Education.DoesNotExist:
-                messages.error(request, 'The education record could not be found.')
-
-        # Eliminar certificación
-        elif 'delete_certification' in request.POST:
-            certification_id = request.POST.get('delete_certification')
-            try:
-                certification = Certification.objects.get(id=certification_id, freelancer=freelancer)
-                certification.delete()
-                messages.success(request, 'Certification deleted successfully.')
-            except Certification.DoesNotExist:
-                messages.error(request, 'The certification could not be found.')
-
-        # Eliminar experiencia laboral
-        elif 'delete_experience' in request.POST:
-            experience_id = request.POST.get('delete_experience')
-            try:
-                experience = WorkExperience.objects.get(id=experience_id, freelancer=freelancer)
-                experience.delete()
-                messages.success(request, 'Work experience deleted successfully.')
-            except WorkExperience.DoesNotExist:
-                messages.error(request, 'The work experience could not be found.')
-
-        # Eliminar portafolio
         elif 'delete_portfolio' in request.POST:
+            # Eliminar portafolio
             portfolio_id = request.POST.get('delete_portfolio')
             try:
                 portfolio = Portfolio.objects.get(id=portfolio_id, freelancer=freelancer)
@@ -380,6 +380,18 @@ def profile_settings(request):
                 messages.success(request, 'Portfolio entry deleted successfully.')
             except Portfolio.DoesNotExist:
                 messages.error(request, 'The portfolio entry could not be found.')
+            return redirect('profile_settings')
+        
+        selected_skills_ids = request.POST.getlist('skills')  # Asume que 'skills' es el nombre de tu campo en el formulario
+        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convierte los IDs a enteros
+        
+        new_skill_name = request.POST.get('new_skill', '').strip()
+        if new_skill_name:
+            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
+            freelancer.skills.add(new_skill)  # Agrega la nueva habilidad al perfil del freelancer
+
+        if selected_skills_ids:
+            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades seleccionadas
 
         freelancer.save()  # Guarda los cambios del freelancer
         return redirect('profile_settings')
