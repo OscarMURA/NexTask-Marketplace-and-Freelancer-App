@@ -7,10 +7,7 @@
 
 
 <div class="container">
-    <div class="text mt-4">
-        <a href="{% url 'manage_applications' project.id %}" class="w-btn-danger-lg"> Back </a>
-    </div>
-
+    
     <!-- Encabezado del perfil -->
     {% include 'Users/profile_header.html' %}
 
@@ -20,11 +17,6 @@
 
 </div>
 
-<!-- Botón para regresar a la búsqueda de freelancers -->
-
-<div class="button-group">
-    <a href="{% url 'manage_applications' project.id %}" class="w-btn-danger-lg">&larr; Manage Aplications </a>
-</div>
 
 
 

@@ -129,7 +129,7 @@ def create_task(request, milestone_id):
     freelancers = [contract.freelancer for contract in active_contracts]
     
     if request.method == 'POST':
-        form = TaskForm(request.POST, freelancers=freelancers)  # Pasar los freelancers al formulario
+        form = TaskForm(request.POST,request.FILES, freelancers=freelancers)  # Pasar los freelancers al formulario
         if form.is_valid():
             task = form.save(commit=False)
             task.milestone = milestone  # Asociar la tarea con el hito
@@ -156,7 +156,7 @@ def edit_task(request, task_id):
     freelancers = [contract.freelancer for contract in active_contracts]
 
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, request.FILES, instance=task)
         if form.is_valid():
             form.save()
             return redirect('milestone_detail', pk=task.milestone.id)
@@ -413,7 +413,7 @@ def edit_task_freelancer(request, task_id):
 
     # Filtrar tareas solo para el freelancer
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST,request.FILES, instance=task)
         if form.is_valid():
             form.save()
             return redirect('milestone_detail_freelancer', pk=milestone.id)  # Redirigir a los hitos del freelancer
@@ -439,4 +439,43 @@ def task_detail_view_freelancer(request, task_id):
         'task': task
     })
 
+
+def manage_applications_freelancer(request):
+    # Filtrar solicitudes donde el freelancer es el usuario actual
+    applications = ProjectFreelancer.objects.filter(freelancer=request.user.freelancer_profile, status='pending')
+
+    if request.method == 'POST':
+        application_id = request.POST.get('application_id')
+        action = request.POST.get('action')
+        application = get_object_or_404(ProjectFreelancer, id=application_id)
+
+        if action == 'accept':
+            # Verificar si ya existe un contrato
+            if not Contract.objects.filter(project=application.project, freelancer=application.freelancer).exists():
+                # Crear el contrato
+                Contract.objects.create(project=application.project, freelancer=application.freelancer)
+            else:
+                # Notificar que ya existe el contrato (implementa como desees)
+                pass
+            
+            application.delete()  # Eliminar la solicitud después de aceptar
+
+        elif action == 'reject':
+            application.delete()  # Eliminar la solicitud después de rechazar
+
+        return redirect('manage_applications_freelancer')
+
+    return render(request, 'Projects/manage_applications_freelancer.html', {
+        'applications': applications,
+    })
+
+
+def freelancers_in_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    freelancers = Contract.objects.filter(project=project)
+
+    return render(request, 'Projects/freelancers_in_project.html', {
+        'project': project,
+        'freelancers': freelancers,
+    })
 
