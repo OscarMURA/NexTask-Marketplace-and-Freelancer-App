@@ -42,69 +42,8 @@
     <div class="col-xl-8">
         <div class="d-flex flex-column gap-4">
             <!-- Task Info Card -->
-            <div class="gig-info-card">
-                <div class="gig-info-header">
-                    <h4 class="text-18 fw-semibold text-dark-300">Task Info</h4>
-                </div>
-                <div class="gig-info-body bg-white">
-                    <div class="row g-4">
-                        <!-- Título de la tarea -->
-                        <div class="col-12">
-                            <div class="form-container">
-                                <label class="form-label">Task Title</label>
-                                <div class="form-control shadow-none readonly-field">{{ task.title }}</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Fecha de vencimiento -->
-                        <div class="col-md-6">
-                            <div class="form-container">
-                                <label class="form-label">Due Date</label>
-                                <div class="form-control shadow-none readonly-field">{{ task.due_date }}</div>
-                            </div>
-                        </div>
-                        <!-- Prioridad -->
-                        <div class="col-md-6">
-                            <div class="form-container">
-                                <label class="form-label">Priority</label>
-                                <div class="form-control shadow-none readonly-field">{{ task.get_priority_display }}</div>
-                            </div>
-                        </div>
-                        <!-- Estado -->
-                        <div class="col-md-6">
-                            <div class="form-container">
-                                <label class="form-label">Status</label>
-                                <div class="form-control shadow-none readonly-field">{{ task.get_status_display }}</div>
-                            </div>
-                        </div>
-                        <!-- Asignación -->
-                        <div class="col-md-6">
-                            <div class="form-container">
-                                <label class="form-label">Assigned to</label>
-                                <div class="form-control shadow-none readonly-field">
-                                    {% if task.assigned_to %}
-                                        {{ task.assigned_to.user.username }}
-                                    {% else %}
-                                        Not assigned
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Descripción -->
-                        <div class="col-12">
-                            <div class="form-container">
-                                <label class="form-label">Description</label>
-                                <div class="quill-content">
-                                    {{ task.description.html|safe }}
-                                </div>
-                            </div>
-                        </div>
-                                           
-                    </div>
-                </div>
-            </div>
             
+            {% include 'Projects/task_info_view.html' %}
 
              <!-- Acciones -->
             <div class="text mt-4">
