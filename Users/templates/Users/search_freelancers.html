@@ -17,15 +17,6 @@
         margin: 0;
     }
 
-    .form-inline .form-group {
-        margin-bottom: 15px;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-
     .search-bar {
         padding: 20px;
         background-color: #f9f9f9;
@@ -46,6 +37,39 @@
         padding: 10px 20px;
     }
 
+    .skill-button {
+        background-color: #635fd9;
+        border: 1px solid #635fd9;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        margin: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .skill-button:hover {
+        background-color: #635fd9;
+    }
+
+    .form-control {
+        border-radius: 20px;
+        padding: 10px;
+    }
+
+    .btn-primary {
+        background-color: #635fd9;
+        border-color: #635fd9;
+        border-radius: 20px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #635fd9;
+    }
+
     .card {
         padding: 20px;
         border-radius: 10px;
@@ -62,13 +86,12 @@
     .card img {
         width: 150px;
         height: 150px;
-        border-radius: 50%; /* Asegura que la imagen sea un círculo */
-        margin-bottom: 15px;
+        border-radius: 50%;
         object-fit: cover;
         margin-left: auto;
         margin-right: auto;
         display: block;
-        border: 2px solid #ddd; /* Añade un borde para resaltar la imagen */
+        border: 2px solid #ddd;
     }
 
     .card-body {
@@ -79,7 +102,7 @@
         margin-top: 20px;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around; /* Asegura un buen espaciado entre las tarjetas */
+        justify-content: space-around;
     }
 
     .col-md-4 {
@@ -89,58 +112,76 @@
     }
 
     .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        width: 100%; /* Asegura que el botón ocupe todo el ancho dentro de la tarjeta */
+        background-color: #635fd9;
+        border-color: #635fd9;
+        width: 100%;
         max-width: 200px;
-        margin: 10px auto; /* Centra el botón */
+        margin: 10px auto;
+    }
+
+    /* Estilo para las etiquetas seleccionadas */
+    .selected-tag {
+        background-color: #6c757d;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        margin-right: 5px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .selected-tag .remove-tag {
+        margin-left: 8px;
+        cursor: pointer;
     }
 </style>
 
 <div class="banner">
-    <h1 class="text-center">Freelancer Results</h1>
+    <h1 class="text-left">Freelancer Results</h1>
 </div>
 
 <!-- Barra de búsqueda -->
-<div class="container mt-4">
-    <form method="GET" class="search-bar">
-        <!-- Barra de búsqueda por palabra clave -->
-        <div class="form-group mx-2" style="flex: 2;">
-            <input type="text" name="q" class="form-control" placeholder="Search by username, skills, country, languages..." value="{{ request.GET.q }}">
-        </div>
+<form method="GET" class="search-bar">
+    <!-- Campo de búsqueda por palabra clave -->
+    <div class="form-group mx-2" style="flex: 2;">
+        <input type="text" name="q" class="form-control" placeholder="Search by username, skills, country, languages" value="{{ request.GET.q }}">
+    </div>
 
-        <div class="form-group mx-2">
-            <select name="skills" class="form-control">
-                <option value="">Skills</option>
-                {% for skill in skills %}
-                    <option value="{{ skill.id }}" {% if request.GET.skills == skill.id %}selected{% endif %}>{{ skill.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    <!-- Botón para seleccionar habilidades (skills) -->
+    <div class="form-group mx-2">
+        <select name="skills" class="form-control">
+            <option value="">Select Skills</option>
+            {% for skill in form.skills.field.queryset %}
+                <option value="{{ skill.id }}" {% if request.GET.skills == skill.id %}selected{% endif %}>{{ skill.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-        <div class="form-group mx-2">
-            <select name="languages" class="form-control">
-                <option value="">Languages</option>
-                {% for language in languages %}
-                    <option value="{{ language.id }}" {% if request.GET.languages == language.id %}selected{% endif %}>{{ language.language }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    <!-- Botón para seleccionar idiomas (languages) -->
+    <div class="form-group mx-2">
+        <select name="languages" class="form-control">
+            <option value="">Select Language</option>
+            {% for language in form.languages.field.queryset %}
+                <option value="{{ language.id }}" {% if request.GET.languages == language.id %}selected{% endif %}>{{ language.language }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-        <div class="form-group mx-2">
-            <select name="country" class="form-control">
-                <option value="">Country</option>
-                {% for country in countries %}
-                    <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    <!-- Botón para seleccionar país (country) -->
+    <div class="form-group mx-2">
+        <select name="country" class="form-control">
+            <option value="">Select Country</option>
+            {% for value, name in form.country.field.choices %}
+                <option value="{{ value }}" {% if request.GET.country == value %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-        <button type="submit" class="btn btn-primary mx-2">Find Freelancer</button>
-    </form>
-</div>
+    <!-- Botón de búsqueda -->
+    <button type="submit" class="btn btn-primary mx-2">Find Freelancer</button>
+</form>
 
-<!-- Resultados de Freelancers -->
+<!-- Mostrar los resultados de los freelancers -->
 <div class="container mt-5">
     <div class="row">
         {% for freelancer in freelancers %}
@@ -156,16 +197,6 @@
                     <h5 class="card-title">{{ freelancer.user.username }}</h5>
                     <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
                     <p class="card-text"><strong>Country:</strong> {{ freelancer.country }}</p>
-                    <p class="card-text"><strong>Skills:</strong> 
-                        {% for skill in freelancer.skills.all %}
-                            <span class="badge badge-primary">{{ skill.name }}</span>
-                        {% endfor %}
-                    </p>
-                    <p class="card-text"><strong>Languages:</strong> 
-                        {% for language in freelancer.languages.all %}
-                            <span class="badge badge-secondary">{{ language.language }}</span>
-                        {% endfor %}
-                    </p>
                     <a href="{% url 'freelancer_profile' freelancer.user.id %}" class="btn btn-primary">View Profile</a>
                 </div>
             </div>
@@ -175,4 +206,5 @@
         {% endfor %}
     </div>
 </div>
+
 {% endblock %}
