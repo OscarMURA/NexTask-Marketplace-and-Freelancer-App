@@ -186,6 +186,18 @@
                 <div class="quill-content" >{{ project.description.html|safe }}</div>
               </div>
             </div>
+
+
+
+            <div class="text mt-4">
+              <div class="button-group">
+                <a href="{% url 'search_freelancer' project.id  %}" class="w-btn-secondary-lg">Search Freelancer</a>
+                <a href="#" class="w-btn-danger-lg"> Accept Freelancer </a>
+              </div>
+              <p>.</p>
+              <p></p>
+            </div>
+
           </div>
         </div>
       </div>
