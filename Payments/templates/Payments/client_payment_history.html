@@ -1,0 +1,19 @@
+<h2>Historial de Pagos</h2>
+<table>
+    <tr>
+        <th>Proyecto</th>
+        <th>Freelancer</th>
+        <th>Monto</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+    </tr>
+    {% for payment in payments %}
+    <tr>
+        <td>{{ payment.project.title }}</td>
+        <td>{{ payment.freelancer.user.username }}</td>
+        <td>{{ payment.amount }}</td>
+        <td>{{ payment.status }}</td>
+        <td>{{ payment.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
