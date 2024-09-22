@@ -242,3 +242,31 @@ def create_project_freelancer_association(request, project_id, freelancer_id):
 
     # Redirigir a la vista de detalles del proyecto
     return redirect('project_detail', project_id=project.id)
+
+
+def manage_applications(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    # Obtener todas las aplicaciones al proyecto
+    applications = Application.objects.filter(project=project)
+
+    if request.method == 'POST':
+        application_id = request.POST.get('application_id')
+        action = request.POST.get('action')
+
+        # Obtener la aplicación correspondiente
+        application = get_object_or_404(Application, id=application_id)
+
+        # Aceptar o rechazar la oferta
+        if action == 'accept':
+            application.status = 'accepted'
+        elif action == 'reject':
+            application.status = 'rejected'
+
+        application.save()
+        return redirect('manage_applications', project_id=project_id)
+
+    return render(request, 'projects/manage_applications.html', {
+        'project': project,
+        'applications': applications,
+    })
