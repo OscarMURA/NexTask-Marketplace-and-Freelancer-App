@@ -43,5 +43,9 @@ urlpatterns = [
 
     path('tasks/<int:task_id>/', views.task_detail_view_freelancer, name='task_detail_freelancer'),
 
+    path('projects/freelancer/manage_applications/', views.manage_applications_freelancer, name='manage_applications_freelancer'),
+    
+    path('projects/<int:project_id>/freelancers/',  views.freelancers_in_project, name='freelancers_in_project'),
+
 
 ]

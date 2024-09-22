@@ -1,3 +1,6 @@
+{% load static %}
+
+
 <div class="gig-info-card">
     <div class="gig-info-header">
         <h4 class="text-18 fw-semibold text-dark-300">Task Info</h4>
@@ -56,6 +59,7 @@
                     <div class="error text-danger">{{ form.attachments.errors }}</div>
                 {% endif %}
             </div>
+            
             <!-- Description -->
             <div class="col-12">
                 <label for="id_description" class="form-label">Description</label>
