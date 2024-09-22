@@ -1,44 +1,21 @@
 {% extends 'NextTask/base.html' %}
-{% load static %}
 
 {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title text-center" style="color: #1A1773; font-weight: bold;">{{ project.title }}</h2>
-                    
-                    <div class="text-center my-3">
-                        <p class="card-text">
-                            <strong>Client:</strong> 
-                            <a href="{% url 'client_profile' project.client.user.id %}" class="text-decoration-none" style="color: #635FD9;">
-                                {{ project.client.user.username }}
-                            </a>
-                        </p>
-                        <p class="card-text"><strong>Category:</strong> {{ project.get_category_display }}</p>
-                        <p class="card-text"><strong>Start Date:</strong> {{ project.start_date }}</p>
-                        <p class="card-text"><strong>Due Date:</strong> {{ project.due_date }}</p>
-                        <p class="card-text"><strong>Budget:</strong> ${{ project.budget }}</p>
-                    </div>
+    <h2>{{ project.title }}</h2>
+    <p>{{ project.description }}</p>
+    <p><strong>Category:</strong> {{ project.get_category_display }}</p>
+    <p><strong>Client:</strong> {{ project.client.user.username }}</p>
+    <p><strong>Budget:</strong> {{ project.budget }}</p>
 
-                    <!-- Mostrar descripción usando Quill renderizado -->
-                    <div class="mt-4">
-                        <h4 style="color: #1A1773;">Description:</h4>
-                        <div class="quill-content" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                            {{ project.description|safe }}
-                        </div>
-                    </div>
-
-                    <!-- Botón para regresar a la búsqueda de proyectos -->
-                    <div class="mt-5 text-center">
-                        <a href="{% url 'search_projects' %}" class="btn btn-secondary" style="padding: 10px 20px; border-radius: 5px; background-color: #635FD9; color: white; text-decoration: none;">
-                            Back to Search Projects
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Botón para aplicar al proyecto -->
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'apply_to_project' project.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Apply to this Project</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">Login to Apply</a>
+    {% endif %}
 </div>
 {% endblock %}

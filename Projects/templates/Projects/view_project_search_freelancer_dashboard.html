@@ -1,0 +1,82 @@
+{% extends 'Users/baseFreelancer.html' %}
+
+
+{% load static %}
+
+{% if messages %}
+    <div class="container mt-4">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Script to auto-dismiss messages after 5 seconds -->
+    <script>
+        setTimeout(function() {
+            var alert = document.querySelector('.alert');
+            if (alert) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);  // After fading out, remove from DOM
+            }
+        }, 5000); // 5000 ms = 5 seconds
+    </script>
+{% endif %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center" style="color: #1A1773; font-weight: bold;">{{ project.title }}</h2>
+                    
+                    <div class="text-center my-3">
+                        <p class="card-text">
+                            <strong>Client:</strong> 
+                            <a href="{% url 'client_profile' project.client.user.id %}" class="text-decoration-none" style="color: #635FD9;">
+                                {{ project.client.user.username }}
+                            </a>
+                        </p>
+                        <p class="card-text"><strong>Category:</strong> {{ project.get_category_display }}</p>
+                        <p class="card-text"><strong>Start Date:</strong> {{ project.start_date }}</p>
+                        <p class="card-text"><strong>Due Date:</strong> {{ project.due_date }}</p>
+                        <p class="card-text"><strong>Budget:</strong> ${{ project.budget }}</p>
+
+                        <!-- Mostrar descripción usando Quill renderizado -->
+                        <div class="mt-4">
+                            <h4 style="color: #1A1773;">Description:</h4>
+                            <div class="quill-content" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                {{ project.description|safe }}
+                            </div>
+                        </div>
+
+                        <div class="mt-5 text-center">
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.is_freelancer %}
+                                    <form method="POST" action="{% url 'apply_to_project' project.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;">Apply to Project</button>
+                                    </form>
+                                {% else %}
+                                    <p class="text-danger">Only freelancers can apply to projects.</p>
+                                {% endif %}
+                            {% else %}
+                                <!-- Siempre mostrar el botón y redirigir a login si el usuario no está autenticado -->
+                                <a href="{% url 'login' %}?next={% url 'apply_to_project' project.id %}" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;">Apply to Project</a>
+                                <a href="{% url 'register_freelancer' %}" class="btn btn-secondary" style="padding: 10px 20px;">Register as Freelancer</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
