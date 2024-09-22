@@ -122,24 +122,38 @@ def delete_milestone(request, milestone_id):
 # Vista para crear una nueva tarea
 def create_task(request, milestone_id):
     milestone = get_object_or_404(Milestone, id=milestone_id)
+    project = milestone.project  # Obtener el proyecto del hito
+
+    # Obtener todos los freelancers que tienen un contrato activo en este proyecto
+    active_contracts = Contract.objects.filter(project=project, status='active')
+    freelancers = [contract.freelancer for contract in active_contracts]
     
     if request.method == 'POST':
-        form = TaskForm(request.POST)
+        form = TaskForm(request.POST, freelancers=freelancers)  # Pasar los freelancers al formulario
         if form.is_valid():
             task = form.save(commit=False)
             task.milestone = milestone  # Asociar la tarea con el hito
             task.save()
             return redirect('milestone_detail', pk=milestone.id)
     else:
-        form = TaskForm()
+        form = TaskForm(freelancers=freelancers)  # Pasar los freelancers al formulario
 
-    # Pasar el hito al contexto
-    return render(request, 'Projects/create_task.html', {'form': form, 'milestone': milestone})
+    # Pasar el hito y los freelancers al contexto
+    return render(request, 'Projects/create_task.html', {
+        'form': form,
+        'milestone': milestone,
+    })
 
 
 # Vista para editar una tarea existente
 def edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
+    milestone = task.milestone  # Obtener el hito asociado
+    project = milestone.project  # Obtener el proyecto asociado al hito
+
+    # Obtener todos los freelancers que tienen un contrato activo en este proyecto
+    active_contracts = Contract.objects.filter(project=project, status='active')
+    freelancers = [contract.freelancer for contract in active_contracts]
 
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
@@ -149,7 +163,14 @@ def edit_task(request, task_id):
     else:
         form = TaskForm(instance=task)
 
-    return render(request, 'Projects/edit_task.html', {'form': form, 'task': task})
+    # Sobrescribir el queryset del campo assigned_to para mostrar solo los freelancers con contrato activo
+    form.fields['assigned_to'].queryset = FreelancerProfile.objects.filter(id__in=[freelancer.id for freelancer in freelancers])
+
+    return render(request, 'Projects/edit_task.html', {
+        'form': form,
+        'task': task
+    })
+
 
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)

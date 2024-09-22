@@ -2,6 +2,8 @@
 from django import forms
 from .models import Project,Milestone, Task
 from django_quill.forms import QuillFormField
+from Users.models import FreelancerProfile 
+
 
 
 class ProjectForm(forms.ModelForm):
@@ -45,3 +47,11 @@ class TaskForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
             'attachments': forms.FileInput(attrs={'class': 'form-control shadow-none'}),
         }
+    def __init__(self, *args, **kwargs):
+        # Obtener el argumento 'freelancers' que será pasado desde la vista
+        freelancers = kwargs.pop('freelancers', None)
+        super(TaskForm, self).__init__(*args, **kwargs)
+
+        if freelancers is not None:
+            # Filtrar el campo 'assigned_to' para mostrar solo los freelancers del contrato
+            self.fields['assigned_to'].queryset = FreelancerProfile.objects.filter(id__in=[freelancer.id for freelancer in freelancers])
