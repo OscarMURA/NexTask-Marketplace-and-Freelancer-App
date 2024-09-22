@@ -9,6 +9,7 @@ from django_select2.forms import Select2MultipleWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django_select2.forms import *
+from django.db.models import Count
 
 # Base class for User Signup
 class UserSignUpForm(UserCreationForm):
@@ -212,24 +213,8 @@ class LanguageForm(forms.ModelForm):
         fields = ['languages']
 
 class FreelancerSearchForm(forms.Form):
-    keyword = forms.CharField(
-        required=False,
-        max_length=255,
-        label="Search by keyword (username, city, skills, languages)",
-        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})
-    )
-    skills = forms.ModelMultipleChoiceField(
-        queryset=Skill.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple,
-        label="Skills"
-    )
-    languages = forms.ModelMultipleChoiceField(
-        queryset=Language.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple,
-        label="Languages"
-    )
+    keyword = forms.CharField(required=False, label="Search by username")
+    skills = forms.ModelMultipleChoiceField(queryset=Skill.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
 
 class ClientProfileForm(forms.ModelForm):
     class Meta:

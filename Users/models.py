@@ -2,9 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_countries.fields import CountryField
 
-
-
-
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
         ('freelancer', 'Freelancer'),
@@ -26,6 +23,7 @@ class Language(models.Model):
     def __str__(self):
         return self.language
 
+
 class Skill(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -45,7 +43,9 @@ class FreelancerProfile(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
-
+    def __str__(self):
+        return self.user.username
+        
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
