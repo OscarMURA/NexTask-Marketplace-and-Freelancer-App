@@ -10,6 +10,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
 from django.shortcuts import get_object_or_404
 from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
+from Projects.models import *
+from Projects.models import Application
+
 
 
 
@@ -54,16 +57,21 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             
             if user is not None:
-                auth_login(request, user)  # Usamos auth_login para iniciar sesión
-                # Redirigir según el tipo de usuario
-                if user.user_type == 'freelancer':
-                    return redirect('home_freelancer')
-                elif user.user_type == 'client':
-                    return redirect('home_client')
+                auth_login(request, user)  # Iniciar sesión
+
+                # Redirigir al 'next' si está en los parámetros, de lo contrario, al dashboard
+                next_url = request.GET.get('next', None)
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    if user.user_type == 'freelancer':
+                        return redirect('home_freelancer')
+                    elif user.user_type == 'client':
+                        return redirect('home_client')
             else:
-                messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
+                messages.error(request, 'Invalid username or password.')
         else:
-            messages.error(request, 'Invalid username or password.')  # Mensaje en inglés
+            messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
 
@@ -93,7 +101,7 @@ def freelancer_signup(request):
 
 
 def work_experience_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         formset = WorkExperienceFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
@@ -118,7 +126,7 @@ def work_experience_register_view(request):
 
 @login_required
 def education_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         formset = EducationFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
@@ -143,7 +151,7 @@ def education_register_view(request):
 
 @login_required
 def certification_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         if 'skip' in request.POST:
             return redirect('portfolio_register')
@@ -167,7 +175,7 @@ def certification_register_view(request):
 
 @login_required
 def portfolio_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         if 'skip' in request.POST:
             return redirect('register_languages')
@@ -193,7 +201,7 @@ def profile_settings(request):
 
 @login_required
 def register_skills_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         # Procesar habilidades predefinidas seleccionadas
         selected_skills_ids = request.POST.get('skills', '')
@@ -225,7 +233,7 @@ def register_skills_view(request):
 
 @login_required
 def register_languages_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         form = LanguageForm(request.POST, instance=freelancer)
         if form.is_valid():
@@ -362,7 +370,7 @@ def search_clients(request):
 
 def client_profile(request, id):
     client = get_object_or_404(ClientProfile, user__id=id)
-    return render(request, 'Users/client_profile.html', {'client': client})
+    return render(request, 'Users/clientProfile.html', {'client': client})
     try:
         freelancer = FreelancerProfile.objects.get(user=user)
         educations = freelancer.educations.all()
@@ -405,3 +413,5 @@ def client_profile(request, id):
         'skills': skills,
         'all_skills': Skill.objects.all()
     })
+
+

@@ -1,0 +1,30 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+
+<!-- This is to view the profile in freelancer in manage-->
+{% block content %}
+
+<div class="container">
+    <div class="text mt-4">
+        <a href="{% url 'manage_applications' project.id %}" class="w-btn-danger-lg"> Back </a>
+    </div>
+
+    <!-- Encabezado del perfil -->
+    {% include 'Users/profile_header.html' %}
+
+
+    <!-- Detalles del perfil -->
+    {% include 'Users/freelancer_details.html' %}
+
+</div>
+
+<!-- Botón para regresar a la búsqueda de freelancers -->
+
+<div class="button-group">
+    <a href="{% url 'manage_applications' project.id %}" class="w-btn-danger-lg">&larr; Manage Aplications </a>
+</div>
+
+
+
+
+{% endblock %}
