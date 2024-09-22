@@ -1,0 +1,77 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+
+{% block content %}
+<div class="text mt-4">
+    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg"> Back </a>
+</div>
+
+
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">Manage Applications for Project: {{ project.title }}</h3>
+    <div class="overflow-x-auto">
+        <div class="w-100">
+            <table class="w-100 dashboard-table">
+                <thead class="pb-3">
+                    <tr>
+                        <th scope="col" class="ps-4">Freelancer</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end pe-5">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                    <tr>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;">
+                            <div class="d-flex gap-3 align-items-center project-name">
+                                <div class="rounded-3">
+                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Avatar" class="img-fluid">
+                                </div>
+                                <div>
+                                    <p class="text-dark-200">{{ application.freelancer.user.username }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;" class="text-dark-200">
+                            {{ application.freelancer.user.first_name }} {{ application.freelancer.user.last_name }}
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;" class="text-dark-200">
+                            {{ application.freelancer.phone }}
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;" class="text-dark-200">
+                            {{ application.freelancer.user.email }}
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;" class="text-dark-200">
+                           Pending 
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-end gap-2">
+                               
+                                <form method="post" class="d-inline-block">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="application_id" value="{{ application.id }}">
+                                    <button type="submit" name="action" value="accept" class="dashboard-action-btn">
+                                        Accept
+                                    </button>
+                                    <button type="submit" name="action" value="reject" class="dashboard-action-btn">
+                                        Reject
+                                    </button>
+                                </form>
+                                                               
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No applications available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

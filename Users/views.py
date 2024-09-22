@@ -101,7 +101,7 @@ def freelancer_signup(request):
 
 
 def work_experience_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         formset = WorkExperienceFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
@@ -126,7 +126,7 @@ def work_experience_register_view(request):
 
 @login_required
 def education_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         formset = EducationFormSet(request.POST, instance=freelancer)
         if formset.is_valid():
@@ -151,7 +151,7 @@ def education_register_view(request):
 
 @login_required
 def certification_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         if 'skip' in request.POST:
             return redirect('portfolio_register')
@@ -175,7 +175,7 @@ def certification_register_view(request):
 
 @login_required
 def portfolio_register_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         if 'skip' in request.POST:
             return redirect('register_languages')
@@ -201,7 +201,7 @@ def profile_settings(request):
 
 @login_required
 def register_skills_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         # Procesar habilidades predefinidas seleccionadas
         selected_skills_ids = request.POST.get('skills', '')
@@ -233,7 +233,7 @@ def register_skills_view(request):
 
 @login_required
 def register_languages_view(request):
-    freelancer = request.user.freelancerprofile
+    freelancer = request.user.freelancer_profile
     if request.method == "POST":
         form = LanguageForm(request.POST, instance=freelancer)
         if form.is_valid():

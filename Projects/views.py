@@ -2,14 +2,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
+
 from .models import *
 from django.urls import reverse
 from django.contrib import messages
-from .models import Project, Milestone
-from .forms import MilestoneForm
-from django.core.paginator import Paginator
 from .models import Project, Milestone,Task
 from .forms import MilestoneForm, TaskForm
+from django.db.models import Q
+from Users.models import FreelancerProfile, Skill, Language
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -33,21 +34,16 @@ def create_project(request):
     return render(request, 'Projects/createProject.html', {'form': form})
 
 def home_client(request):
+    # Supongamos que el cliente está autenticado y puedes acceder a su perfil
     client_profile = request.user.clientprofile  # Asumiendo que el usuario tiene un perfil de cliente
+    projects = client_profile.projects.all()  # Obtiene todos los proyectos asociados al cliente
+    total_projects = projects.count()  # Número total de proyectos
+    total_balance = client_profile.get_total_budget()  # Presupuesto total
 
-    # Obtiene todos los proyectos asociados al cliente y los ordena
-    projects = client_profile.projects.all().order_by('-created_at')
-    
-    # Paginación
-    paginator = Paginator(projects, 5)  # 10 proyectos por página
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    # Solo se necesita pasar 'page_obj' para la paginación junto con cualquier otra variable necesaria
     return render(request, 'Projects/homeClient.html', {
-        'page_obj': page_obj,
-        'total_projects': projects.count(),  # Número total de proyectos
-        'total_balance': client_profile.get_total_budget()  # Presupuesto total
+        'projects': projects,
+        'total_projects': total_projects,
+        'total_balance': total_balance,
     })
 
 def project_detail(request, project_id):
@@ -126,24 +122,38 @@ def delete_milestone(request, milestone_id):
 # Vista para crear una nueva tarea
 def create_task(request, milestone_id):
     milestone = get_object_or_404(Milestone, id=milestone_id)
+    project = milestone.project  # Obtener el proyecto del hito
+
+    # Obtener todos los freelancers que tienen un contrato activo en este proyecto
+    active_contracts = Contract.objects.filter(project=project, status='active')
+    freelancers = [contract.freelancer for contract in active_contracts]
     
     if request.method == 'POST':
-        form = TaskForm(request.POST)
+        form = TaskForm(request.POST, freelancers=freelancers)  # Pasar los freelancers al formulario
         if form.is_valid():
             task = form.save(commit=False)
             task.milestone = milestone  # Asociar la tarea con el hito
             task.save()
             return redirect('milestone_detail', pk=milestone.id)
     else:
-        form = TaskForm()
+        form = TaskForm(freelancers=freelancers)  # Pasar los freelancers al formulario
 
-    # Pasar el hito al contexto
-    return render(request, 'Projects/create_task.html', {'form': form, 'milestone': milestone})
+    # Pasar el hito y los freelancers al contexto
+    return render(request, 'Projects/create_task.html', {
+        'form': form,
+        'milestone': milestone,
+    })
 
 
 # Vista para editar una tarea existente
 def edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
+    milestone = task.milestone  # Obtener el hito asociado
+    project = milestone.project  # Obtener el proyecto asociado al hito
+
+    # Obtener todos los freelancers que tienen un contrato activo en este proyecto
+    active_contracts = Contract.objects.filter(project=project, status='active')
+    freelancers = [contract.freelancer for contract in active_contracts]
 
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
@@ -153,7 +163,14 @@ def edit_task(request, task_id):
     else:
         form = TaskForm(instance=task)
 
-    return render(request, 'Projects/edit_task.html', {'form': form, 'task': task})
+    # Sobrescribir el queryset del campo assigned_to para mostrar solo los freelancers con contrato activo
+    form.fields['assigned_to'].queryset = FreelancerProfile.objects.filter(id__in=[freelancer.id for freelancer in freelancers])
+
+    return render(request, 'Projects/edit_task.html', {
+        'form': form,
+        'task': task
+    })
+
 
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -170,6 +187,121 @@ def delete_task(request, task_id):
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     return render(request, 'Projects/task_detail.html', {'task': task})
+
+def search_freelancer(request, project_id):
+    # Obtener el proyecto a través del project_id
+    project = get_object_or_404(Project, id=project_id)
+
+    freelancers = FreelancerProfile.objects.all()
+    skills = Skill.objects.all()
+    languages = Language.objects.all()
+    countries = FreelancerProfile.objects.values_list('country', flat=True).distinct()
+
+    # Filtrar por los parámetros de búsqueda
+    query = request.GET.get('q')
+    selected_skill = request.GET.get('skills')
+    selected_language = request.GET.get('languages')
+    selected_country = request.GET.get('country')
+
+    if query:
+        freelancers = freelancers.filter(
+            Q(user__username__icontains=query) |
+            Q(skills__name__icontains=query) |
+            Q(country__icontains=query) |
+            Q(languages__language__icontains=query)
+        ).distinct()
+
+    if selected_skill:
+        freelancers = freelancers.filter(skills__id=selected_skill).distinct()
+
+    if selected_language:
+        freelancers = freelancers.filter(languages__id=selected_language).distinct()
+
+    if selected_country:
+        freelancers = freelancers.filter(country=selected_country).distinct()
+
+    context = {
+        'project': project,  # Asegúrate de pasar el proyecto al contexto
+        'freelancers': freelancers,
+        'skills': skills,
+        'languages': languages,
+        'countries': countries,
+    }
+
+    return render(request, 'Projects/search_freelancer.html', context)
+
+
+
+def freelancer_profile(request, project_id, freelancer_id):
+    # Obtener el proyecto y el freelancer
+    project = get_object_or_404(Project, id=project_id)
+    freelancer = get_object_or_404(FreelancerProfile, user__id=freelancer_id)
+
+    context = {
+        'project': project,
+        'freelancer': freelancer,
+    }
+
+    return render(request, 'Projects/freelancer_profile.html', context)
+
+
+def create_project_freelancer_association(request, project_id, freelancer_id):
+    # Obtener el proyecto
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Verificar si el FreelancerProfile está asociado al user con el freelancer_id
+    freelancer = get_object_or_404(FreelancerProfile, user__id=freelancer_id)
+
+    # Crear la asociación entre el proyecto y el freelancer
+    association, created = ProjectFreelancer.objects.get_or_create(
+        project=project,
+        freelancer=freelancer,
+        defaults={'status': 'pending'}
+    )
+    
+    if created:
+        messages.success(request, f"Contract pending for {freelancer.user.username} on project {project.title}")
+    else:
+        messages.info(request, f"A contract already exists for {freelancer.user.username} on project {project.title}")
+
+    # Redirigir a la vista de detalles del proyecto
+    return redirect('project_detail', project_id=project.id)
+
+
+def manage_applications(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    applications = Application.objects.filter(project=project)
+
+    if request.method == 'POST':
+        application_id = request.POST.get('application_id')
+        action = request.POST.get('action')
+
+        # Obtener la aplicación correspondiente
+        application = get_object_or_404(Application, id=application_id)
+
+        if action == 'accept':
+            # Crear el contrato
+            Contract.objects.create(
+                project=application.project,
+                freelancer=application.freelancer
+            )
+            # Eliminar la aplicación después de aceptar
+            application.delete()
+            messages.success(request, f"Freelancer {application.freelancer.user.username} accepted and contract created.")
+            return redirect('home_client')
+
+        elif action == 'reject':
+            # Eliminar la aplicación cuando se rechace
+            application.delete()
+            messages.info(request, f"Freelancer {application.freelancer.user.username} rejected.")
+            return redirect('home_client')
+
+    return render(request, 'projects/manageApplications.html', {
+        'project': project,
+        'applications': applications,
+    })
+
+
 
 @login_required
 def search_projects(request):
@@ -235,3 +367,15 @@ def search_public_projects(request):
 def view_public_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     return render(request, 'Projects/view_project_search.html', {'project': project})
+
+def freelancer_profile_manage(request, project_id, freelancer_id):
+    # Obtener el proyecto y el freelancer
+    project = get_object_or_404(Project, id=project_id)
+    freelancer = get_object_or_404(FreelancerProfile, user__id=freelancer_id)
+
+    context = {
+        'project': project,
+        'freelancer': freelancer,
+    }
+
+    return render(request, 'Projects/freelancer_profile_manage.html', context)

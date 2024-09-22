@@ -41,6 +41,9 @@ class FreelancerProfile(models.Model):
     skills = models.ManyToManyField(Skill, related_name='freelancers', blank=True)
     languages = models.ManyToManyField('Language', blank=True)
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
 
 
 class ClientProfile(models.Model):

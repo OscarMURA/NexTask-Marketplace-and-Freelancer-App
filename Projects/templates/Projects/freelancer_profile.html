@@ -1,0 +1,42 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+
+<!-- This is to view the profile in freelancer searches-->
+{% block content %}
+
+<div class="container">
+    <div class="text mt-4">
+        <a href="{% url 'search_freelancer' project.id %}" class="w-btn-danger-lg"> Back </a>
+    </div>
+
+    <!-- Encabezado del perfil -->
+    {% include 'Users/profile_header.html' %}
+
+
+    <div class="button-group">
+    <div class="col-md-4 text-center">
+
+        <a href="{% url 'create_project_freelancer_association' project.id freelancer.user.id %}" class="w-btn-secondary-lg col-6"> Contract </a>
+    </div>
+    </div>
+
+
+    <!-- Detalles del perfil -->
+    {% include 'Users/freelancer_details.html' %}
+
+</div>
+
+<!-- Botón para regresar a la búsqueda de freelancers -->
+
+<div>
+    <a href="{% url 'search_freelancer' project.id %}" class="btn-back">&larr; Search Freelancer </a>
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -20,7 +20,6 @@
   </style>
 </head>
 
-
 <!-- Page Header -->
 <div>
   <h3 class="text-24 fw-bold text-dark-300 mb-2">{{ project.title }}</h3>
@@ -46,7 +45,9 @@
     <li class="text-lime-300 fs-6">{{ project.title }}</li>
   </ul>
 </div>
-
+<div class="text mt-4">
+  <a href="{% url 'home_client' %}" class="w-btn-danger-lg"> Back </a>
+  </div>
 <!-- Project Info -->
 <div class="row justify-content-center">
   <div class="col-xl-8">
@@ -186,6 +187,20 @@
                 <div class="quill-content" >{{ project.description.html|safe }}</div>
               </div>
             </div>
+
+
+
+            <div class="text mt-4">
+              <div class="button-group">
+                <a href="{% url 'search_freelancer' project.id  %}" class="w-btn-secondary-lg">Search Freelancer</a>
+                <a href="{% url 'manage_applications' project.id  %}" class="w-btn-plus-lg"> Manage Aplications Freelancer </a>
+                <a href="{% url 'search_freelancer' project.id  %}" class="w-btn-secondary-lg">Freelancer List in the project</a>
+                
+              </div>
+              <p>.</p>
+              <p></p>
+            </div>
+
           </div>
         </div>
       </div>
