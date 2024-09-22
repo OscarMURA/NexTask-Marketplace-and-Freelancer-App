@@ -249,7 +249,18 @@ def home_client(request):
     return render(request, 'Users/homeClient.html')
 
 def home_freelancer(request):
-    return render(request, 'Users/homeFreelancer.html')
+    freelancer_profile = request.user.freelancer_profile  # Obtener el perfil del freelancer
+    # Obtener los contratos activos asociados a este freelancer
+    active_contracts = Contract.objects.filter(freelancer=freelancer_profile, status='active')
+    # Obtener los proyectos asociados a esos contratos
+    projects = [contract.project for contract in active_contracts]
+    total_projects = len(projects)  # Contar proyectos
+
+    return render(request, 'Users/homeFreelancer.html', {
+        'projects': projects,
+        'total_projects': total_projects,
+
+    })
 
 def createProject(request):
     return render(request, 'Users/createProject.html')

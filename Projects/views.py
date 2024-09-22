@@ -379,3 +379,64 @@ def freelancer_profile_manage(request, project_id, freelancer_id):
     }
 
     return render(request, 'Projects/freelancer_profile_manage.html', context)
+
+def project_detail_freelancer(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'Projects/project_detail_freelancer.html', {'project': project})
+
+def milestone_detail_view_freelancer(request, pk):
+    milestone = get_object_or_404(Milestone, pk=pk)
+
+    # Obtener el perfil del freelancer usando el related_name
+    try:
+        freelancer_profile = request.user.freelancer_profile  # Accediendo al perfil del freelancer
+    except FreelancerProfile.DoesNotExist:
+        # Manejar el caso en que no exista el perfil
+        return render(request, 'Projects/no_profile.html')  # Puedes crear un template adecuado
+
+    # Filtrar tareas solo para el freelancer
+    tasks = milestone.tasks.filter(assigned_to=freelancer_profile)
+
+    return render(request, 'Projects/milestone_detail_freelancer.html', {
+        'milestone': milestone,
+        'tasks': tasks,
+    })
+
+
+def edit_task_freelancer(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    milestone = task.milestone  # Obtener el hito asociado
+    project = milestone.project  # Obtener el proyecto asociado al hito
+
+    # Obtener el perfil del freelancer
+    freelancer_profile = request.user.freelancer_profile
+
+    # Filtrar tareas solo para el freelancer
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('milestone_detail_freelancer', pk=milestone.id)  # Redirigir a los hitos del freelancer
+    else:
+        form = TaskForm(instance=task)
+
+    # Solo permitir que el freelancer vea su tarea
+    if task.assigned_to != freelancer_profile:
+        return render(request, 'Projects/access_denied.html')  # O una página adecuada
+
+    return render(request, 'Projects/edit_task_freelancer.html', {
+        'form': form,
+        'task': task
+    })
+    
+    
+from django.shortcuts import render, get_object_or_404
+from .models import Task
+
+def task_detail_view_freelancer(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    return render(request, 'Projects/task_detail_freelancer.html', {
+        'task': task
+    })
+
+

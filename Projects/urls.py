@@ -33,9 +33,15 @@ urlpatterns = [
     path('search_projects/', views.search_projects, name='search_projects'),  # New URL for project search
     path('project/view/<int:project_id>/', views.view_project_search, name='view_project_search'),
     path('project/apply/<int:project_id>/', views.apply_to_project, name='apply_to_project'),
-    path('application-confirmation/', views.application_confirmation, name='application_confirmation')
+    path('application-confirmation/', views.application_confirmation, name='application_confirmation'),
     
+    path('freelancer/project/<int:project_id>/', views.project_detail_freelancer, name='project_detail_freelancer'),
+
+    path('milestone/<int:pk>/details/', views.milestone_detail_view_freelancer, name='milestone_detail_freelancer'),
     
+    path('tasks/<int:task_id>/edit/',views.edit_task_freelancer, name='edit_task_freelancer'),
+
+    path('tasks/<int:task_id>/', views.task_detail_view_freelancer, name='task_detail_freelancer'),
 
 
 ]
