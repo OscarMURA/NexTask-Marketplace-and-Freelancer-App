@@ -18,6 +18,6 @@ urlpatterns = [
     path('task/<int:task_id>/edit/', views.edit_task, name='edit_task'),
     path('task/<int:task_id>/delete/', views.delete_task, name='delete_task'),
     path('task/<int:task_id>/', views.task_detail, name='task_detail'),
-
+    path('projects/<int:project_id>/applications/', views.manage_applications, name='manage_applications'),
 
 ]

@@ -161,3 +161,29 @@ def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     return render(request, 'Projects/task_detail.html', {'task': task})
 
+def manage_applications(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    # Obtener todas las aplicaciones al proyecto
+    applications = Application.objects.filter(project=project)
+
+    if request.method == 'POST':
+        application_id = request.POST.get('application_id')
+        action = request.POST.get('action')
+
+        # Obtener la aplicación correspondiente
+        application = get_object_or_404(Application, id=application_id)
+
+        # Aceptar o rechazar la oferta
+        if action == 'accept':
+            application.status = 'accepted'
+        elif action == 'reject':
+            application.status = 'rejected'
+
+        application.save()
+        return redirect('manage_applications', project_id=project_id)
+
+    return render(request, 'projects/manage_applications.html', {
+        'project': project,
+        'applications': applications,
+    })

@@ -1,0 +1,33 @@
+<h2>Manage Applications for Project: {{ project.title }}</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Freelancer</th>
+            <th>Offer</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for application in applications %}
+        <tr>
+            <td>{{ application.freelancer.user.username }}</td>
+            <td>${{ application.offer }}</td>
+            <td>{{ application.get_status_display }}</td>
+            <td>
+                {% if application.status == 'pending' %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="application_id" value="{{ application.id }}">
+                    <button type="submit" name="action" value="accept">Accept</button>
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+                {% else %}
+                <p>{{ application.get_status_display }}</p>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
