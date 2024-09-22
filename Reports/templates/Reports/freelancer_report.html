@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Freelancer Report</h1>
+
+    <div class="summary-section">
+        <h2>Summary</h2>
+        <p><strong>Total Projects:</strong> {{ total_projects }}</p>
+        <p><strong>Total Milestones:</strong> {{ total_milestones }}</p>
+        <p><strong>Total Tasks Completed:</strong> {{ total_tasks }}</p>
+    </div>
+
+    <div class="projects-section">
+        <h2>Projects</h2>
+        {% if projects %}
+            <ul>
+                {% for project in projects %}
+                    <li>
+                        <h3>{{ project.title }}</h3>
+                        <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+                        <p><strong>Due Date:</strong> {{ project.due_date }}</p>
+                        <p><strong>Category:</strong> {{ project.category }}</p>
+                        <p><strong>Description:</strong> {{ project.description }}</p>
+                        <p><strong>Milestones:</strong> {{ project.milestones.count }}</p>
+                        <p><strong>Tasks:</strong> {{ project.tasks.count }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No projects to display.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
