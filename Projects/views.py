@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
-from .models import Project  
+from .models import *
 from django.urls import reverse
 from django.contrib import messages
 from .models import Project, Milestone
@@ -10,6 +10,9 @@ from .forms import MilestoneForm
 from django.core.paginator import Paginator
 from .models import Project, Milestone,Task
 from .forms import MilestoneForm, TaskForm
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def create_project(request):
     if request.method == 'POST':
@@ -168,3 +171,67 @@ def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     return render(request, 'Projects/task_detail.html', {'task': task})
 
+@login_required
+def search_projects(request):
+    query = request.GET.get('q')
+    category_filter = request.GET.get('category')
+    projects = Project.objects.all()
+
+    if query:
+        projects = projects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(client__user__username__icontains=query)
+        )
+
+    if category_filter and category_filter != 'all':
+        projects = projects.filter(category=category_filter)
+
+    return render(request, 'Projects/search_projects_freelancer_dashboard.html', {
+        'projects': projects,
+        'categories': Project.CATEGORY_CHOICES,
+        'selected_category': category_filter,
+    })
+
+@login_required
+def view_project_search(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'Projects/view_project_search_freelancer_dashboard.html', {'project': project})
+
+@login_required
+def apply_to_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if not hasattr(request.user, 'freelancer_profile'):
+        return redirect('register_freelancer')
+
+    application, created = Application.objects.get_or_create(
+        freelancer=request.user.freelancer_profile, project=project
+    )
+
+    return redirect('application_confirmation')
+
+def application_confirmation(request):
+    return render(request, 'Projects/application_confirmation.html')
+
+@login_required
+def search_public_projects(request):
+    query = request.GET.get('q')
+    projects = Project.objects.all()
+
+    if query:
+        projects = projects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(client__user__username__icontains=query)
+        )
+
+    return render(request, 'Projects/search_projects.html', {
+        'projects': projects,
+    })
+
+
+@login_required
+def view_public_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(request, 'Projects/view_project_search.html', {'project': project})

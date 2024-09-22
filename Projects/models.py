@@ -1,7 +1,7 @@
 from django.db import models
 from Users.models import ClientProfile, FreelancerProfile
 from django_quill.fields import QuillField
-
+from django.contrib.auth import get_user_model
 
 class Project(models.Model):
     
@@ -92,3 +92,17 @@ class Task(models.Model):
     
     def __str__(self):
         return self.title
+    
+    
+
+
+User = get_user_model()
+
+
+class Application(models.Model):
+    freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE, related_name='applications')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='applications')
+    applied_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.freelancer.user.username} applied to {self.project.title}"

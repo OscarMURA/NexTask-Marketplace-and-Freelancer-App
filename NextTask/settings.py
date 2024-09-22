@@ -190,3 +190,20 @@ QUILL_CONFIGS = {
     },
 }
 
+# settings.py
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True 
+
+# settings.py
+
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # La sesión dura 7 días
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
