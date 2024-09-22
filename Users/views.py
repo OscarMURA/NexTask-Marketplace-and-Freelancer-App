@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
 from django.shortcuts import get_object_or_404
 from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 
 
 
@@ -302,19 +303,29 @@ def search_freelancers(request):
     form = FreelancerSearchForm(request.GET or None)
     freelancers = FreelancerProfile.objects.all()
 
-    print("GET request:", request.GET)  # Verificar qué parámetros están siendo enviados
+    print("GET request:", request.GET)
 
     if form.is_valid():
-        # Filtrar por keyword (username)
+        # Capturar el valor del campo keyword
         keyword = form.cleaned_data.get('keyword', '').strip()
-        print("Keyword recibido:", keyword)  # Depuración para ver si el campo keyword se está capturando correctamente
+        print("Keyword recibido:", keyword)
+
+        # Filtrar por username, first_name, last_name o nombre completo
         if keyword:
-            freelancers = freelancers.filter(user__username__icontains=keyword)
+            # Anotar un campo virtual que concatene first_name y last_name
+            freelancers = freelancers.annotate(
+                full_name=Concat('user__first_name', Value(' '), 'user__last_name')
+            ).filter(
+                Q(user__username__icontains=keyword) | 
+                Q(user__first_name__icontains=keyword) | 
+                Q(user__last_name__icontains=keyword) |
+                Q(full_name__icontains=keyword)  # Búsqueda por nombre completo
+            )
             print(f"Freelancers filtrados por keyword '{keyword}':", freelancers.count())
 
         # Filtrar por skills si hay habilidades seleccionadas
         skills = form.cleaned_data.get('skills')
-        print("Skills recibidas:", skills)  # Depuración para ver si el campo skills se está capturando correctamente
+        print("Skills recibidas:", skills)
         if skills and skills.exists():
             freelancers = freelancers.filter(skills__in=skills).distinct()
             print(f"Freelancers filtrados por skills '{skills}':", freelancers.count())
@@ -323,6 +334,7 @@ def search_freelancers(request):
         'form': form,
         'freelancers': freelancers
     })
+
 
 def freelancer_profile(request, id):
     freelancer = get_object_or_404(FreelancerProfile, user__id=id)
