@@ -1,11 +1,8 @@
 from django.apps import AppConfig
 
 
-# notifications/apps.py
-from django.apps import AppConfig
-
 class NotificationsConfig(AppConfig):
-    name = 'notifications'
-
+    name = 'Notifications'  # Esto está bien si el nombre de tu carpeta comienza con mayúscula
+    
     def ready(self):
-        import notifications.signals  # Import the signals module
+        import Notifications.signals  # Correcto, ya que el nombre de la app tiene mayúscula
