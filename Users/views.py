@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
-from django.contrib import messages  # Para los mensajes de error y éxito
-from django.contrib.auth.decorators import login_required
+from django.contrib import messages  # For success and error messages
 from django.contrib.auth.backends import ModelBackend 
 from django.shortcuts import get_object_or_404
 from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
@@ -16,105 +15,165 @@ from Projects.models import *
 from Projects.models import Application
 
 
-
 @never_cache
 def freelancer_signup(request):
-    if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
+    """
+    View for handling freelancer signup.
 
-            # Explicitly pass the backend
+    If the request is a POST, it processes the signup form.
+    On successful signup, the user is logged in and redirected to the work experience registration page.
+    If there are errors, they are displayed on the signup form.
+
+    Returns:
+        Rendered template for freelancer signup with the form.
+    """
+    if request.method == 'POST':
+        form = FreelancerSignUpForm(request.POST, request.FILES)  # Include file uploads
+        if form.is_valid():
+            user = form.save()  # Save the new user
+
+            # Explicitly log in the user after signup
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             
-            messages.success(request, 'Account created successfully. Welcome!')
-            return redirect('work_experience_register')
+            messages.success(request, 'Account created successfully. Welcome!')  # Success message
+            return redirect('work_experience_register')  # Redirect to work experience registration
         else:
-            messages.error(request, "Please fix the errors below.")
+            messages.error(request, "Please fix the errors below.")  # Error message if form is invalid
     else:
-        form = FreelancerSignUpForm()
+        form = FreelancerSignUpForm()  # Create a new form instance
 
-    return render(request, 'Users/freelancer_signup.html', {'form': form})
+    return render(request, 'Users/freelancer_signup.html', {'form': form})  # Render signup template
+
 
 @never_cache
 def client_signup(request):
+    """
+    View for handling client signup.
+
+    If the request is a POST, it processes the signup form.
+    On successful signup, the user is logged in and redirected to the client home page.
+
+    Returns:
+        Rendered template for client signup with the form.
+    """
     if request.method == 'POST':
-        form = ClientSignUpForm(request.POST, request.FILES)  # Include request.FILES to handle file uploads
+        form = ClientSignUpForm(request.POST, request.FILES)  # Include file uploads
         if form.is_valid():
-            user = form.save()
-            print("Usuario creado:", user)  # Imprimir el usuario creado
-            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return redirect('home_client')
+            user = form.save()  # Save the new user
+            print("Usuario creado:", user)  # Log the created user
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')  # Log in the user
+            return redirect('home_client')  # Redirect to client home page
     else:
-        form = ClientSignUpForm()
-    return render(request, 'Users/client_signup.html', {'form': form})
+        form = ClientSignUpForm()  # Create a new form instance
+    return render(request, 'Users/client_signup.html', {'form': form})  # Render signup template
 
 
 def user_login(request):
+    """
+    View for handling user login.
+
+    If the request is a POST, it processes the login form.
+    On successful login, the user is redirected to their respective home page based on user type.
+    If the credentials are invalid, an error message is displayed.
+
+    Returns:
+        Rendered template for user login with the form.
+    """
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)  # Create an authentication form with POST data
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            username = form.cleaned_data.get('username')  # Get the cleaned username
+            password = form.cleaned_data.get('password')  # Get the cleaned password
+            user = authenticate(username=username, password=password)  # Authenticate the user
             
             if user is not None:
-                auth_login(request, user)  # Iniciar sesión
+                auth_login(request, user)  # Log in the user
 
-                # Redirigir al 'next' si está en los parámetros, de lo contrario, al dashboard
+                # Redirect to the 'next' URL if present, otherwise redirect based on user type
                 next_url = request.GET.get('next', None)
                 if next_url:
                     return redirect(next_url)
                 else:
                     if user.user_type == 'freelancer':
-                        return redirect('home_freelancer')
+                        return redirect('home_freelancer')  # Redirect to freelancer home
                     elif user.user_type == 'client':
-                        return redirect('home_client')
+                        return redirect('home_client')  # Redirect to client home
             else:
-                messages.error(request, 'Invalid username or password.')
+                messages.error(request, 'Invalid username or password.')  # Error message for invalid credentials
         else:
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, 'Invalid username or password.')  # Error message if form is invalid
     else:
-        form = AuthenticationForm()
+        form = AuthenticationForm()  # Create a new form instance
 
-    return render(request, 'Users/login.html', {'form': form})
+    return render(request, 'Users/login.html', {'form': form})  # Render login template
+
 
 def welcome(request):
-    return render(request, 'Users/welcome.html')
+    """
+    View for rendering the welcome page.
+
+    Returns:
+        Rendered welcome template.
+    """
+    return render(request, 'Users/welcome.html')  # Render welcome template
+
 
 def home(request):
-    return render(request, 'users/home.html')
+    """
+    View for rendering the user home page.
 
+    Returns:
+        Rendered home template for users.
+    """
+    return render(request, 'users/home.html')  # Render home template
 
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import get_backends
 
 @never_cache
 def freelancer_signup(request):
+    """
+    Duplicate view for handling freelancer signup.
+    
+    This is an identical implementation to the previous freelancer_signup function. 
+    It includes handling of file uploads and user login after successful signup.
+    
+    Returns:
+        Rendered template for freelancer signup with the form.
+    """
     if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST, request.FILES)  # Añadir request.FILES
+        form = FreelancerSignUpForm(request.POST, request.FILES)  # Include file uploads
         if form.is_valid():
-            user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('work_experience_register')  # Redirige al registro de educación
+            user = form.save()  # Save the new user
+            auth_login(request, user)  # Log in the user to avoid conflicts
+            return redirect('work_experience_register')  # Redirect to work experience registration
     else:
-        form = FreelancerSignUpForm()
-    return render(request, 'Users/freelancer_signup.html', {'form': form})
+        form = FreelancerSignUpForm()  # Create a new form instance
+    return render(request, 'Users/freelancer_signup.html', {'form': form})  # Render signup template
 
 
+@login_required
 def work_experience_register_view(request):
-    freelancer = request.user.freelancer_profile
-    if request.method == "POST":
-        formset = WorkExperienceFormSet(request.POST, instance=freelancer)
-        if formset.is_valid():
-            formset.save()
-            return redirect('education_register')
-        else:
-            print(formset.errors)  # Debugging formset errors
-    else:
-        formset = WorkExperienceFormSet(instance=freelancer)
+    """
+    View for registering work experience for a freelancer.
 
-    helper = WorkExperienceFormHelper()
+    This view handles both GET and POST requests. 
+    On a POST request, it processes the WorkExperienceFormSet and saves it if valid.
+    On a GET request, it initializes the formset with the freelancer's instance.
+
+    Returns:
+        Rendered template for work experience registration with the formset and helpers.
+    """
+    freelancer = request.user.freelancer_profile  # Get the freelancer's profile
+    if request.method == "POST":
+        formset = WorkExperienceFormSet(request.POST, instance=freelancer)  # Initialize formset with POST data
+        if formset.is_valid():
+            formset.save()  # Save the formset if valid
+            return redirect('education_register')  # Redirect to education registration
+        else:
+            print(formset.errors)  # Debugging: print formset errors
+    else:
+        formset = WorkExperienceFormSet(instance=freelancer)  # Initialize formset for GET request
+
+    helper = WorkExperienceFormHelper()  # Initialize form helper
 
     # Debugging: print the management form to check if it's being rendered
     print("Management form:", formset.management_form)
@@ -126,18 +185,29 @@ def work_experience_register_view(request):
         'next_url': 'education_register',
     })
 
+
 @login_required
 def education_register_view(request):
-    freelancer = request.user.freelancer_profile
-    if request.method == "POST":
-        formset = EducationFormSet(request.POST, instance=freelancer)
-        if formset.is_valid():
-            formset.save()
-            return redirect('certification_register')
-    else:
-        formset = EducationFormSet(instance=freelancer)
+    """
+    View for registering education for a freelancer.
 
-    helper = EducationFormHelper()
+    This view handles both GET and POST requests. 
+    On a POST request, it processes the EducationFormSet and saves it if valid.
+    On a GET request, it initializes the formset with the freelancer's instance.
+
+    Returns:
+        Rendered template for education registration with the formset and helpers.
+    """
+    freelancer = request.user.freelancer_profile  # Get the freelancer's profile
+    if request.method == "POST":
+        formset = EducationFormSet(request.POST, instance=freelancer)  # Initialize formset with POST data
+        if formset.is_valid():
+            formset.save()  # Save the formset if valid
+            return redirect('certification_register')  # Redirect to certification registration
+    else:
+        formset = EducationFormSet(instance=freelancer)  # Initialize formset for GET request
+
+    helper = EducationFormHelper()  # Initialize form helper
 
     # Debugging: print the management form to check the formset prefix
     print("Management form:", formset.management_form)
@@ -150,22 +220,30 @@ def education_register_view(request):
     })
 
 
-
 @login_required
 def certification_register_view(request):
-    freelancer = request.user.freelancer_profile
+    """
+    View for registering certifications for a freelancer.
+
+    This view handles both GET and POST requests. 
+    On a POST request, it processes the CertificationFormSet and saves it if valid.
+    It also allows skipping the certification step.
+
+    Returns:
+        Rendered template for certification registration with the formset and helpers.
+    """
+    freelancer = request.user.freelancer_profile  # Get the freelancer's profile
     if request.method == "POST":
         if 'skip' in request.POST:
-            return redirect('portfolio_register')
-        formset = CertificationFormSet(request.POST, instance=freelancer)
+            return redirect('portfolio_register')  # Skip to portfolio registration
+        formset = CertificationFormSet(request.POST, instance=freelancer)  # Initialize formset with POST data
         if formset.is_valid():
-            formset.save()
-            return redirect('portfolio_register')
+            formset.save()  # Save the formset if valid
+            return redirect('portfolio_register')  # Redirect to portfolio registration
     else:
-        formset = CertificationFormSet(instance=freelancer)
+        formset = CertificationFormSet(instance=freelancer)  # Initialize formset for GET request
 
-    # Add the helper here
-    helper = CertificationFormHelper()
+    helper = CertificationFormHelper()  # Initialize form helper
 
     return render(request, 'Users/certification_register.html', {
         'certification_formset': formset,
@@ -177,111 +255,196 @@ def certification_register_view(request):
 
 @login_required
 def portfolio_register_view(request):
-    freelancer = request.user.freelancer_profile
+    """
+    View for registering portfolio items for a freelancer.
+
+    This view handles both GET and POST requests. 
+    On a POST request, it processes the PortfolioFormSet and saves it if valid.
+    It also allows skipping the portfolio step.
+
+    Returns:
+        Rendered template for portfolio registration with the formset and helpers.
+    """
+    freelancer = request.user.freelancer_profile  # Get the freelancer's profile
     if request.method == "POST":
         if 'skip' in request.POST:
-            return redirect('register_languages')
-        formset = PortfolioFormSet(request.POST, instance=freelancer)
+            return redirect('register_languages')  # Skip to language registration
+        formset = PortfolioFormSet(request.POST, instance=freelancer)  # Initialize formset with POST data
         if formset.is_valid():
-            formset.save()
-            return redirect('register_languages')
+            formset.save()  # Save the formset if valid
+            return redirect('register_languages')  # Redirect to language registration
     else:
-        formset = PortfolioFormSet(instance=freelancer)
+        formset = PortfolioFormSet(instance=freelancer)  # Initialize formset for GET request
 
-    # Add the helper here
-    helper = PortfolioFormHelper()
+    helper = PortfolioFormHelper()  # Initialize form helper
 
     return render(request, 'Users/portfolio_register.html', {
         'portfolio_formset': formset,
         'helper': helper,  # Pass the helper to the template
         'back_url': 'certification_register',
-        'next_url': 'welcome',
+        'next_url': 'register_languages',
     })
+
+
 @login_required
 def profile_settings(request):
-    return render(request, 'Users/changePassword.html')
+    """
+    View for rendering the profile settings page for users.
+
+    Returns:
+        Rendered template for changing the user's password.
+    """
+    return render(request, 'Users/changePassword.html')  # Render profile settings template
 
 @login_required
 def register_skills_view(request):
-    freelancer = request.user.freelancer_profile
+    """
+    View for registering skills for a freelancer.
+
+    This view handles both GET and POST requests. 
+    On a POST request, it processes selected predefined skills and new skills entered by the user. 
+    It updates the freelancer's skills accordingly.
+
+    Returns:
+        Rendered template for skill registration or redirects to the freelancer home page.
+    """
+    freelancer = request.user.freelancer_profile  # Get the freelancer's profile
     if request.method == "POST":
-        # Procesar habilidades predefinidas seleccionadas
+        # Process selected predefined skills
         selected_skills_ids = request.POST.get('skills', '')
         if selected_skills_ids:
             selected_skills_ids = [int(id) for id in selected_skills_ids.split(',') if id.isdigit()]
 
-        # Procesar nuevas habilidades ingresadas
+        # Process new skills entered by the user
         new_skills = request.POST.get('new_skills', '').split(',')
 
-        # Actualizar habilidades seleccionadas
+        # Update selected predefined skills
         if selected_skills_ids:
-            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades predefinidas
+            freelancer.skills.set(selected_skills_ids)  # Update predefined skills
 
-        # Agregar nuevas habilidades
+        # Add new skills
         for skill_name in new_skills:
             skill_name = skill_name.strip()
             if skill_name:
-                skill, created = Skill.objects.get_or_create(name=skill_name)
-                freelancer.skills.add(skill)  # Agrega la nueva habilidad al perfil del freelancer
+                skill, created = Skill.objects.get_or_create(name=skill_name)  # Create or get the skill
+                freelancer.skills.add(skill)  # Add new skill to the freelancer's profile
 
-        freelancer.save()  # Guardar los cambios
-
-        return redirect('home_freelancer')
+        freelancer.save()  # Save changes
+        return redirect('home_freelancer')  # Redirect to freelancer home page
 
     else:
-        form = SkillsForm(instance=freelancer)
-        form.fields['skills'].queryset = Skill.objects.all().order_by('name')[:10]  # Limitar a las primeras 8 habilidades
+        form = SkillsForm(instance=freelancer)  # Initialize form for GET request
+        form.fields['skills'].queryset = Skill.objects.all().order_by('name')[:10]  # Limit to the first 10 skills
         return render(request, 'Users/register_skills.html', {'form': form})
+
 
 @login_required
 def register_languages_view(request):
-    freelancer = request.user.freelancer_profile
+    """
+    View for registering languages for a freelancer.
+
+    This view handles both GET and POST requests. 
+    On a POST request, it processes the LanguageForm and saves it if valid.
+    On a GET request, it initializes the form with the freelancer's instance.
+
+    Returns:
+        Rendered template for language registration or redirects to skills registration.
+    """
+    freelancer = request.user.freelancer_profile  # Get the freelancer's profile
     if request.method == "POST":
-        form = LanguageForm(request.POST, instance=freelancer)
+        form = LanguageForm(request.POST, instance=freelancer)  # Initialize form with POST data
         if form.is_valid():
-            form.save()
-            return redirect('register_skills')  # Redirect to the next step
+            form.save()  # Save the form if valid
+            return redirect('register_skills')  # Redirect to skills registration
     else:
-        form = LanguageForm(instance=freelancer)
+        form = LanguageForm(instance=freelancer)  # Initialize form for GET request
 
     return render(request, 'Users/register_languages.html', {'form': form})
 
 
 def home_client(request):
-    return render(request, 'Users/homeClient.html')
+    """
+    View for rendering the home page for clients.
+
+    Returns:
+        Rendered template for client home page.
+    """
+    return render(request, 'Users/homeClient.html')  # Render client home template
+
 
 def home_freelancer(request):
-    freelancer_profile = request.user.freelancer_profile  # Obtener el perfil del freelancer
-    # Obtener los contratos activos asociados a este freelancer
+    """
+    View for rendering the home page for freelancers.
+
+    This view retrieves the active contracts associated with the freelancer 
+    and the corresponding projects. It counts the number of projects.
+
+    Returns:
+        Rendered template for freelancer home page with project information.
+    """
+    freelancer_profile = request.user.freelancer_profile  # Get the freelancer's profile
+    # Get active contracts associated with the freelancer
     active_contracts = Contract.objects.filter(freelancer=freelancer_profile, status='active')
-    # Obtener los proyectos asociados a esos contratos
+    # Get projects associated with those contracts
     projects = [contract.project for contract in active_contracts]
-    total_projects = len(projects)  # Contar proyectos
+    total_projects = len(projects)  # Count projects
 
     return render(request, 'Users/homeFreelancer.html', {
         'projects': projects,
         'total_projects': total_projects,
-
     })
 
+
 def createProject(request):
-    return render(request, 'Users/createProject.html')
+    """
+    View for rendering the project creation page.
+
+    Returns:
+        Rendered template for creating a project.
+    """
+    return render(request, 'Users/createProject.html')  # Render project creation template
+
 
 def change_password(request):
-    return render(request, 'Users/changePassword.html')
+    """
+    View for rendering the change password page for users.
+
+    Returns:
+        Rendered template for changing the user's password.
+    """
+    return render(request, 'Users/changePassword.html')  # Render change password template
+
 
 @login_required
 def profile_settings(request):
-    user = request.user
+    """
+    View for managing the profile settings of a freelancer.
+
+    This view allows the user to update their personal information, 
+    as well as manage their education, certifications, work experience, 
+    portfolio entries, and skills. 
+
+    It handles both GET and POST requests:
+    - On a GET request, it retrieves the freelancer's profile data.
+    - On a POST request, it processes the form data for updates and additions.
+
+    Returns:
+        Rendered template for profile settings, along with the user's data and relevant messages.
+    """
+    user = request.user  # Get the currently logged-in user
     try:
+        # Try to retrieve the freelancer profile associated with the user
         freelancer = FreelancerProfile.objects.get(user=user)
-        educations = freelancer.educations.all()
-        certifications = Certification.objects.filter(freelancer=freelancer)
-        work_experiences = WorkExperience.objects.filter(freelancer=freelancer)
-        portfolios = Portfolio.objects.filter(freelancer=freelancer)
-        skills = freelancer.skills.all()
+        # Retrieve related data
+        educations = freelancer.educations.all()  # Get all education records for the freelancer
+        certifications = Certification.objects.filter(freelancer=freelancer)  # Get certifications
+        work_experiences = WorkExperience.objects.filter(freelancer=freelancer)  # Get work experiences
+        portfolios = Portfolio.objects.filter(freelancer=freelancer)  # Get portfolio entries
+        skills = freelancer.skills.all()  # Get all skills associated with the freelancer
     except FreelancerProfile.DoesNotExist:
+        # Create a new FreelancerProfile if it does not exist
         freelancer = FreelancerProfile.objects.create(user=user)
+        # Initialize empty lists for related data
         educations = []
         certifications = []
         work_experiences = []
@@ -289,27 +452,27 @@ def profile_settings(request):
         skills = []
 
     if request.method == 'POST':
-        # Verificar qué formulario se está enviando para procesar solo esa sección
+        # Check which form is being submitted
         if 'update_user_info' in request.POST:
-            # Actualizar los datos del usuario (nombre, email, etc.)
+            # Update user info (first name, last name, email, username)
             user.first_name = request.POST.get('first_name', user.first_name)
             user.last_name = request.POST.get('last_name', user.last_name)
             user.email = request.POST.get('email', user.email)
             user.username = request.POST.get('username', user.username)
-            user.save()  # Guarda los datos actualizados del usuario
+            user.save()  # Save updated user info
 
-            # Actualizar los datos del freelancer (teléfono, ciudad, país, etc.)
+            # Update freelancer profile info (phone, city, country, address)
             freelancer.phone = request.POST.get('phone', freelancer.phone)
             freelancer.city = request.POST.get('city', freelancer.city)
             freelancer.country = request.POST.get('country', freelancer.country)
             freelancer.address = request.POST.get('address', freelancer.address)
-            freelancer.save()  # Guarda los cambios del freelancer
+            freelancer.save()  # Save updated freelancer info
 
-            messages.success(request, "User information updated successfully.")
-            return redirect('profile_settings')
+            messages.success(request, "User information updated successfully.")  # Success message
+            return redirect('profile_settings')  # Redirect to profile settings
 
         elif 'add_education' in request.POST:
-            # Agregar nueva educación
+            # Add new education record
             if request.POST.get('new_institution_name') and request.POST.get('new_degree_obtained'):
                 new_education = Education(
                     freelancer=freelancer,
@@ -319,21 +482,21 @@ def profile_settings(request):
                     end_date=request.POST.get('new_end_date'),
                     description=request.POST.get('new_description')
                 )
-                new_education.save()
+                new_education.save()  # Save new education record
 
         elif 'delete_education' in request.POST:
-            # Eliminar educación
+            # Delete education record
             education_id = request.POST.get('delete_education')
             try:
                 education = Education.objects.get(id=education_id, freelancer=freelancer)
-                education.delete()
-                messages.success(request, 'Educational record deleted successfully.')
+                education.delete()  # Delete the education record
+                messages.success(request, 'Educational record deleted successfully.')  # Success message
             except Education.DoesNotExist:
-                messages.error(request, 'The education record could not be found.')
+                messages.error(request, 'The education record could not be found.')  # Error message
             return redirect('profile_settings')
 
         elif 'add_certification' in request.POST:
-            # Agregar nueva certificación
+            # Add new certification
             if request.POST.get('new_certification_name') and request.POST.get('new_issuing_organization'):
                 new_certification = Certification(
                     freelancer=freelancer,
@@ -343,21 +506,21 @@ def profile_settings(request):
                     expiration_date=request.POST.get('new_expiration_date'),
                     short_description=request.POST.get('new_certification_description')
                 )
-                new_certification.save()
+                new_certification.save()  # Save new certification
 
         elif 'delete_certification' in request.POST:
-            # Eliminar certificación
+            # Delete certification
             certification_id = request.POST.get('delete_certification')
             try:
                 certification = Certification.objects.get(id=certification_id, freelancer=freelancer)
-                certification.delete()
-                messages.success(request, 'Certification deleted successfully.')
+                certification.delete()  # Delete the certification
+                messages.success(request, 'Certification deleted successfully.')  # Success message
             except Certification.DoesNotExist:
-                messages.error(request, 'The certification could not be found.')
+                messages.error(request, 'The certification could not be found.')  # Error message
             return redirect('profile_settings')
 
         elif 'add_experience' in request.POST:
-            # Agregar nueva experiencia laboral
+            # Add new work experience
             if request.POST.get('new_company_name') and request.POST.get('new_position'):
                 new_experience = WorkExperience(
                     freelancer=freelancer,
@@ -367,54 +530,56 @@ def profile_settings(request):
                     end_date=request.POST.get('new_experience_end_date'),
                     description=request.POST.get('new_experience_description')
                 )
-                new_experience.save()
+                new_experience.save()  # Save new work experience
 
         elif 'delete_experience' in request.POST:
-            # Eliminar experiencia laboral
+            # Delete work experience
             experience_id = request.POST.get('delete_experience')
             try:
                 experience = WorkExperience.objects.get(id=experience_id, freelancer=freelancer)
-                experience.delete()
-                messages.success(request, 'Work experience deleted successfully.')
+                experience.delete()  # Delete the work experience
+                messages.success(request, 'Work experience deleted successfully.')  # Success message
             except WorkExperience.DoesNotExist:
-                messages.error(request, 'The work experience could not be found.')
+                messages.error(request, 'The work experience could not be found.')  # Error message
             return redirect('profile_settings')
 
         elif 'add_portfolio' in request.POST:
-            # Agregar nuevo portafolio
+            # Add new portfolio entry
             if request.POST.get('new_portfolio_url') and request.POST.get('new_portfolio_description'):
                 new_portfolio = Portfolio(
                     freelancer=freelancer,
                     url=request.POST.get('new_portfolio_url'),
                     description=request.POST.get('new_portfolio_description')
                 )
-                new_portfolio.save()
+                new_portfolio.save()  # Save new portfolio entry
 
         elif 'delete_portfolio' in request.POST:
-            # Eliminar portafolio
+            # Delete portfolio entry
             portfolio_id = request.POST.get('delete_portfolio')
             try:
                 portfolio = Portfolio.objects.get(id=portfolio_id, freelancer=freelancer)
-                portfolio.delete()
-                messages.success(request, 'Portfolio entry deleted successfully.')
+                portfolio.delete()  # Delete the portfolio entry
+                messages.success(request, 'Portfolio entry deleted successfully.')  # Success message
             except Portfolio.DoesNotExist:
-                messages.error(request, 'The portfolio entry could not be found.')
+                messages.error(request, 'The portfolio entry could not be found.')  # Error message
             return redirect('profile_settings')
+
+        # Process skills
+        selected_skills_ids = request.POST.getlist('skills')  # Assume 'skills' is the name of your field in the form
+        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convert IDs to integers
         
-        selected_skills_ids = request.POST.getlist('skills')  # Asume que 'skills' es el nombre de tu campo en el formulario
-        selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convierte los IDs a enteros
-        
-        new_skill_name = request.POST.get('new_skill', '').strip()
+        new_skill_name = request.POST.get('new_skill', '').strip()  # Get new skill
         if new_skill_name:
-            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)
-            freelancer.skills.add(new_skill)  # Agrega la nueva habilidad al perfil del freelancer
+            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)  # Create or get the new skill
+            freelancer.skills.add(new_skill)  # Add new skill to the freelancer's profile
 
         if selected_skills_ids:
-            freelancer.skills.set(selected_skills_ids)  # Actualiza las habilidades seleccionadas
+            freelancer.skills.set(selected_skills_ids)  # Update selected skills
 
-        freelancer.save()  # Guarda los cambios del freelancer
-        return redirect('profile_settings')
+        freelancer.save()  # Save changes to the freelancer's profile
+        return redirect('profile_settings')  # Redirect to profile settings
 
+    # Render profile settings page
     return render(request, 'Users/profileSettings.html', {
         'user': user,
         'freelancer': freelancer,
@@ -423,81 +588,123 @@ def profile_settings(request):
         'work_experiences': work_experiences,
         'portfolios': portfolios,
         'skills': skills,
-        'all_skills': Skill.objects.all()
+        'all_skills': Skill.objects.all()  # Pass all available skills to the template
     })
-
-
+    
+    
 def search_freelancers(request):
-    form = FreelancerSearchForm(request.GET or None)
-    freelancers = FreelancerProfile.objects.all()
+    """
+    View for searching freelancers based on a keyword and selected skills.
 
-    print("GET request:", request.GET)
+    This view handles both GET requests with search parameters and displays 
+    the search form along with the filtered results.
 
-    if form.is_valid():
-        # Capturar el valor del campo keyword
+    The filtering includes:
+    - Username, first name, last name, or full name (concatenation of first and last names).
+    - Skills, if any are selected from the form.
+
+    Returns:
+        Rendered template displaying the search form and list of freelancers.
+    """
+    form = FreelancerSearchForm(request.GET or None)  # Initialize the search form with GET data
+    freelancers = FreelancerProfile.objects.all()  # Start with all freelancers
+
+    print("GET request:", request.GET)  # Debugging: log GET request parameters
+
+    if form.is_valid():  # Check if the form is valid
+        # Capture the value of the keyword field
         keyword = form.cleaned_data.get('keyword', '').strip()
-        print("Keyword recibido:", keyword)
+        print("Keyword recibido:", keyword)  # Debugging: log the received keyword
 
-        # Filtrar por username, first_name, last_name o nombre completo
+        # Filter by username, first name, last name, or full name
         if keyword:
-            # Anotar un campo virtual que concatene first_name y last_name
+            # Annotate a virtual field that concatenates first_name and last_name
             freelancers = freelancers.annotate(
                 full_name=Concat('user__first_name', Value(' '), 'user__last_name')
             ).filter(
                 Q(user__username__icontains=keyword) | 
                 Q(user__first_name__icontains=keyword) | 
                 Q(user__last_name__icontains=keyword) |
-                Q(full_name__icontains=keyword)  # Búsqueda por nombre completo
+                Q(full_name__icontains=keyword)  # Search by full name
             )
-            print(f"Freelancers filtrados por keyword '{keyword}':", freelancers.count())
+            print(f"Freelancers filtrados por keyword '{keyword}':", freelancers.count())  # Log the number of filtered freelancers
 
-        # Filtrar por skills si hay habilidades seleccionadas
+        # Filter by skills if any skills are selected
         skills = form.cleaned_data.get('skills')
-        print("Skills recibidas:", skills)
+        print("Skills recibidas:", skills)  # Debugging: log received skills
         if skills and skills.exists():
-            freelancers = freelancers.filter(skills__in=skills).distinct()
-            print(f"Freelancers filtrados por skills '{skills}':", freelancers.count())
+            freelancers = freelancers.filter(skills__in=skills).distinct()  # Filter by selected skills
+            print(f"Freelancers filtrados por skills '{skills}':", freelancers.count())  # Log the count of filtered freelancers
 
     return render(request, 'Users/search_freelancers.html', {
         'form': form,
-        'freelancers': freelancers
+        'freelancers': freelancers  # Pass the filtered freelancers to the template
     })
 
 
 def freelancer_profile(request, id):
-    freelancer = get_object_or_404(FreelancerProfile, user__id=id)
-    return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})
+    """
+    View for displaying a freelancer's profile.
 
+    This view retrieves the freelancer's profile using the provided user ID 
+    and renders the corresponding template.
+
+    Args:
+        id (int): The user ID of the freelancer.
+
+    Returns:
+        Rendered template displaying the freelancer's profile.
+    """
+    freelancer = get_object_or_404(FreelancerProfile, user__id=id)  # Get the freelancer profile or 404
+    return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})  # Render the profile template
 
 
 def search_clients(request):
-    form = ClientSearchForm(request.GET or None)
-    clients = ClientProfile.objects.all()
+    """
+    View for searching clients based on a keyword and country.
 
-    if form.is_valid():
-        keyword = form.cleaned_data.get('keyword')
-        country = form.cleaned_data.get('country')
+    This view processes the search form to filter clients by:
+    - Company name, city, or country based on the keyword.
+    - Specific country if selected.
 
-        if keyword:
+    Returns:
+        Rendered template displaying the search form and list of clients.
+    """
+    form = ClientSearchForm(request.GET or None)  # Initialize the search form with GET data
+    clients = ClientProfile.objects.all()  # Start with all clients
+
+    if form.is_valid():  # Check if the form is valid
+        keyword = form.cleaned_data.get('keyword')  # Get the keyword
+        country = form.cleaned_data.get('country')  # Get the selected country
+
+        if keyword:  # Filter by keyword
             clients = clients.filter(
                 Q(company_name__icontains=keyword) |
                 Q(city__icontains=keyword) |
                 Q(country__icontains=keyword)
-            ).distinct()
+            ).distinct()  # Remove duplicates
 
-        if country:
+        if country:  # Filter by country
             clients = clients.filter(country=country)
 
     return render(request, 'Users/search_clients.html', {
         'form': form,
-        'clients': clients
+        'clients': clients  # Pass the filtered clients to the template
     })
-    
-    
 
 
 def client_profile(request, id):
-    client = get_object_or_404(ClientProfile, user__id=id)
-    return render(request, 'Users/clientProfile.html', {'client': client})
-    
+    """
+    View for displaying a client's profile.
 
+    This view retrieves the client's profile using the provided user ID 
+    and renders the corresponding template.
+
+    Args:
+        id (int): The user ID of the client.
+
+    Returns:
+        Rendered template displaying the client's profile.
+    """
+    client = get_object_or_404(ClientProfile, user__id=id)  # Get the client profile or 404
+    return render(request, 'Users/clientProfile.html', {'client': client})  # Render the profile template
