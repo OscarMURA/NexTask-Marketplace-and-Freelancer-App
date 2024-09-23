@@ -5,18 +5,23 @@
 ## Estilo de Nombres
 
 ### Nombres de Variables
-- **Formato:** Utilizar `camelCase` para los nombres de las variables.
+- **Formato:** Se permite el uso de `camelCase` o guion bajo (`snake_case`) para los nombres de las variables.
 - **Ejemplos:**
   - `miVariable`
-  - `nombreUsuario`
+  - `nombre_usuario`
   - `totalVehiculos`
+  - `total_vehiculos`
 
-### Nombres de Funciones y Clases
-- **Funciones y Métodos:**
-  - Utilizar `PascalCase` para los nombres de funciones y métodos.
-  - **Ejemplo:** `CalcularTotalVehiculos()`, `ValidarDocumento()`
-- **Clases:**
-  - Usar `PascalCase` para el nombre de las clases.
+### Nombres de Funciones y Métodos
+- **Formato:** Se permite el uso de `camelCase` o guion bajo (`snake_case`) para los nombres de funciones y métodos.
+- **Ejemplos:**
+  - `calcularTotalVehiculos()`
+  - `calcular_total_vehiculos()`
+  - `validarDocumento()`
+  - `validar_documento()`
+
+### Nombres de Clases
+- Usar `PascalCase` para el nombre de las clases.
   - **Ejemplo:** `ClaseVehiculo`, `HistorialMantenimiento`
 
 ---
@@ -25,18 +30,12 @@
 - Utilizar **4 espacios** por cada nivel de indentación. No se deben usar tabuladores.
 - **Ejemplo:**
   ```python
-  def calcularPrecioTotal(precioBase, impuestos):
-      precioFinal = precioBase + impuestos
-      return precioFinal
+  def calcular_precio_total(precio_base, impuestos):
+      precio_final = precio_base + impuestos
+      return precio_final
   ```
 
----
 
-## Longitud Máxima de las Líneas de Código
-- Mantener una longitud máxima de **80 caracteres** por línea de código para asegurar la legibilidad.
-- Si una línea es muy larga, dividirla en múltiples líneas usando sangría adecuada.
-
----
 
 ## Comentarios y Documentación
 
@@ -44,26 +43,26 @@
 - Utilizar `#` para comentarios en línea que expliquen partes específicas del código.
 - **Ejemplo:**
   ```python
-  precioBase = 100  # Precio base del vehículo
+  precio_base = 100  # Precio base del vehículo
   ```
 
 ### Comentarios de Bloque
 - Para comentarios más extensos que describen funciones, clases o bloques de código, utilizar el siguiente formato de documentación:
   - **Funciones/Métodos:**
     ```python
-    def calcularPrecioTotal(precioBase, impuestos):
+    def calcular_precio_total(precio_base, impuestos):
         """
         Calcula el precio total del vehículo sumando el precio base e impuestos.
 
         Args:
-            precioBase (float): El precio base del vehículo.
+            precio_base (float): El precio base del vehículo.
             impuestos (float): Impuestos a aplicar sobre el precio base.
 
         Returns:
             float: El precio total después de aplicar los impuestos.
         """
-        precioFinal = precioBase + impuestos
-        return precioFinal
+        precio_final = precio_base + impuestos
+        return precio_final
     ```
 
   - **Clases:**
@@ -117,31 +116,25 @@ Para los mensajes de commits, seguiremos las reglas de [Conventional Commits](ht
 
 ## Convención de Nombres de Ramas
 
-Las ramas deben seguir una convención clara basada en la funcionalidad que se está desarrollando o corrigiendo. Utiliza las siguientes convenciones para nombrar las ramas:
+Las ramas deben seguir una convención clara basada en la funcionalidad que se está desarrollando o corrigiendo. Se acepta el uso de guion bajo (`_`) en los nombres de las ramas para mayor legibilidad. Utiliza las siguientes convenciones para nombrar las ramas:
 
 - **Para nuevas características:**
+  ```bash
+  feat/<nombre_funcionalidad>
   ```
-  feat/<nombre-funcionalidad>
-  ```
-  **Ejemplo:** `feat/agregar-vehiculo`
+  **Ejemplo:** `feat/agregar_vehiculo`
   
 - **Para corrección de errores:**
+  ```bash
+  fix/<descripcion_error>
   ```
-  fix/<descripción-error>
-  ```
-  **Ejemplo:** `fix/corregir-validacion-combustible`
+  **Ejemplo:** `fix/corregir_validacion_combustible`
 
 - **Para cambios en la documentación:**
+  ```bash
+  docs/<actualizacion_documentacion>
   ```
-  docs/<actualización-documentación>
-  ```
-  **Ejemplo:** `docs/actualizar-readme`
+  **Ejemplo:** `docs/actualizar_readme`
 
----
 
-## Prácticas Generales
-
-1. **Testing:** Asegúrate de escribir pruebas unitarias para toda nueva funcionalidad que se agregue.
-2. **Revisiones de Código:** Todo código debe ser revisado por al menos un compañero antes de ser integrado a la rama principal.
-3. **Limpieza de Código:** Antes de realizar un commit, asegúrate de eliminar cualquier código comentado que no sea relevante o necesario.
 
