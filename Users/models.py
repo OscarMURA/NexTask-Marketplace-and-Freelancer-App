@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_countries.fields import CountryField
+from django.forms import ValidationError
+
 
 class User(AbstractUser):
     """
@@ -72,7 +74,7 @@ class FreelancerProfile(models.Model):
         avatar (ImageField): Profile picture of the freelancer.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='freelancer_profile')
-    country = CountryField()  # Campo para seleccionar país
+    country = CountryField(blank=False, null=False)  # Campo para seleccionar país
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
@@ -85,6 +87,11 @@ class FreelancerProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    def clean(self):
+        super().clean()
+        if not self.country:
+            raise ValueError('El campo "country" es obligatorio.')
         
         
 class ClientProfile(models.Model):
@@ -104,7 +111,7 @@ class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
     company_website = models.URLField(blank=True)
-    country = CountryField()  # Campo para seleccionar país
+    country = CountryField(blank=False, null=False)  # Campo para seleccionar país
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
@@ -128,6 +135,11 @@ class ClientProfile(models.Model):
             QuerySet: All projects associated with this client.
         """
         return self.projects.all()
+    
+    def clean(self):
+        super().clean()
+        if not self.country:
+            raise ValueError('El campo "country" es obligatorio.')
 
 
 class Education(models.Model):
@@ -174,6 +186,10 @@ class WorkExperience(models.Model):
 
     def __str__(self):
         return f"{self.position} - {self.company_name}"
+    
+    def clean(self):
+        if self.end_date and self.start_date and self.end_date < self.start_date:
+            raise ValidationError("La fecha de finalización debe ser posterior a la fecha de inicio.")
 
 
 class Certification(models.Model):

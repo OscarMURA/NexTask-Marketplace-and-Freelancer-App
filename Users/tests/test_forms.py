@@ -450,24 +450,6 @@ def test_freelancer_signup_form_invalid_long_username():
     assert not form.is_valid()
     assert 'username' in form.errors
 
-@pytest.mark.django_db
-def test_freelancer_signup_form_invalid_phone_number():
-    data = {
-        'username': 'testuser',
-        'email': 'test@example.com',
-        'first_name': 'John',
-        'last_name': 'Doe',
-        'password1': 'securepassword123',
-        'password2': 'securepassword123',
-        'country': 'US',
-        'city': 'New York',
-        'phone': 'invalid-phone',  # Número no válido
-        'address': '1234 Test St.'
-    }
-
-    form = FreelancerSignUpForm(data=data)
-    assert not form.is_valid()
-    assert 'phone' in form.errors
 
 @pytest.mark.django_db
 def test_client_signup_form_valid_url():

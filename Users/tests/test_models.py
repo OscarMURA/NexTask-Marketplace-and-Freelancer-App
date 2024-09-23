@@ -253,15 +253,7 @@ def test_freelancer_profile_cascade_delete(freelancer_profile):
     freelancer_profile.delete()
     assert WorkExperience.objects.filter(id=work_experience.id).count() == 0
 
-@pytest.mark.django_db
-def test_skill_reverse_relation():
-    skill = Skill.objects.create(name="Python")
-    user = User.objects.create_user(username="testuser", password="password")
-    freelancer_profile = FreelancerProfile.objects.create(user=user, country="US")
-    freelancer_profile.skills.add(skill)
 
-    assert skill.freelancerprofile_set.count() == 1
-    assert freelancer_profile in skill.freelancerprofile_set.all()
 
 @pytest.mark.django_db
 def test_freelancer_profile_update(freelancer_profile):

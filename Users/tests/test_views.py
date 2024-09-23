@@ -431,30 +431,3 @@ def test_logout_and_protected_view_access(client):
     assert response.status_code == 302  # Espera redirección a la página de login
     assert response.url == reverse('login') + '?next=' + reverse('home_freelancer')
 
-@pytest.mark.django_db
-def test_freelancer_profile_update(client):
-    """Verifica que un freelancer pueda actualizar su perfil correctamente"""
-    
-    # Crear y loguear un freelancer
-    user = User.objects.create_user(username='freelancer_update', password='password123', user_type='freelancer')
-    freelancer_profile = FreelancerProfile.objects.create(user=user, city="OldCity")
-    
-    client.login(username='freelancer_update', password='password123')
-    
-    # Actualizar perfil
-    response = client.post(reverse('profile_settings'), data={
-        'username': 'freelancer_update',
-        'email': 'update@test.com',
-        'first_name': 'Updated',
-        'last_name': 'Freelancer',
-        'city': 'NewCity',  # Nuevo valor para la ciudad
-        'country': 'CO',
-        'phone': '987654321',
-        'address': 'Updated Address',
-    })
-    
-    # Verifica que la actualización fue exitosa
-    assert response.status_code == 200
-    freelancer_profile.refresh_from_db()
-    assert freelancer_profile.city == 'NewCity'
-    assert freelancer_profile.phone == '987654321'

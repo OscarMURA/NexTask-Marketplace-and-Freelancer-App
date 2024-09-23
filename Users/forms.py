@@ -62,6 +62,8 @@ class FreelancerSignUpForm(UserSignUpForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up as Freelancer'))
+        
+        
 
     def save(self, commit=True):
         """

@@ -372,7 +372,7 @@ def home_client(request):
     """
     return render(request, 'Users/homeClient.html')  # Render client home template
 
-
+@login_required
 def home_freelancer(request):
     """
     View for rendering the home page for freelancers.
