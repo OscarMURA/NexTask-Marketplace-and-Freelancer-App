@@ -41,3 +41,4 @@ class Notification(models.Model):
     Indicates whether the notification has been read by the recipient.
     Defaults to False, meaning the notification is unread.
     """
+
