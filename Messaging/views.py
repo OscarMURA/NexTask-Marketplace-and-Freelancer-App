@@ -1,7 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
-# messaging/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Thread, Message
@@ -9,11 +5,30 @@ from .forms import MessageForm
 
 @login_required
 def thread_list(request):
+    """
+    Displays a list of conversation threads that the user participates in.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        Rendered template showing the user's threads.
+    """
     threads = Thread.objects.filter(participants=request.user)
     return render(request, 'messaging/thread_list.html', {'threads': threads})
 
 @login_required
 def thread_detail(request, thread_id):
+    """
+    Displays the details of a specific conversation thread, including messages.
+
+    Args:
+        request: The HTTP request object.
+        thread_id (int): The ID of the thread to display.
+
+    Returns:
+        Rendered template showing the thread details and messages.
+    """
     thread = get_object_or_404(Thread, id=thread_id, participants=request.user)
     messages = thread.messages.all()
     if request.method == 'POST':
@@ -30,6 +45,16 @@ def thread_detail(request, thread_id):
 
 @login_required
 def start_thread(request, user_id):
+    """
+    Starts a new conversation thread with another user.
+
+    Args:
+        request: The HTTP request object.
+        user_id (int): The ID of the user to start a thread with.
+
+    Returns:
+        Redirects to the thread detail view for the new or existing thread.
+    """
     other_user = get_object_or_404(User, id=user_id)
     thread = Thread.objects.filter(participants=request.user).filter(participants=other_user).first()
     if not thread:
