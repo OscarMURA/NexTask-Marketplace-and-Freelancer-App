@@ -5,3 +5,4 @@ from .models import Notification
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('recipient', 'message', 'is_read', 'created_at')  # Cambiar 'timestamp' por 'created_at'
     list_filter = ('is_read', 'created_at')  # Cambiar 'timestamp' por 'created_at'
+

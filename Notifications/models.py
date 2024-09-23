@@ -9,3 +9,4 @@ class Notification(models.Model):
     message = models.ForeignKey('Messaging.Message', on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     is_read = models.BooleanField(default=False)
+

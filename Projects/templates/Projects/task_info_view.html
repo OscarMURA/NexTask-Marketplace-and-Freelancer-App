@@ -1,3 +1,6 @@
+{% load static %}
+
+
 <div class="gig-info-card">
     <div class="gig-info-header">
         <h4 class="text-18 fw-semibold text-dark-300">Task Info</h4>
@@ -44,6 +47,17 @@
                             Not assigned
                         {% endif %}
                     </div>
+                </div>
+            </div>
+            <!-- Archivo -->
+            <div class="col-6">
+                <div class="form-container">
+                    <label class="form-label">File</label>
+                    {% if task.attachments %}
+                        <a href="{{ task.attachments.url }}" class="w-btn-secondary-lg">Download File</a>
+                    {% else %}
+                        <p>No file uploaded</p>
+                    {% endif %}
                 </div>
             </div>
 

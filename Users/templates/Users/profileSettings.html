@@ -26,6 +26,7 @@
         <form method="post" enctype="multipart/form-data" id="profile_settings_form">
             {% csrf_token %}
             <div class="d-flex flex-column gap-4">
+
                 <!-- User Information Container -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
@@ -121,10 +122,64 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Botón de Upload más pequeño -->
+                        <br>
+                        <div class="mt-12 text-start"></div>
+                            <button type="submit" name="update_user_info" class="btn btn-sm btn-primary">
+                                Update User Information
+                            </button>
+                        </div>
                     </div>  
-                    <br>
-                  
-                <!-- Education Information Container -->
+                </div>
+                <br>
+                <!-- Formulario para agregar nueva educación -->
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Education</h4>
+                            <button type="submit" name="add_education" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Institution Name</label>
+                                        <input type="text" class="form-control shadow-none" name="new_institution_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Degree Obtained</label>
+                                        <input type="text" class="form-control shadow-none" name="new_degree_obtained">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_start_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">End Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_end_date">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
+
+                <!-- Display existing Education Records -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
                         <h4 class="text-18 fw-semibold text-dark-300">List Educational</h4>
@@ -163,6 +218,14 @@
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ education.description }}</textarea>
                                         </div>
                                     </div>
+                                    <!-- Botón de eliminar educación -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_education" value="{{ education.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
                                 {% endfor %}
                             {% else %}
                                 <p>No educational records found.</p>
@@ -171,9 +234,53 @@
                     </div>
                 </div>
                 <br>
+                <!-- Formulario para agregar nuevas certificaciones -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Certification</h4>
+                            <button type="submit" name="add_certification" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Certification Name</label>
+                                        <input type="text" class="form-control shadow-none" name="new_certification_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Issuing Organization</label>
+                                        <input type="text" class="form-control shadow-none" name="new_issuing_organization">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Issue Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_issue_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Expiration Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_expiration_date">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_certification_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>     
 
-                
-                <!-- Certification Information Container -->
+                <!-- Display existing Certifications -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
                         <h4 class="text-18 fw-semibold text-dark-300">Certifications</h4>
@@ -212,6 +319,14 @@
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ certification.short_description }}</textarea>
                                         </div>
                                     </div>
+                                    <!-- Botón de eliminar certificación -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_certification" value="{{ certification.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
                                 {% endfor %}
                             {% else %}
                                 <p>No certifications found.</p>
@@ -220,9 +335,54 @@
                     </div>
                 </div>
                 <br>
+                <!-- Formulario para agregar nueva experiencia laboral -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Work Experience</h4>
+                            <button type="submit" name="add_experience" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Company Name</label>
+                                        <input type="text" class="form-control shadow-none" name="new_company_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Position</label>
+                                        <input type="text" class="form-control shadow-none" name="new_position">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_experience_start_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">End Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_experience_end_date">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_experience_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
 
-                 <!-- Work Experience Information Container -->
-                 <div class="gig-info-card">
+                <!-- Display existing Work Experience -->
+                <div class="gig-info-card">
                     <div class="gig-info-header">
                         <h4 class="text-18 fw-semibold text-dark-300">Work Experience</h4>
                     </div>
@@ -260,6 +420,14 @@
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ work_experience.description }}</textarea>
                                         </div>
                                     </div>
+                                    <!-- Botón de eliminar experiencia laboral -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_experience" value="{{ work_experience.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
                                 {% endfor %}
                             {% else %}
                                 <p>No work experience found.</p>
@@ -268,8 +436,35 @@
                     </div>
                 </div>
                 <br>
+                <!-- Formulario para agregar nuevo portafolio -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Portfolio</h4>
+                            <button type="submit" name="add_portfolio" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Portfolio URL</label>
+                                        <input type="text" class="form-control shadow-none" name="new_portfolio_url">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_portfolio_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
 
-                <!-- Portfolio Information Container -->
+                <!-- Display existing Portfolio -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
                         <h4 class="text-18 fw-semibold text-dark-300">List Portfolio</h4>
@@ -290,6 +485,14 @@
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ portfolio.description }}</textarea>
                                         </div>
                                     </div>
+                                    <!-- Botón de eliminar portafolio -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_portfolio" value="{{ portfolio.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
                                 {% endfor %}
                             {% else %}
                                 <p>No portfolio entries found.</p>
@@ -298,7 +501,7 @@
                     </div>
                 </div>
                 <br>
-                
+
                 <form method="POST" action="{% url 'profile_settings' %}">
                     {% csrf_token %}
                     <div class="gig-info-card">
@@ -332,22 +535,14 @@
                         </div>
                     </div>
                 </form>
-                <br>
-                <!-- Submit Button -->
-                <div>
-                    <button type="submit" class="w-btn-secondary-lg">
-                        Update Profile
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
-                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
+                <br>            
             </div>
         </form>
     </div>
 </div>
 
-<style>
+
+<style> 
     .form-container {
         box-shadow: none !important; /* Elimina sombras de contenedores */
         border: none !important; /* Elimina bordes de contenedores */
