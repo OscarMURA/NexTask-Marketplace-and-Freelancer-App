@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
-from django.contrib import messages  # For success and error messages
+from django.contrib import messages  # Para los mensajes de error y éxito
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
 from django.shortcuts import get_object_or_404
 from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio

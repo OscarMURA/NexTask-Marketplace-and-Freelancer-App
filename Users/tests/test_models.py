@@ -219,14 +219,21 @@ def test_freelancer_profile_skills():
 
 @pytest.mark.django_db
 def test_freelancer_profile_missing_required_fields(user):
-    # Intenta crear un perfil sin un campo obligatorio como "country"
-    with pytest.raises(ValidationError):
-        FreelancerProfile.objects.create(
-            user=user,
-            city="New York",
-            phone="123456789",
-            address="1234 Freelance Ave"
-        )
+    # Intenta crear un perfil sin el campo obligatorio 'country'
+    freelancer_profile = FreelancerProfile(
+        user=user,
+        city="New York",
+        phone="123456789",
+        address="1234 Freelance Ave"
+    )
+    
+    # Llama a full_clean() para forzar la validación y verificar que se lanza un ValueError
+    with pytest.raises(ValueError) as exc_info:
+        freelancer_profile.full_clean()  # Esto lanzará el ValueError por 'country' faltante
+
+    # Verifica que el mensaje del error sea el esperado
+    assert str(exc_info.value) == 'El campo "country" es obligatorio.'
+
 
 @pytest.mark.django_db
 def test_freelancer_profile_phone_length(freelancer_profile):

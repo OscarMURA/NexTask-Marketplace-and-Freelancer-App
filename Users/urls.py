@@ -53,4 +53,6 @@ urlpatterns = [
 
     # URL for viewing a client's profile
     path('client/<int:id>/', views.client_profile, name='client_profile'),
+
 ]
+
