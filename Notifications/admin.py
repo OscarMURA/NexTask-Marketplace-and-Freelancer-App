@@ -1,11 +1,7 @@
 from django.contrib import admin
-
-# Register your models here.
-# notifications/admin.py
-from django.contrib import admin
 from .models import Notification
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('recipient', 'message', 'is_read', 'timestamp')
-    list_filter = ('is_read', 'timestamp')
+    list_display = ('recipient', 'message', 'is_read', 'created_at')  # Cambiar 'timestamp' por 'created_at'
+    list_filter = ('is_read', 'created_at')  # Cambiar 'timestamp' por 'created_at'
