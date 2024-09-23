@@ -1,0 +1,15 @@
+<h2>Your Notifications</h2>
+<ul>
+    {% for notification in notifications %}
+    <li>
+        You have a new message in thread: 
+        <a href="{% url 'thread_detail' notification.thread.id %}">
+            View message
+        </a>
+        <form method="post" action="{% url 'mark_as_read' notification.id %}">
+            {% csrf_token %}
+            <button type="submit">Mark as read</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
