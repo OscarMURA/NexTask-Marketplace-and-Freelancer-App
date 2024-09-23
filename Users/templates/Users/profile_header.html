@@ -1,0 +1,131 @@
+{% load static %}
+
+
+<!-- Encabezado del perfil -->
+<div class="profile-header">
+    <div class="col-md-8">
+        <h1>{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</h1>
+        <p><strong>Username:</strong> {{ freelancer.user.username }}</p>
+        <p>{{ freelancer.city }}, {{ freelancer.country }}</p>
+        <p><strong>id</strong> {{ freelancer.user.id }}</p>
+        <!-- Botones para enviar mensaje y contratar al freelancer -->
+        
+    </div>
+    <div class="col-md-4 text-center">
+        <!-- Mostrar el avatar cargado del freelancer -->
+        {% if freelancer.avatar %}
+            <img src="{{ freelancer.avatar.url }}" alt="Profile Picture" class="img-thumbnail">
+        {% else %}
+            <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Avatar" class="img-thumbnail">
+        {% endif %}
+    </div>
+    
+</div>
+
+
+<!-- Estilos CSS incluidos directamente en el archivo HTML -->
+<style>
+    .profile-header {
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .profile-header h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .profile-header p {
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    .profile-header img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%; /* Hace que la imagen sea circular */
+        border: 3px solid #007bff;
+        object-fit: cover;
+    }
+
+    .profile-details {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-details h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+
+    .profile-details ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .profile-details ul li {
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .profile-details a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .profile-details a:hover {
+        text-decoration: underline;
+    }
+
+    .no-info {
+        color: #888;
+        font-style: italic;
+    }
+
+    /* Botón de regreso estilizado */
+    .btn-back {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: block; /* Ajusta el botón al centro */
+        margin: 20px auto;
+        width: fit-content;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-back:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-header img {
+            margin-top: 20px;
+        }
+    }
+</style>

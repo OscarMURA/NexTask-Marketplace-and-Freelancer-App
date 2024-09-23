@@ -3,24 +3,30 @@ from django.db import models
 from django.forms import ValidationError
 from django_countries.fields import CountryField
 
-
-
-
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
         ('freelancer', 'Freelancer'),
         ('client', 'Client'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-    
+
+    @property
+    def is_freelancer(self):
+        return self.user_type == 'freelancer'
+
+    @property
+    def is_client(self):
+        return self.user_type == 'client'
+
 class Language(models.Model):
     language = models.CharField(max_length=100)  # Use CharField instead of LanguageField
 
     def __str__(self):
         return self.language
 
+
 class Skill(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -31,14 +37,23 @@ class FreelancerProfile(models.Model):
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
-    skills = models.ManyToManyField(Skill, blank=True)
+    skills = models.ManyToManyField(Skill, related_name='freelancers', blank=True)
     languages = models.ManyToManyField('Language', blank=True)
+    avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
     def clean(self):
         super().clean()
         if not self.country:
             raise ValueError('El campo "country" es obligatorio.')
+    avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
 
-
+    def __str__(self):
+        return self.user.username
+        
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
@@ -47,6 +62,10 @@ class ClientProfile(models.Model):
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
+    avatar = models.ImageField(upload_to='avatars/', default='img/defaultClientProfileImage.jpg', blank=True, null=True)
+
+    
+
     
     # Método para calcular el presupuesto total de los proyectos del cliente
     def get_total_budget(self):
@@ -59,6 +78,7 @@ class ClientProfile(models.Model):
         super().clean()
         if not self.country:
             raise ValueError('El campo "country" es obligatorio.')
+
 
 # Historial académico
 class Education(models.Model):

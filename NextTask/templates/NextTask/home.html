@@ -30,6 +30,26 @@
             padding: 20px;
             text-align: center;
         }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-search {
+            background-color: #635FD9;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .btn-search:hover {
+            background-color: #4c4dbf;
+        }
     </style>
 </head>
 <body>
@@ -37,11 +57,24 @@
     <div style="background-color: #1A1773; display: flex; align-items: center; justify-content: space-between; padding: 20px; text-align: left; color: white;">
         <div style="flex: 1; padding-right: 20px;">
             <h1 style="font-size: 60px; font-weight: bold;">
-                Find Your Perfect <span style="color: #635FD9;">Freelancer</span> Quick<br>
+                Find Your Perfect <span style="color: #635FD9;">Freelancer</span> or <span style="color: #635FD9;">Client</span> Quick<br>
             </h1>
             <h1 style="font-size: 60px; font-weight: bold;">and Easy</h1><br><br>
             <div style="margin-top: 20px; font-size: 30px;"><b>We have</b></div>
             <p style="font-size: 24px;">your next task!</p>
+            <br>
+            <!-- Add the search links here -->
+            <div class="button-container">
+                <a href="{% url 'search_freelancers' %}" class="btn-search">
+                    Search Freelancers
+                </a>
+                <a href="{% url 'search_clients' %}" class="btn-search">
+                    Search Clients
+                </a>
+                <a href="{% url 'search_projects' %}" class="btn-search"> <!-- Nuevo botón para buscar proyectos -->
+                    Search Projects
+                </a>
+            </div>
         </div>
         <img src="{% static 'img/others/freelancerHome.png' %}" alt="Freelancer Working" style="max-width: 55%; height: auto;">
     </div>

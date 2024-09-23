@@ -5,6 +5,22 @@
 <head>
     <!-- django-quill-editor Media -->
     {% include 'django_quill/media.html' %}
+
+    <style>
+        .quill-content {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .quill-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
 </head>
 
 <!-- Page Header -->
@@ -57,7 +73,9 @@
                         <div class="col-12">
                             <div class="form-container">
                                 <label class="form-label">Description</label>
-                                <div>{{ milestone.description.html|safe }}</div>
+                                <div class="quill-content">
+                                    {{ milestone.description.html|safe }}
+                                </div>
                             </div>
                         </div>
                         <!-- Archivo -->
@@ -149,45 +167,93 @@
                 </div>
             </div>
 
-            <!-- Botones de navegación -->
-            <div class="button-group">
-                <a href="{% url 'project_detail' milestone.project.id %}" class="w-btn-danger-lg">
-                    Back to Project
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
-                        <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </a>
-            </div>
+            
+            <div class="text mt-4">
+                <div class="button-group">
+                  <a href="{% url  'create_task' milestone.id %}" class="w-btn-secondary-lg">Add Task</a>
+                  <a href="{% url 'project_detail' milestone.project.id %}" class="w-btn-danger-lg"> Back </a>
+                </div>
+                <p>.</p>
+                <p></p>
+              </div>
         </div>
     </div>
 </div>
 
-<style>
-    .readonly-field {
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        padding: 10px;
-        background-color: #f5f5f5;
-        color: #333;
-        cursor: not-allowed;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-    }
 
-    .ql-container {
-        border: 2px solid #ccc;
-        border-radius: 10px;
-        min-height: 300px;
-        padding: 10px;
-    }
+<!-- Lista de Tareas -->
 
-    .ql-editor {
-        min-height: 280px;
-        font-size: 16px;
-        border: 2px solid #ccc;
-        border-radius: 10px;
-    }
-</style>
+    <!-- Verifica si hay tareas -->
+    {% if milestone.tasks.all %}
+        <table class="w-100 dashboard-table">
+            <thead class="pb-3">
+                <tr>
+                    <th scope="col" class="ps-4">Task Title</th>
+                    <th scope="col">Freelancer</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col" class="text-end pe-5">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Itera sobre cada tarea asociada al hito -->
+                {% for task in milestone.tasks.all %}
+                <tr>
+                    <!-- Título de la tarea -->
+                    <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">
+                        <div class="d-flex gap-3 align-items-center project-name">
+                            <div>
+                                <p class="text-dark-200">{{ task.title }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <!-- Freelancer asignado a la tarea -->
+                    <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;" class="text-dark-200">
+                        {% if task.assigned_to %}
+                            {{ task.assigned_to.user.first_name }} {{ task.assigned_to.user.last_name }}
+                        {% else %}
+                            Not Assigned
+                        {% endif %}
+                    </td>
+                    
+                    <!-- Fecha de vencimiento -->
+                    <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;" class="text-dark-200">
+                        {{ task.due_date }}
+                    </td>
+                    
+                    <!-- Estado de la tarea -->
+                    <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;" class="text-dark-200">
+                        {{ task.get_status_display }}
+                    </td>
+                    
+                    <!-- Prioridad de la tarea -->
+                    <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;" class="text-dark-200">
+                        {{ task.get_priority_display }}
+                    </td>
+                    
+                    <!-- Acciones (Editar y Eliminar) -->
+                    <td>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm">Edit</a>
+                            <form action="{% url 'delete_task' task.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <!-- Mensaje si no hay tareas -->
+        <p>No tasks available for this milestone.</p>
+    {% endif %}
+
+
+
+
 
 {% endblock %}

@@ -1,62 +1,638 @@
 {% extends 'Users/baseFreelancer.html' %}
 
+{% load static %}
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-left">Profile Settings</h2>
-    <br>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+<!-- Page Header -->
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">Profile Settings</h3>
+    <ul class="d-flex align-items-center gap-2">
+        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
+                <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </li>
+        <li class="text-lime-300 fs-6">Profile Settings</li>
+    </ul>
+</div>
 
-    <div class="card p-4 mt-3">
-        <h4>User Information</h4>
-        <br>
-        <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
-        <br>
-
-        <form method="POST">
+<!-- Form Section -->
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <form method="post" enctype="multipart/form-data" id="profile_settings_form">
             {% csrf_token %}
-            <!-- Datos del usuario -->
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+            <div class="d-flex flex-column gap-4">
+
+                <!-- User Information Container -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">User Information</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            <!-- Username Field -->
+                            <div class="col-6">
+                                <div class="form-container">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control shadow-none" name="username" id="username" value="{{ user.username }}">
+                                    {% if form.username.errors %}
+                                        <div class="error text-danger">{{ form.username.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- Email Field -->
+                            <div class="col-6">
+                                <div class="form-container">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control shadow-none" name="email" id="email" value="{{ user.email }}">
+                                    {% if form.email.errors %}
+                                        <div class="error text-danger">{{ form.email.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- First Name Field -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="first_name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control shadow-none" name="first_name" id="first_name" value="{{ user.first_name }}">
+                                    {% if form.first_name.errors %}
+                                        <div class="error text-danger">{{ form.first_name.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- Last Name Field -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="last_name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control shadow-none" name="last_name" id="last_name" value="{{ user.last_name }}">
+                                    {% if form.last_name.errors %}
+                                        <div class="error text-danger">{{ form.last_name.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- Country Field -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="country" class="form-label">Country</label>
+                                    <input type="text" class="form-control shadow-none" name="country" id="country" value="{{ freelancer.country }}">
+                                    {% if form.country.errors %}
+                                        <div class="error text-danger">{{ form.country.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- City Field -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control shadow-none" name="city" id="city" value="{{ freelancer.city }}">
+                                    {% if form.city.errors %}
+                                        <div class="error text-danger">{{ form.city.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- Phone Field -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control shadow-none" name="phone" id="phone" value="{{ freelancer.phone }}">
+                                    {% if form.phone.errors %}
+                                        <div class="error text-danger">{{ form.phone.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    
+                            <!-- Address Field -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" class="form-control shadow-none" name="address" id="address" value="{{ freelancer.address }}">
+                                    {% if form.address.errors %}
+                                        <div class="error text-danger">{{ form.address.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Botón de Upload más pequeño -->
+                        <br>
+                        <div class="mt-12 text-start"></div>
+                            <button type="submit" name="update_user_info" class="btn btn-sm btn-primary">
+                                Update User Information
+                            </button>
+                        </div>
+                    </div>  
+                </div>
+                <br>
+                <!-- Formulario para agregar nueva educación -->
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Education</h4>
+                            <button type="submit" name="add_education" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Institution Name</label>
+                                        <input type="text" class="form-control shadow-none" name="new_institution_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Degree Obtained</label>
+                                        <input type="text" class="form-control shadow-none" name="new_degree_obtained">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_start_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">End Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_end_date">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
+
+                <!-- Display existing Education Records -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">List Educational</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            {% if educations %}
+                                {% for education in educations %}
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Institution Name</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ education.institution_name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Degree Obtained</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ education.degree_obtained }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Start Date</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ education.start_date }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">End Date</label>
+                                            <input type="text" class="form-control shadow-none" value="{% if education.end_date %}{{ education.end_date }}{% else %}Present{% endif %}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-container">
+                                            <label class="form-label">Description</label>
+                                            <textarea class="form-control shadow-none" rows="3" readonly>{{ education.description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <!-- Botón de eliminar educación -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_education" value="{{ education.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No educational records found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <!-- Formulario para agregar nuevas certificaciones -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Certification</h4>
+                            <button type="submit" name="add_certification" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Certification Name</label>
+                                        <input type="text" class="form-control shadow-none" name="new_certification_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Issuing Organization</label>
+                                        <input type="text" class="form-control shadow-none" name="new_issuing_organization">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Issue Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_issue_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Expiration Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_expiration_date">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_certification_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>     
+
+                <!-- Display existing Certifications -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">Certifications</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            {% if certifications %}
+                                {% for certification in certifications %}
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Certification Name</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ certification.certification_name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Issuing Organization</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ certification.issuing_organization }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Issue Date</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ certification.issue_date }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Expiration Date</label>
+                                            <input type="text" class="form-control shadow-none" value="{% if certification.expiration_date %}{{ certification.expiration_date }}{% else %}No Expiration{% endif %}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-container">
+                                            <label class="form-label">Description</label>
+                                            <textarea class="form-control shadow-none" rows="3" readonly>{{ certification.short_description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <!-- Botón de eliminar certificación -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_certification" value="{{ certification.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No certifications found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <!-- Formulario para agregar nueva experiencia laboral -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Work Experience</h4>
+                            <button type="submit" name="add_experience" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Company Name</label>
+                                        <input type="text" class="form-control shadow-none" name="new_company_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Position</label>
+                                        <input type="text" class="form-control shadow-none" name="new_position">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_experience_start_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label class="form-label">End Date</label>
+                                        <input type="date" class="form-control shadow-none" name="new_experience_end_date">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_experience_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
+
+                <!-- Display existing Work Experience -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">Work Experience</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            {% if work_experiences %}
+                                {% for work_experience in work_experiences %}
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Company Name</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ work_experience.company_name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Position</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ work_experience.position }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">Start Date</label>
+                                            <input type="text" class="form-control shadow-none" value="{{ work_experience.start_date }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-container">
+                                            <label class="form-label">End Date</label>
+                                            <input type="text" class="form-control shadow-none" value="{% if work_experience.end_date %}{{ work_experience.end_date }}{% else %}Present{% endif %}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-container">
+                                            <label class="form-label">Description</label>
+                                            <textarea class="form-control shadow-none" rows="3" readonly>{{ work_experience.description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <!-- Botón de eliminar experiencia laboral -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_experience" value="{{ work_experience.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No work experience found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <!-- Formulario para agregar nuevo portafolio -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add New Portfolio</h4>
+                            <button type="submit" name="add_portfolio" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Portfolio URL</label>
+                                        <input type="text" class="form-control shadow-none" name="new_portfolio_url">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control shadow-none" rows="3" name="new_portfolio_description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>
+
+                <!-- Display existing Portfolio -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">List Portfolio</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            {% if portfolios %}
+                                {% for portfolio in portfolios %}
+                                    <div class="col-12">
+                                        <div class="form-container">
+                                            <label class="form-label">Portfolio URL<span class="text-lime-300"></span></label>
+                                            <input type="text" class="form-control shadow-none portfolio-url" value="{{ portfolio.url }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-container">
+                                            <label class="form-label">Description</label>
+                                            <textarea class="form-control shadow-none" rows="3" readonly>{{ portfolio.description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <!-- Botón de eliminar portafolio -->
+                                    <div class="col-md-12">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_portfolio" value="{{ portfolio.id }}">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No portfolio entries found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <form method="POST" action="{% url 'profile_settings' %}">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Skills</h4>
+                            <button type="submit" name="add_skill" class="btn btn-success">+</button>
+                        </div>
+                        <div class="gig-info-body bg-white p-3">
+                            <!-- Input para agregar una nueva skill -->
+                            <div class="form-group mb-3">
+                                <input type="text" id="new_skill_input" name="new_skill" placeholder="Add new skill" class="form-control">
+                            </div>
+                
+                            <!-- Mostrar habilidades que el usuario ya tiene -->
+                            <h5 class="mt-4">Your Skills:</h5>
+                            <br>
+                            <div class="list-group">
+                                {% if skills %}
+                                    <!-- Mostrar habilidades que el usuario ya tiene registradas -->
+                                    {% for skill in skills %}
+                                        <div class="list-group-item list-group-item-action">
+                                            {{ skill.name }}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="list-group-item">
+                                        No skills found.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br>            
             </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
-            </div>
-            <div class="mb-3">
-                <label for="first_name" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
-            </div>
-            <div class="mb-3">
-                <label for="last_name" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
-            </div>
-            <!-- Datos del FreelancerProfile -->
-            <div class="mb-3">
-                <label for="country" class="form-label">Country</label>
-                <input type="text" class="form-control" id="country" name="country" value="{{ freelancer.country }}">
-            </div>
-            <div class="mb-3">
-                <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control" id="city" name="city" value="{{ freelancer.city }}">
-            </div>
-            <div class="mb-3">
-                <label for="phone" class="form-label">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" value="{{ freelancer.phone }}">
-            </div>
-            <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="address" name="address" value="{{ freelancer.address }}">
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Update Profile</button>
         </form>
     </div>
 </div>
+
+
+<style> 
+    .form-container {
+        box-shadow: none !important; /* Elimina sombras de contenedores */
+        border: none !important; /* Elimina bordes de contenedores */
+        background: transparent !important; /* Fondo transparente si es necesario */
+    }
+
+    input.form-control, input.form-control:focus, textarea.form-control:focus {
+        box-shadow: none !important; /* No shadow for input fields */
+        border: 1px solid #ccc; /* Simple, clean border */
+        outline: none; /* Removes the focus outline */
+    }
+
+    .w-btn-secondary-lg {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .w-btn-secondary-lg:hover {
+        background-color: #45a049;
+    }
+
+    .skills-section {
+    background: #FFFFFF; /* Fondo blanco */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.skills-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.skill-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.skill-item {
+    display: inline-block;
+    background: #F4F4F5;
+    border-radius: 20px;
+    padding: 5px 15px;
+    margin-right: 5px;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.remove_skill {
+    margin-left: 10px;
+    color: #707070;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add-skill-button {
+    background-color: #5C67F2;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.add-skill-button:hover {
+    background-color: #4a54e1;
+}
+
+.btn-primary {
+    background-color: #4CAF50; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin bordes */
+    padding: 5px 10px; /* Relleno */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor como puntero */
+}
+
+.btn-primary:hover {
+    background-color: #45a049; /* Color al pasar el ratón */
+}
+</style>
+
 {% endblock %}

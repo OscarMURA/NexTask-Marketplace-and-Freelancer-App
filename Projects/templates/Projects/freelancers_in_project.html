@@ -1,0 +1,59 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+
+{% block content %}
+<div class="text mt-4">
+    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg"> Back </a>
+</div>
+
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">Freelancers Working on Project: {{ project.title }}</h3>
+    <div class="overflow-x-auto">
+        <div class="w-100">
+            <table class="w-100 dashboard-table">
+                <thead class="pb-3">
+                    <tr>
+                        <th scope="col" class="ps-4">Freelancer</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contract in freelancers %}
+                    <tr>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id contract.freelancer.user.id %}'">
+                            <div class="d-flex gap-3 align-items-center project-name">
+                                <div class="rounded-3">
+                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Avatar" class="img-fluid">
+                                </div>
+                                <div>
+                                    <p class="text-dark-200">{{ contract.freelancer.user.username }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id contract.freelancer.user.id %}'" class="text-dark-200">
+                            {{ contract.freelancer.user.first_name }} {{ contract.freelancer.user.last_name }}
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id contract.freelancer.user.id %}'" class="text-dark-200">
+                            {{ contract.freelancer.phone }}
+                        </td>
+                        <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id contract.freelancer.user.id %}'" class="text-dark-200">
+                            {{ contract.freelancer.user.email }}
+                        </td>
+                        <td  onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id contract.freelancer.user.id %}'" class="text-dark-200">
+                            {{ contract.status|capfirst }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No freelancers are currently working on this project.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

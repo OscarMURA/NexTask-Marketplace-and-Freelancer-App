@@ -1,0 +1,24 @@
+{% extends 'NextTask/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div>
+    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; Back to Freelancer Search</a>
+</div>
+
+<div class="container">
+
+    <!-- Encabezado del perfil -->
+    {% include 'Users/profile_header.html' %}
+
+    <!-- Detalles del perfil -->
+    {% include 'Users/freelancer_details.html' %}
+    
+</div>
+
+<!-- Botón para regresar a la búsqueda de freelancers -->
+<div>
+    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; Back to Freelancer Search</a>
+</div>
+{% endblock %}

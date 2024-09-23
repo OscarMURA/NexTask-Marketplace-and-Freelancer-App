@@ -38,7 +38,7 @@
                             <div class="col-12">
                                 <div class="form-container">
                                     <label for="id_title" class="form-label">Milestone Title <span class="text-lime-300">*</span></label>
-                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Milestone title here" maxlength="70">
+                                    <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Milestone title here" maxlength="50">
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
                                     {% endif %}
@@ -124,7 +124,7 @@
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
         const title = document.getElementById('id_title').value.trim();
-        const maxTitleLength = 70;
+        const maxTitleLength = 50;
         
         // Crear espacio para errores si no existe
         let titleError = document.getElementById('title-error');
@@ -145,7 +145,7 @@
             isValid = false;
         }
 
-        // Validación del título del hito (no debe exceder 70 caracteres)
+        // Validación del título del hito (no debe exceder 50 caracteres)
         if (title.length > maxTitleLength) {
             titleError.textContent = `The milestone title cannot exceed ${maxTitleLength} characters.`;
             isValid = false;
