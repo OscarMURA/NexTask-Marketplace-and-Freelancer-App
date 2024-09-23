@@ -4,11 +4,12 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import User, FreelancerProfile, ClientProfile, Skill, Certification, Portfolio, Education, WorkExperience, Language
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
-from django.forms import ModelForm, inlineformset_factory
+from django.forms import ModelForm, ValidationError, inlineformset_factory
 from django_select2.forms import Select2MultipleWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django_select2.forms import *
+import re
 
 # Base class for User Signup
 class UserSignUpForm(UserCreationForm):
@@ -29,23 +30,36 @@ class UserSignUpForm(UserCreationForm):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up'))
 
-# Form for Freelancer Signup
 class FreelancerSignUpForm(UserSignUpForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up as Freelancer'))
+    
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone:  # Solo valida si el campo no está vacío
+            if not re.match(r'^\+?1?\d{9,15}$', phone):  # Patrón de validación de número de teléfono
+                raise ValidationError("El número de celular no es válido. Debe contener entre 9 y 15 dígitos.")
+        return phone
+
     def save(self, commit=True):
+        """
+        Guardar el usuario y el perfil de freelancer, pero no el formset de certificaciones,
+        ya que esto lo manejaremos en las pruebas y vistas donde sea necesario.
+        """
         user = super().save(commit=False)
         user.user_type = 'freelancer'
         if commit:
             user.save()
-            freelancer_profile = FreelancerProfile.objects.create(user=user)
-            freelancer_profile.country = self.cleaned_data.get('country')
-            freelancer_profile.city = self.cleaned_data.get('city')
-            freelancer_profile.phone = self.cleaned_data.get('phone')
-            freelancer_profile.address = self.cleaned_data.get('address')
+            freelancer_profile = FreelancerProfile.objects.create(
+                user=user,
+                country=self.cleaned_data.get('country'),
+                city=self.cleaned_data.get('city'),
+                phone=self.cleaned_data.get('phone'),
+                address=self.cleaned_data.get('address'),
+            )
             freelancer_profile.save()
             print("Freelancer creado")
         return user
@@ -138,16 +152,34 @@ class EducationFormHelper(FormHelper):
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
-        
-        
 
+class WorkExperienceForm(forms.ModelForm):
+    class Meta:
+        model = WorkExperience
+        fields = ['company_name', 'position', 'start_date', 'end_date', 'description']
 
-# Work Experience Formset
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = WorkExperienceFormHelper()  # Agrega el helper aquí
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+
+        if end_date and start_date and end_date < start_date:
+            raise ValidationError("La fecha de finalización debe ser posterior a la fecha de inicio.")
+
+        return cleaned_data
+    
 WorkExperienceFormSet = inlineformset_factory(
     FreelancerProfile,
     WorkExperience,
+    form=WorkExperienceForm,  # Añadir esta línea
     fields=('company_name', 'position', 'start_date', 'end_date', 'description'),
     widgets={
+        'company_name': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
+        'position': forms.TextInput(attrs={'class': 'form-control shadow-none'}),
         'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
         'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
         'description': forms.Textarea(attrs={'class': 'form-control shadow-none', 'rows': 3}),
@@ -156,13 +188,14 @@ WorkExperienceFormSet = inlineformset_factory(
     can_delete=True
 )
 
+
 class WorkExperienceFormHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form_method = 'post'
         self.render_required_fields = True
         self.add_input(Submit('submit', 'Save'))
-        
+
 
 
 class SkillsForm(forms.ModelForm):

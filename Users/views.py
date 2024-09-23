@@ -10,19 +10,6 @@ from django.contrib.auth.decorators import login_required
 
 
 @never_cache
-def freelancer_signup(request):
-    if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            auth_login(request, user)  # Usamos auth_login para evitar conflicto
-            return redirect('education_register')  # Redirige al registro de educación
-    else:
-        form = FreelancerSignUpForm()
-    return render(request, 'Users/freelancer_signup.html', {'form': form})
-
-
-@never_cache
 def client_signup(request):
     if request.method == 'POST':
         form = ClientSignUpForm(request.POST)
@@ -222,6 +209,7 @@ def register_languages_view(request):
 def home_client(request):
     return render(request, 'Users/homeClient.html')
 
+@login_required
 def home_freelancer(request):
     return render(request, 'Users/homeFreelancer.html')
 

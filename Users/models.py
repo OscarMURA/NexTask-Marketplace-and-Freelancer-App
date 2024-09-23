@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.forms import ValidationError
 from django_countries.fields import CountryField
 
 
@@ -26,19 +27,23 @@ class Skill(models.Model):
 
 class FreelancerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    country = CountryField()  # Campo para seleccionar país
+    country = CountryField(blank=False, null=False)  # Campo para seleccionar país
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
     skills = models.ManyToManyField(Skill, blank=True)
     languages = models.ManyToManyField('Language', blank=True)
+    def clean(self):
+        super().clean()
+        if not self.country:
+            raise ValueError('El campo "country" es obligatorio.')
 
 
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
     company_website = models.URLField(blank=True)
-    country = CountryField()  # Campo para seleccionar país
+    country = CountryField(blank=False, null=False)  # Campo para seleccionar país
     city = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
@@ -49,6 +54,11 @@ class ClientProfile(models.Model):
     
     def get_all_projects(self):
         return self.projects.all()
+    
+    def clean(self):
+        super().clean()
+        if not self.country:
+            raise ValueError('El campo "country" es obligatorio.')
 
 # Historial académico
 class Education(models.Model):
@@ -73,6 +83,10 @@ class WorkExperience(models.Model):
 
     def __str__(self):
         return f"{self.position} - {self.company_name}"
+    
+    def clean(self):
+        if self.end_date and self.start_date and self.end_date < self.start_date:
+            raise ValidationError("La fecha de finalización debe ser posterior a la fecha de inicio.")
 
 # Certificaciones
 class Certification(models.Model):
