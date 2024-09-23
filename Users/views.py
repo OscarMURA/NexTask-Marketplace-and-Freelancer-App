@@ -16,26 +16,6 @@ from Projects.models import *
 from Projects.models import Application
 
 
-
-@never_cache
-def freelancer_signup(request):
-    if request.method == 'POST':
-        form = FreelancerSignUpForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
-
-            # Explicitly pass the backend
-            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            
-            messages.success(request, 'Account created successfully. Welcome!')
-            return redirect('work_experience_register')
-        else:
-            messages.error(request, "Please fix the errors below.")
-    else:
-        form = FreelancerSignUpForm()
-
-    return render(request, 'Users/freelancer_signup.html', {'form': form})
-
 @never_cache
 def client_signup(request):
     if request.method == 'POST':
@@ -250,6 +230,7 @@ def register_languages_view(request):
 def home_client(request):
     return render(request, 'Users/homeClient.html')
 
+@login_required
 def home_freelancer(request):
     freelancer_profile = request.user.freelancer_profile  # Obtener el perfil del freelancer
     # Obtener los contratos activos asociados a este freelancer
