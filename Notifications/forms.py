@@ -5,3 +5,4 @@ class NotificationForm(forms.ModelForm):
     class Meta:
         model = Notification
         fields = ['recipient', 'message']
+
