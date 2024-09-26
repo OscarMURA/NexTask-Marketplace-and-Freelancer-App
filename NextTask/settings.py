@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'Payments',
     'Projects',
     'Reports',
+    'translations',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',  # Agregamos esta línea
+    'django.middleware.locale.LocaleMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'NextTask.urls'
@@ -208,6 +211,15 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',
 }
+
+USE_L10N = True
+
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
+
 
 #MERCADOPAGO_PUBLIC_KEY = 'tu_public_key'
 #MERCADOPAGO_ACCESS_TOKEN = 'tu_access_token'

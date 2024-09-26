@@ -40,3 +40,4 @@ Pillow
 pytest-django
 pytest
 mixer
+django-translations

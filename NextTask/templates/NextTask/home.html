@@ -1,9 +1,11 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
+{% load i18n %}  <!-- Cargar el template tag i18n -->
+
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-<title>Home NexTask</title>
+<title>{% trans "Home NexTask" %}</title>  <!-- Marcar el título para traducción -->
 <head>
     <style>
         .info-section {
@@ -57,45 +59,45 @@
     <div style="background-color: #1A1773; display: flex; align-items: center; justify-content: space-between; padding: 20px; text-align: left; color: white;">
         <div style="flex: 1; padding-right: 20px;">
             <h1 style="font-size: 60px; font-weight: bold;">
-                Find Your Perfect <span style="color: #635FD9;">Freelancer</span> or <span style="color: #635FD9;">Client</span> Quick<br>
+                {% trans "Find Your Perfect" %} <span style="color: #635FD9;">{% trans "Freelancer" %}</span> or <span style="color: #635FD9;">{% trans "Client" %}</span> {% trans "Quick" %}<br>
             </h1>
-            <h1 style="font-size: 60px; font-weight: bold;">and Easy</h1><br><br>
-            <div style="margin-top: 20px; font-size: 30px;"><b>We have</b></div>
-            <p style="font-size: 24px;">your next task!</p>
+            <h1 style="font-size: 60px; font-weight: bold;">{% trans "and Easy" %}</h1><br><br>
+            <div style="margin-top: 20px; font-size: 30px;"><b>{% trans "We have" %}</b></div>
+            <p style="font-size: 24px;">{% trans "your next task!" %}</p>
             <br>
             <!-- Add the search links here -->
             <div class="button-container">
                 <a href="{% url 'search_freelancers' %}" class="btn-search">
-                    Search Freelancers
+                    {% trans "Search Freelancers" %}
                 </a>
                 <a href="{% url 'search_clients' %}" class="btn-search">
-                    Search Clients
+                    {% trans "Search Clients" %}
                 </a>
                 <a href="{% url 'search_projects' %}" class="btn-search"> <!-- Nuevo botón para buscar proyectos -->
-                    Search Projects
+                    {% trans "Search Projects" %}
                 </a>
             </div>
         </div>
-        <img src="{% static 'img/others/freelancerHome.png' %}" alt="Freelancer Working" style="max-width: 55%; height: auto;">
+        <img src="{% static 'img/others/freelancerHome.png' %}" alt="{% trans 'Freelancer Working' %}" style="max-width: 55%; height: auto;">
     </div>
 
     <!-- New Information Section: Why Choose Us? -->
     <div class="info-section">
         <div class="container">
-            <h2>Why Choose Us?</h2>
-            <p>Discover why NextTask is the best platform for freelancers and clients to connect and succeed.</p>
+            <h2>{% trans "Why Choose Us?" %}</h2>
+            <p>{% trans "Discover why NextTask is the best platform for freelancers and clients to connect and succeed." %}</p>
             <div class="row">
                 <div class="col-md-4 feature">
-                    <h3>Reliable Service</h3>
-                    <p>We offer 24/7 customer support to ensure you always have the help you need.</p>
+                    <h3>{% trans "Reliable Service" %}</h3>
+                    <p>{% trans "We offer 24/7 customer support to ensure you always have the help you need." %}</p>
                 </div>
                 <div class="col-md-4 feature">
-                    <h3>Wide Range of Categories</h3>
-                    <p>From design to development, we have projects to suit every skill set.</p>
+                    <h3>{% trans "Wide Range of Categories" %}</h3>
+                    <p>{% trans "From design to development, we have projects to suit every skill set." %}</p>
                 </div>
                 <div class="col-md-4 feature">
-                    <h3>Secure Payments</h3>
-                    <p>Our payment system ensures that you get paid safely and promptly for every task.</p>
+                    <h3>{% trans "Secure Payments" %}</h3>
+                    <p>{% trans "Our payment system ensures that you get paid safely and promptly for every task." %}</p>
                 </div>
             </div>
         </div>
@@ -104,14 +106,14 @@
     <!-- New Information Section: Our Mission -->
     <div class="info-section">
         <div class="container">
-            <h2>Our Mission</h2>
-            <p>Our mission is to empower freelancers worldwide by providing opportunities for economic growth through meaningful work.</p>
+            <h2>{% trans "Our Mission" %}</h2>
+            <p>{% trans "Our mission is to empower freelancers worldwide by providing opportunities for economic growth through meaningful work." %}</p>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <p>&copy; 2024 NextTask. All rights reserved.</p>
+        <p>&copy; 2024 NextTask. {% trans "All rights reserved." %}</p>
     </div>
 
     <!-- Scripts -->

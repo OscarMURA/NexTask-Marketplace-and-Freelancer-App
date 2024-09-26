@@ -14,6 +14,8 @@ from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from Projects.models import *
 from Projects.models import Application
+from django.utils.translation import gettext as _
+
 
 
 @never_cache
