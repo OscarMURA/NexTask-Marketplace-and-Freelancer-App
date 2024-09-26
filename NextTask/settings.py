@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne', 
+    'channels', 
     'django.contrib.staticfiles',
     'django_countries',
     'django_select2',
@@ -51,6 +53,8 @@ INSTALLED_APPS = [
     'Projects',
     'Reports',
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -84,6 +88,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'NextTask.wsgi.application'
+
+ASGI_APPLICATION = 'NextTask.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database
