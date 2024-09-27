@@ -4,4 +4,7 @@ from django.utils.translation import gettext as _
 
 
 def home(request):
-    return render(request, 'NextTask/home.html')
+    context = {
+        'Freelancer' : _('Freelancer')
+    }
+    return render(request, 'NextTask/home.html', context)
