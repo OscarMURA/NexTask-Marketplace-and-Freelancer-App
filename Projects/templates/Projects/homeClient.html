@@ -1,20 +1,21 @@
-{% extends 'Users/baseClient.html' %} {% load static %} 
+{% extends 'Users/baseClient.html' %} {% load static %} {% load i18n %}
+
 {% block content %}
-<title>Client Dashboard</title>
+{% block trans %}<title>{% trans "Client Dashboard" %}</title>{% endblock %}
 <!-- Page Header -->
 <div
   class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
 >
   <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Dashboard</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Dashboard" %}</h3>
     <ul class="d-flex align-items-center gap-2">
-      <li class="text-dark-200 fs-6">Dashboard</li>
+      <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
     </ul>
   </div>
   <div>
     <a href="{% url 'createProject' %}" class="w-btn-secondary-lg">
-      Create Project</a
-    >
+      {% trans "Create Project" %}</a>
+    
   </div>
 </div>
 <div class="row">
@@ -24,7 +25,7 @@
     >
       <div>
         <h5 class="dashboard-widget-title fw-bold text-dark-300">{{ total_balance }}</h5>
-        <p class="text-18 text-dark-200">Total Balance</p>
+        <p class="text-18 text-dark-200">{% trans "Total Balance" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-1.png' %}" alt="" />
@@ -37,7 +38,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ total_projects }}</h3>
-        <p class="text-18 text-dark-200">Total Projects</p>
+        <p class="text-18 text-dark-200">{% trans "Total Projects" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-2.png' %}" alt="" />
@@ -50,7 +51,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">35</h3>
-        <p class="text-18 text-dark-200">Complete Order</p>
+        <p class="text-18 text-dark-200">{% trans "Complete Order" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-3.png' %}" alt="" />
@@ -63,7 +64,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">02</h3>
-        <p class="text-18 text-dark-200">Active Order</p>
+        <p class="text-18 text-dark-200">{% trans "Active Order" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-4.png' %}" alt="" />
@@ -74,7 +75,7 @@
 
 <!-- Sección de Proyectos -->
 <div class="projects-section container">
-    <h2 class="text-20 fw-semibold text-dark-300 mb-3">Latest Projects</h2>
+    <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Latest Projects" %}</h2>
 
     <!-- Proyectos en formato de tarjetas -->
     <div class="row justify-content-center" style="gap: 20px;">
@@ -91,9 +92,9 @@
           </div>
           <div class="card-body d-flex flex-column">
             <h4 class="card-title">{{ project.title }}</h4>
-            <h6 class="card-subtitle mb-2 text-muted">Budget: ${{ project.budget }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">{% trans "Budget:" %} ${{ project.budget }}</h6>
             <p class="card-subtitle">{{ project.get_category_display }}</p>
-            <p class="card-text text-dark-200">Days until due: {{ project.days_until_due }}</p>
+            <p class="card-text text-dark-200">{% trans "Days until due:" %} {{ project.days_until_due }}</p>
             <p class="card-text text-dark-200">{{ project.get_category_display }}</p>
 
 
@@ -169,18 +170,18 @@
                           </svg>
                         </span>
                         <h4 class="text-18 fw-normal text-center mb-2">
-                          Are you sure you want to delete the project “{{ project.title }}”?
+                            {% trans "Are you sure you want to delete the project “{{ project.title }}”?" %}
                         </h4>
                         <div class="d-flex gap-3 mt-30">
                           <!-- Formulario para eliminar el proyecto -->
                           <form action="{% url 'delete_project' project.id %}" method="POST">
                             {% csrf_token %}
                             <button type="submit" class="w-btn-secondary-lg">
-                              Remove
+                                {% trans "Remove" %}
                             </button>
                           </form>
                           <button class="text-decoration-underline text-danger" data-bs-dismiss="modal" aria-label="Close">
-                            Cancel
+                            {% trans "Cancel" %}
                           </button>
                         </div>
                       </div>
@@ -201,7 +202,7 @@
 
 
       {% empty %}
-      <p class="text-center w-100">No projects available.</p>
+      <p class="text-center w-100">{% trans "No projects available." %}</p>
       {% endfor %}
     </div>
 </div>

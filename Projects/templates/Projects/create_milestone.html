@@ -1,5 +1,7 @@
 {% extends 'Users/baseClient.html' %}
 {% load static %}
+{% load i18n %}
+
 
 {% block content %}
 <head>
@@ -9,15 +11,15 @@
 
 <!-- Page Header -->
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Create Milestone for {{ project.title }}</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Create Milestone for" %} {{ project.title }}</h3>
     <ul class="d-flex align-items-center gap-2">
-        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
         <li>
             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
                 <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </li>
-        <li class="text-lime-300 fs-6">Create Milestone</li>
+        <li class="text-lime-300 fs-6">{% trans "Create Milestone" %}</li>
     </ul>
 </div>
 
@@ -30,14 +32,14 @@
                 <!-- Milestone Info -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">Milestone Info</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Milestone Info" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
                             <!-- Título del hito -->
                             <div class="col-12">
                                 <div class="form-container">
-                                    <label for="id_title" class="form-label">Milestone Title <span class="text-lime-300">*</span></label>
+                                    <label for="id_title" class="form-label">{% trans "Milestone Title" %} <span class="text-lime-300">*</span></label>
                                     <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Milestone title here" maxlength="50">
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
@@ -48,7 +50,7 @@
                             <!-- Fecha de vencimiento -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_due_date" class="form-label">Due Date <span class="text-lime-300">*</span></label>
+                                    <label for="id_due_date" class="form-label">{% trans "Due Date" %} <span class="text-lime-300">*</span></label>
                                     <input type="date" class="form-control shadow-none" name="due_date" id="id_due_date" value="{{ form.due_date.value|default_if_none:'' }}">
                                     {% if form.due_date.errors %}
                                         <div class="error text-danger">{{ form.due_date.errors }}</div>
@@ -58,13 +60,13 @@
                             <!-- Campo de categoría para hitos -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    <label for="id_category" class="form-label">{% trans "Category" %}<span class="text-lime-300">*</span></label>
                                     {{ form.category }} <!-- Esto cargará el <select> con las opciones de categorías del formulario -->
                                 </div>
                             </div> 
                             <!-- Archivo del hito -->
                             <divclass="col-md-6">
-                                <label for="id_file" class="form-container">File (optional)</label>
+                                <label for="id_file" class="form-container">{% trans "File (optional)" %}</label>
                                 {{ form.file }}
                                 {% if form.file.errors %}
                                     <div class="error text-danger">{{ form.file.errors }}</div>
@@ -72,7 +74,7 @@
                             </div> 
                             <!-- Descripción -->
                             <div class="col-12">
-                                <label for="id_description" class="form-label">Description</label>
+                                <label for="id_description" class="form-label">{% trans "Description" %}</label>
                                 {{ form.description }}
                                 {% if form.description.errors %}
                                     <div class="error text-danger">{{ form.description.errors }}</div>

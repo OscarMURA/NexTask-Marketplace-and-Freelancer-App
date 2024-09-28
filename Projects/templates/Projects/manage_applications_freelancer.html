@@ -1,21 +1,23 @@
 {% extends 'Users/baseFreelancer.html' %}
 {% load static %}
+{% load i18n %}
+
 
 {% block content %}
 <div class="text mt-4">
-    <a href="{% url 'home_freelancer' %}" class="w-btn-danger-lg"> Back </a>
+    <a href="{% url 'home_freelancer' %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
 </div>
 
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Manage Applications</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Manage Applications" %}</h3>
     <div class="overflow-x-auto">
         <div class="w-100">
             <table class="w-100 dashboard-table">
                 <thead class="pb-3">
                     <tr>
-                        <th scope="col" class="ps-4">Project</th>
-                        <th scope="col">Status</th>
-                        <th scope="col" class="text-end pe-5">Actions</th>
+                        <th scope="col" class="ps-4">{% trans "Project" %}</th>
+                        <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col" class="text-end pe-5">{% trans "Actions" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,10 +37,10 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="application_id" value="{{ application.id }}">
                                     <button type="submit" name="action" value="accept" class="dashboard-action-btn">
-                                        Accept
+                                        {% trans "Accept" %}
                                     </button>
                                     <button type="submit" name="action" value="reject" class="dashboard-action-btn">
-                                        Reject
+                                        {% trans "Reject" %}
                                     </button>
                                 </form>
                             </div>
@@ -46,7 +48,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center">No applications available.</td>
+                        <td colspan="3" class="text-center">{% trans "No applications available." %}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -54,4 +56,5 @@
         </div>
     </div>
 </div>
+{% endblock %}
 {% endblock %}

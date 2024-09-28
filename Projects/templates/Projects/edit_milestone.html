@@ -1,4 +1,6 @@
 {% extends 'Users/baseClient.html' %}
+{% load i18n %}
+
 {% block content %}
 
 <head>
@@ -29,14 +31,14 @@
                 <!-- Milestone Info -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">Milestone Info</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Milestone Info" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
                             <!-- Título del hito -->
                             <div class="col-12">
                                 <div class="form-container">
-                                    <label for="id_title" class="form-label">Milestone Title <span class="text-lime-300">*</span></label>
+                                    <label for="id_title" class="form-label">{% trans "Milestone Title" %} <span class="text-lime-300">*</span></label>
                                     {{ form.title }} <!-- Campo del título -->
                                     {% if form.title.errors %}
                                         <div class="error text-danger">{{ form.title.errors }}</div>
@@ -46,7 +48,7 @@
                             <!-- Fecha de vencimiento -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_due_date" class="form-label">Due Date <span class="text-lime-300">*</span></label>
+                                    <label for="id_due_date" class="form-label">{% trans "Due Date" %} <span class="text-lime-300">*</span></label>
                                     {{ form.due_date }} <!-- Campo de la fecha de vencimiento -->
                                     {% if form.due_date.errors %}
                                         <div class="error text-danger">{{ form.due_date.errors }}</div>
@@ -56,16 +58,16 @@
                             <!-- Campo de categoría para hitos -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    <label for="id_category" class="form-label">{% trans "Category" %}<span class="text-lime-300">*</span></label>
                                     {{ form.category }} <!-- Esto cargará el <select> con las opciones de categorías del formulario -->
                                 </div>
                             </div>
                             <!-- Archivo -->
                             <div class="col-12">
-                                <label for="id_file" class="form-label">File (optional)</label>
+                                <label for="id_file" class="form-label">{% trans "File (optional)" %}</label>
                                 {{ form.file }} <!-- Campo de archivo -->
                                 {% if milestone.file %}
-                                    <p>Current file: <a href="{{ milestone.file.url }}">Download current file</a></p>
+                                    <p>{% trans "Current file:" %} <a href="{{ milestone.file.url }}">{% trans "Download current file" %}</a></p>
                                 {% endif %}
                                 {% if form.file.errors %}
                                     <div class="error text-danger">{{ form.file.errors }}</div>
@@ -73,13 +75,12 @@
                             </div>
                             <!-- Descripción -->
                             <div class="col-12">
-                                <label for="id_description" class="form-label">Description</label>
+                                <label for="id_description" class="form-label">{% trans "Description" %}</label>
                                 {{ form.description }} <!-- Editor Quill -->
                                 {% if form.description.errors %}
                                     <div class="error text-danger">{{ form.description.errors }}</div>
                                 {% endif %}
                             </div>
-                            
                         </div>
                     </div>
                 </div>
@@ -87,13 +88,13 @@
                 <!-- Botón de enviar -->
                 <div class="button-group">
                     <button type="submit" class="w-btn-secondary-lg">
-                        Save Changes
+                        {% trans "Save Changes" %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                     <a href="{% url 'project_detail' milestone.project.id %}" class="w-btn-danger-lg">
-                        Cancel
+                        {% trans "Cancel" %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>

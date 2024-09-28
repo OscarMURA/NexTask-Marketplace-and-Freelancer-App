@@ -1,26 +1,27 @@
 {% extends 'Users/baseFreelancer.html' %}
+{% load i18n %}
 
 {% load static %}
 
 {% block content %}
 <div class="banner" style="background-color: #f7f7f7; padding: 40px 0; margin-bottom: 20px;">
-    <h1 class="text-center" style="font-size: 2.5rem; font-weight: bold; margin: 0;">Project Results</h1>
+    <h1 class="text-center" style="font-size: 2.5rem; font-weight: bold; margin: 0;">{% trans "Project Results" %}</h1>
 </div>
 
 <!-- Barra de búsqueda -->
 <div class="container mt-4">
     <form method="GET" class="search-bar" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-        <input type="text" name="q" class="form-control" placeholder="Search by project title, description, client..." value="{{ request.GET.q }}" style="flex: 1; max-width: 400px;">
+        <input type="text" name="q" class="form-control" placeholder="{% trans 'Search by project title, description, client...' %}" value="{{ request.GET.q }}" style="flex: 1; max-width: 400px;">
         
         <!-- Dropdown para la categoría -->
         <select name="category" class="form-control" style="max-width: 200px;">
-            <option value="all">All Categories</option>
+            <option value="all">{% trans "All Categories" %}</option>
             {% for value, label in categories %}
                 <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
-        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #635FD9; border: none;">Find Projects</button>
+        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #635FD9; border: none;">{% trans "Find Projects" %}</button>
     </form>
 </div>
 

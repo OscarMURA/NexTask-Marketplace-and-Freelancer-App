@@ -1,5 +1,6 @@
 {% extends 'Users/baseFreelancer.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <head>
@@ -25,15 +26,15 @@
 
 <!-- Page Header -->
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Task Details: {{ task.title }}</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Task Details:" %} {{ task.title }}</h3>
     <ul class="d-flex align-items-center gap-2">
-        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
         <li>
             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
                 <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </li>
-        <li class="text-lime-300 fs-6">Task Details</li>
+        <li class="text-lime-300 fs-6">{% trans "Task Details" %}</li>
     </ul>
 </div>
 
@@ -47,12 +48,10 @@
 
             <div class="text mt-4">
                 <div class="button-group">
-                    <a href="{% url 'milestone_detail_freelancer' task.milestone.id %}" class="w-btn-danger-lg"> Back </a>
-                    <a href="{% url 'edit_task_freelancer' task.id %}" class="w-btn-secondary-lg"> Edit </a>
+                    <a href="{% url 'milestone_detail_freelancer' task.milestone.id %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+                    <a href="{% url 'edit_task_freelancer' task.id %}" class="w-btn-secondary-lg">{% trans "Edit" %}</a>
                 </div>
             </div>
-
-               
         </div>
     </div>
 </div>

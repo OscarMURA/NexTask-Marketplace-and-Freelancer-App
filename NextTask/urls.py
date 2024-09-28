@@ -7,6 +7,7 @@ from . import views
 from django.conf.urls.i18n import i18n_patterns  # Importa la función i18n_patterns
 
 urlpatterns = i18n_patterns(
+    path("i18n/", include("django.conf.urls.i18n")),
     path('admin/', admin.site.urls),
     path('users/', include('Users.urls')),  # Incluye las urls de la app Users
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # Ruta para cerrar sesión

@@ -1,5 +1,6 @@
 {% extends 'Users/baseFreelancer.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <head>
@@ -25,15 +26,15 @@
 
 <!-- Page Header -->
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Milestone Details: {{ milestone.title }}</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Milestone Details:" %} {{ milestone.title }}</h3>
     <ul class="d-flex align-items-center gap-2">
-        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
         <li>
             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
                 <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </li>
-        <li class="text-lime-300 fs-6">Milestone Details</li>
+        <li class="text-lime-300 fs-6">{% trans "Milestone Details" %}</li>
     </ul>
 </div>
 
@@ -44,46 +45,46 @@
             <!-- Milestone Info Card -->
             <div class="gig-info-card">
                 <div class="gig-info-header">
-                    <h4 class="text-18 fw-semibold text-dark-300">Milestone Info</h4>
+                    <h4 class="text-18 fw-semibold text-dark-300">{% trans "Milestone Info" %}</h4>
                 </div>
                 <div class="gig-info-body bg-white">
                     <div class="row g-4">
                         <!-- Título del hito -->
                         <div class="col-12">
                             <div class="form-container">
-                                <label class="form-label">Milestone Title</label>
+                                <label class="form-label">{% trans "Milestone Title" %}</label>
                                 <div class="form-control shadow-none readonly-field">{{ milestone.title }}</div>
                             </div>
                         </div>
                         <!-- Fecha de vencimiento -->
                         <div class="col-md-6">
                             <div class="form-container">
-                                <label class="form-label">Due Date</label>
+                                <label class="form-label">{% trans "Due Date" %}</label>
                                 <div class="form-control shadow-none readonly-field">{{ milestone.due_date }}</div>
                             </div>
                         </div>
                         <!-- Categoría -->
                         <div class="col-md-6">
                             <div class="form-container">
-                                <label class="form-label">Category</label>
+                                <label class="form-label">{% trans "Category" %}</label>
                                 <div class="form-control shadow-none readonly-field">{{ milestone.get_category_display }}</div>
                             </div>
                         </div>
                         <!-- Descripción -->
                         <div class="col-12">
                             <div class="form-container">
-                                <label class="form-label">Description</label>
+                                <label class="form-label">{% trans "Description" %}</label>
                                 <div class="quill-content">{{ milestone.description.html|safe }}</div>
                             </div>
                         </div>
                         <!-- Archivo -->
                         <div class="col-6">
                             <div class="form-container">
-                                <label class="form-label">File</label>
+                                <label class="form-label">{% trans "File" %}</label>
                                 {% if milestone.file %}
-                                    <a href="{{ milestone.file.url }}" class="w-btn-secondary-lg">Download File</a>
+                                    <a href="{{ milestone.file.url }}" class="w-btn-secondary-lg">{% trans "Download File" %}</a>
                                 {% else %}
-                                    <p>No file uploaded</p>
+                                    <p>{% trans "No file uploaded" %}</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -93,7 +94,7 @@
 
             <div class="text mt-4">
                 <div class="button-group">
-                    <a href="{% url 'project_detail_freelancer' milestone.project.id %}" class="w-btn-danger-lg"> Back </a>
+                    <a href="{% url 'project_detail_freelancer' milestone.project.id %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
                 </div>
                 <p>.</p>
                 <p></p>
@@ -104,18 +105,18 @@
 
 <!-- Lista de Tareas -->
 <div>
-    <h3 class="text-20 fw-semibold text-dark-300 mb-3">Tasks</h3>
+    <h3 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Tasks" %}</h3>
 
     <!-- Verifica si hay tareas -->
     {% if tasks.all %}
         <table class="w-100 dashboard-table">
             <thead class="pb-3">
                 <tr>
-                    <th scope="col" class="ps-4">Task Title</th>
-                    <th scope="col">Due Date</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Priority</th>
-                    <th scope="col" class="text-end pe-5">Actions</th>
+                    <th scope="col" class="ps-4">{% trans "Task Title" %}</th>
+                    <th scope="col">{% trans "Due Date" %}</th>
+                    <th scope="col">{% trans "Status" %}</th>
+                    <th scope="col">{% trans "Priority" %}</th>
+                    <th scope="col" class="text-end pe-5">{% trans "Actions" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -149,7 +150,7 @@
                     <!-- Acciones (Solo Editar) -->
                     <td>
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'edit_task_freelancer' task.id %}" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{% url 'edit_task_freelancer' task.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
                         </div>
                     </td>
                 </tr>
@@ -158,7 +159,7 @@
         </table>
     {% else %}
         <!-- Mensaje si no hay tareas -->
-        <p>No tasks available for this milestone.</p>
+        <p>{% trans "No tasks available for this milestone." %}</p>
     {% endif %}
 </div>
 
