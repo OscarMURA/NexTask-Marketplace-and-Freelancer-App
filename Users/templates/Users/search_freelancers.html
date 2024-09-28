@@ -1,7 +1,7 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
-
+{% load i18n %}
 {% block content %}
 <!-- Estilos CSS incluidos directamente en el archivo HTML -->
 <style>
@@ -150,7 +150,7 @@
 </script>
 
 <div class="banner">
-    <h1 class="text-left">Freelancer Results</h1>
+    <h1 class="text-left">{% trans "Freelancer Results" %}</h1>
 </div>
 
 <!-- Formulario de búsqueda -->
@@ -163,7 +163,7 @@
     <!-- Campo de habilidades (skills) -->
     <div class="form-group mx-2">
         <select name="skills" class="form-control">
-            <option value="">Select Skills</option>
+            <option value="">{% trans "Select Skills" %}</option>
             {% for skill in form.skills.field.queryset %}
                 <option value="{{ skill.id }}" {% if request.GET.skills == skill.id|stringformat:"s" %}selected{% endif %}>{{ skill.name }}</option>
             {% endfor %}
@@ -171,7 +171,7 @@
     </div>
 
     <!-- Botón de búsqueda -->
-    <button type="submit" class="btn btn-primary mx-2">Find Freelancer</button>
+    <button type="submit" class="btn btn-primary mx-2">{% trans "Find Freelancer" %}</button>
 </form>
 
 <!-- Mostrar los resultados de los freelancers -->
@@ -190,7 +190,7 @@
                     <h5 class="card-title">{{ freelancer.user.username }}</h5>
                     <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
                     <p class="card-text"><strong>Country:</strong> {{ freelancer.country }}</p>
-                    <a href="{% url 'freelancer_profile' freelancer.user.id %}" class="btn btn-primary">View Profile</a>
+                    <a href="{% url 'freelancer_profile' freelancer.user.id %}" class="btn btn-primary">{% trans "View Profile" %}</a>
                 </div>
             </div>
         </div>

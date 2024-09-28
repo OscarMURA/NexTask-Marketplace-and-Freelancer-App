@@ -1,6 +1,7 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 
 {% block content %}
     <title>Login - NextTask</title>   
@@ -13,8 +14,8 @@
                 <h2 class="section-title-light mb-2">Sign In</h2>
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb w-breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Login</li>
+                    <li class="breadcrumb-item"><a href="#">{% trans "Home" %}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{% trans "Login" %}</li>
                   </ol>
                 </nav>
               </div>
@@ -28,8 +29,8 @@
             <div class="row g-4">
               <div class="col-lg-6 p-3 p-lg-5">
                 <div class="mb-40">
-                  <h2 class="section-title mb-2">Log in</h2>
-                  <p class="section-desc">Welcome to NextTask</p>
+                  <h2 class="section-title mb-2">{% trans "Log in" %}</h2>
+                  <p class="section-desc">{% trans "Welcome to NextTask" %}</p>
                 </div>
                 <form method="post"class="d-grid mt-4">
                   {% csrf_token %}
@@ -55,12 +56,12 @@
                     </div>
                     
                     <!-- Botón de submit -->
-                    <button  type="submit" id="submit-btn" class="w-btn-secondary-lg">Log In</button>
+                    <button  type="submit" id="submit-btn" class="w-btn-secondary-lg">{% trans "Log In" %}</button>
                   </div>
                 </form>
                 
                 <div class="mt-4">
-                  <p class="text-center form-text">Don’t have an account?<a href="{% url 'register_freelancer' %}">Create Account</a></p>
+                  <p class="text-center form-text">{% trans "Don’t have an account?" %}<a href="{% url 'register_freelancer' %}">{% trans "Create Account" %}</a></p>
                 </div>
               </div>
               

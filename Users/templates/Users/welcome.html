@@ -1,10 +1,10 @@
 {% extends 'NextTask/base.html' %}
-
+{% load i18n %}
 {% block content %}
 <div class="container py-110 bg-offWhite">
     <section class="container bg-white rounded-3 p-3">
-        <h1 class="section-title">Welcome</h1>
-        <p class="section-desc">You have successfully completed your registration!</p>
+        <h1 class="section-title">{% trans "Welcome" %}</h1>
+        <p class="section-desc">{% trans "You have successfully completed your registration!" %}</p>
     </section>
 </div>
 {% endblock %}
