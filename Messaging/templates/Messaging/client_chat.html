@@ -1,4 +1,4 @@
-{% extends 'Users/baseClient.html' %}
+{% extends 'Users/baseClient.html' %}  <!-- or baseFreelancer.html for freelancer -->
 
 {% block content %}
 <style>
@@ -31,16 +31,27 @@
 
     .conversation-list li {
         margin-bottom: 10px;
+        display: flex;
+        align-items: center;
     }
 
     .conversation-list a {
         text-decoration: none;
         color: #333;
-        display: block;
+        display: flex;
+        align-items: center;
         padding: 10px;
         border-radius: 5px;
         background-color: #fff;
         transition: background-color 0.2s;
+        width: 100%;
+    }
+
+    .conversation-list a img {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
     }
 
     .conversation-list a:hover {
@@ -94,39 +105,104 @@
 <div class="chat-layout">
     <!-- Lista de Conversaciones -->
     <div class="conversation-list">
-        <form method="get" action="">
-            <input type="text" id="search" name="search" placeholder="Buscar chats o usuarios..." value="{{ request.GET.search }}">
-            <button type="submit">Buscar</button>
-        </form>
+        <input type="text" id="search" placeholder="Buscar chats o usuarios.">
+        <h4>Usuarios disponibles para iniciar conversación:</h4>
         <ul>
-            {% for conversation in conversations %}
+            {% for user in users %}
                 <li>
-                    <a href="{% url 'messaging:conversation_detail' conversation.id %}">
-                        {{ conversation }}
+                    <a href="#" class="conversation-link" data-user-id="{{ user.id }}">
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                        {{ user.username }}
                     </a>
                 </li>
             {% endfor %}
         </ul>
+        <hr>
+        <h4>Conversaciones activas:</h4>
+        <ul>
+            {% for conversation in conversations %}
+                {% for participant in conversation.participants.all %}
+                    {% if participant != request.user %}
+                        <li>
+                            <a href="#" class="conversation-link" data-conversation-id="{{ conversation.id }}">
+                                <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}">
+                                {{ participant.username }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </ul>
     </div>
-    
+
     <!-- Ventana del Chat -->
     <div id="chat-window">
-        {% if conversation %}
-            <div class="messages" id="message-container">
-                {% for message in messages %}
-                    <div class="message">
-                        <strong>{{ message.sender.username }}</strong>: {{ message.content }}
-                    </div>
-                {% endfor %}
-            </div>
-            <form id="message-form" method="post">
-                {% csrf_token %}
-                {{ form }}
-                <button type="submit">Enviar</button>
-            </form>
-        {% else %}
-            <p>Selecciona una conversación para comenzar a chatear.</p>
-        {% endif %}
+        <p>Selecciona una conversación para comenzar a chatear.</p>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const conversationLinks = document.querySelectorAll('.conversation-link');
+        const chatWindow = document.getElementById('chat-window');
+
+        conversationLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // Fetch conversation ID or user ID
+                const conversationId = link.getAttribute('data-conversation-id');
+                const userId = link.getAttribute('data-user-id');
+
+                // Define the URL to fetch the chat messages (API endpoint or Django view)
+                let url = '';
+                if (conversationId) {
+                    url = `/messaging/api/conversation/${conversationId}/`;
+                } else if (userId) {
+                    url = `/messaging/api/start_conversation/${userId}/`;
+                }
+
+                // Fetch the chat data
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Clear current chat window
+                        chatWindow.innerHTML = '';
+
+                        // Display chat messages
+                        let messagesHtml = '<div class="messages" id="message-container">';
+                        data.messages.forEach(message => {
+                            messagesHtml += `<div class="message"><strong>${message.sender}</strong>: ${message.content}</div>`;
+                        });
+                        messagesHtml += '</div>';
+
+                        // Add message form
+                        messagesHtml += `
+                            <form id="message-form" method="post">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${data.csrf_token}">
+                                <input type="text" id="message-input" name="content" placeholder="Escribe un mensaje...">
+                                <button type="submit">Enviar</button>
+                            </form>
+                        `;
+
+                        chatWindow.innerHTML = messagesHtml;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching chat data:', error);
+                    });
+            });
+        });
+    });
+</script>
+
 {% endblock %}
