@@ -14,6 +14,8 @@ from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from Projects.models import *
 from Projects.models import Application
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomPasswordChangeForm
 
 
 @never_cache
@@ -709,3 +711,24 @@ def client_profile(request, id):
     """
     client = get_object_or_404(ClientProfile, user__id=id)  # Get the client profile or 404
     return render(request, 'Users/clientProfile.html', {'client': client})  # Render the profile template
+
+@login_required
+def change_password(request):
+    form = CustomPasswordChangeForm(user=request.user, data=request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Importante para no desloguear al usuario
+            messages.success(request, 'Your password has been updated successfully!')
+            return redirect('profile_settings')  # Redirigir a la configuración del perfil
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePassword.html', {
+                'form': form,
+                'is_submitted': True  # Agregar este flag
+            })
+    else:
+        return render(request, 'Users/changePassword.html', {
+            'form': form,
+            'is_submitted': False  # Agregar este flag
+        })
