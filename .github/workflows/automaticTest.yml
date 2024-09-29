@@ -25,13 +25,35 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        
-    - name: Run Tests
+
+    - name: Install coverage tools
       run: |
-        pytest --junitxml=report.xml  # Genera un reporte XML de los resultados
-        
-    - name: Upload test results
-      uses: actions/upload-artifact@v3  # Cambiar v2 a v3
+        pip install pytest-cov coverage
+
+    - name: Run Tests with Coverage
+      run: |
+        pytest --cov=tu_paquete --cov-report=xml --cov-report=html --junitxml=report.xml
+
+    - name: Show Coverage Summary
+      run: |
+        COVERAGE=$(coverage report | grep TOTAL | awk '{print $4}')
+        echo "## Coverage Summary"
+        echo "Coverage: $COVERAGE"
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
       with:
-        name: pytest-report  # Nombre del archivo en los artefactos de GitHub
-        path: report.xml  # Ruta del archivo de reporte
+        name: pytest-report
+        path: report.xml
+
+    - name: Upload Coverage XML
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-xml
+        path: coverage.xml
+
+    - name: Upload Coverage HTML
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-html
+        path: htmlcov/
