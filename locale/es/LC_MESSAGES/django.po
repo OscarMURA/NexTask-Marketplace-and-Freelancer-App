@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 23:48-0500\n"
+"POT-Creation-Date: 2024-09-29 00:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -257,6 +257,7 @@ msgstr "Título del Proyecto"
 #: .\Projects\templates\Projects\edit_project.html:55
 #: .\Projects\templates\Projects\project_detail.html:149
 #: .\Projects\templates\Projects\project_detail_freelancer.html:66
+#: .\Users\models.py:160 .\Users\models.py:183
 #: .\Users\templates\Users\profileSettings.html:161
 #: .\Users\templates\Users\profileSettings.html:206
 msgid "Start Date"
@@ -306,7 +307,8 @@ msgstr "Categoría"
 #: .\Projects\templates\Projects\project_detail.html:186
 #: .\Projects\templates\Projects\project_detail_freelancer.html:102
 #: .\Projects\templates\Projects\task_info_edit.html:66
-#: .\Projects\templates\Projects\task_info_view.html:66
+#: .\Projects\templates\Projects\task_info_view.html:66 .\Users\models.py:162
+#: .\Users\models.py:185 .\Users\models.py:229
 #: .\Users\templates\Users\client_profile.html:130
 #: .\Users\templates\Users\freelancer_details.html:8
 #: .\Users\templates\Users\profileSettings.html:173
@@ -837,6 +839,69 @@ msgstr "Solo los freelancers pueden aplicar a proyectos."
 msgid "Register as Freelancer"
 msgstr "Registrarse como Freelancer"
 
+#: .\Users\models.py:43
+#, fuzzy
+#| msgid "Languages"
+msgid "Language"
+msgstr "Lenguajes"
+
+#: .\Users\models.py:158
+#, fuzzy
+#| msgid "Institution name"
+msgid "Institution Name"
+msgstr "Nombre de la institución"
+
+#: .\Users\models.py:159 .\Users\templates\Users\profileSettings.html:155
+#: .\Users\templates\Users\profileSettings.html:200
+msgid "Degree Obtained"
+msgstr "Título recibido"
+
+#: .\Users\models.py:161 .\Users\models.py:184
+#: .\Users\templates\Users\profileSettings.html:167
+#: .\Users\templates\Users\profileSettings.html:212
+msgid "End Date"
+msgstr "Fecha de fin"
+
+#: .\Users\models.py:181 .\Users\templates\Users\client_signup.html:74
+#: .\Users\templates\Users\profileSettings.html:351
+#: .\Users\templates\Users\profileSettings.html:396
+msgid "Company Name"
+msgstr "Página web"
+
+#: .\Users\models.py:182 .\Users\templates\Users\profileSettings.html:357
+#: .\Users\templates\Users\profileSettings.html:402
+msgid "Position"
+msgstr "Posición:"
+
+#: .\Users\models.py:208 .\Users\templates\Users\profileSettings.html:250
+#: .\Users\templates\Users\profileSettings.html:295
+msgid "Certification Name"
+msgstr "Certificados"
+
+#: .\Users\models.py:209 .\Users\templates\Users\profileSettings.html:256
+#: .\Users\templates\Users\profileSettings.html:301
+msgid "Issuing Organization"
+msgstr "Organización emisora"
+
+#: .\Users\models.py:210 .\Users\templates\Users\profileSettings.html:262
+#: .\Users\templates\Users\profileSettings.html:307
+msgid "Issue Date"
+msgstr "Fecha de Vencimiento"
+
+#: .\Users\models.py:211 .\Users\templates\Users\profileSettings.html:268
+#: .\Users\templates\Users\profileSettings.html:313
+msgid "Expiration Date"
+msgstr "Fecha de fin"
+
+#: .\Users\models.py:212
+msgid "Short Description"
+msgstr "Descripción:"
+
+#: .\Users\models.py:228 .\Users\templates\Users\profileSettings.html:452
+#: .\Users\templates\Users\profileSettings.html:479
+msgid "Portfolio URL"
+msgstr "URL del portafolio"
+
 #: .\Users\templates\Users\baseClient.html:112
 #: .\Users\templates\Users\baseClient.html:331
 msgid "My Orders"
@@ -1019,12 +1084,6 @@ msgstr "Nombre Completo"
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: .\Users\templates\Users\client_signup.html:74
-#: .\Users\templates\Users\profileSettings.html:351
-#: .\Users\templates\Users\profileSettings.html:396
-msgid "Company Name"
-msgstr "Página web"
-
 #: .\Users\templates\Users\client_signup.html:78
 msgid "Company Website"
 msgstr "Página web"
@@ -1182,16 +1241,6 @@ msgstr "Añadir nueva educación"
 msgid "Institution name"
 msgstr "Nombre de la institución"
 
-#: .\Users\templates\Users\profileSettings.html:155
-#: .\Users\templates\Users\profileSettings.html:200
-msgid "Degree Obtained"
-msgstr "Título recibido"
-
-#: .\Users\templates\Users\profileSettings.html:167
-#: .\Users\templates\Users\profileSettings.html:212
-msgid "End Date"
-msgstr "Fecha de fin"
-
 #: .\Users\templates\Users\profileSettings.html:186
 msgid "List Educational"
 msgstr "Lista de educación"
@@ -1204,26 +1253,6 @@ msgstr "No se encontrarón registros de educación"
 msgid "Add New Certification"
 msgstr "Añadir nuevo certificado"
 
-#: .\Users\templates\Users\profileSettings.html:250
-#: .\Users\templates\Users\profileSettings.html:295
-msgid "Certification Name"
-msgstr "Certificados"
-
-#: .\Users\templates\Users\profileSettings.html:256
-#: .\Users\templates\Users\profileSettings.html:301
-msgid "Issuing Organization"
-msgstr "Organización emisora"
-
-#: .\Users\templates\Users\profileSettings.html:262
-#: .\Users\templates\Users\profileSettings.html:307
-msgid "Issue Date"
-msgstr "Fecha de Vencimiento"
-
-#: .\Users\templates\Users\profileSettings.html:268
-#: .\Users\templates\Users\profileSettings.html:313
-msgid "Expiration Date"
-msgstr "Fecha de fin"
-
 #: .\Users\templates\Users\profileSettings.html:333
 msgid "No certifications found."
 msgstr "No se encontrarón certificados"
@@ -1231,11 +1260,6 @@ msgstr "No se encontrarón certificados"
 #: .\Users\templates\Users\profileSettings.html:344
 msgid "Add New Work Experience"
 msgstr "Añadir nueva experiencia laboral"
-
-#: .\Users\templates\Users\profileSettings.html:357
-#: .\Users\templates\Users\profileSettings.html:402
-msgid "Position"
-msgstr "Posición:"
 
 #: .\Users\templates\Users\profileSettings.html:363
 #: .\Users\templates\Users\profileSettings.html:408
@@ -1254,11 +1278,6 @@ msgstr "No se encontró experiencia laboral"
 #: .\Users\templates\Users\profileSettings.html:445
 msgid "Add New Portfolio"
 msgstr "Añadir nuevo portafolio"
-
-#: .\Users\templates\Users\profileSettings.html:452
-#: .\Users\templates\Users\profileSettings.html:479
-msgid "Portfolio URL"
-msgstr "URL del portafolio"
 
 #: .\Users\templates\Users\profileSettings.html:471
 msgid "List Portfolio"
@@ -1337,6 +1356,36 @@ msgstr "Registro de experiencia laboral"
 #: .\Users\templates\Users\work_experience_register.html:28
 msgid "Add More Work Experience"
 msgstr "Añadir más experiencia laboral"
+
+#~ msgid "Nombre de la institución educativa"
+#~ msgstr "Name of the institution"
+
+#~ msgid "Título obtenido"
+#~ msgstr "Degree obtained"
+
+#~ msgid "Fecha de inicio"
+#~ msgstr "Start date"
+
+#~ msgid "Fecha de finalización"
+#~ msgstr "End date"
+
+#~ msgid "Descripción"
+#~ msgstr "Description"
+
+#~ msgid "Nombre de la certificación"
+#~ msgstr "Name of the certification"
+
+#~ msgid "Organización emisora"
+#~ msgstr "Issuing organization"
+
+#~ msgid "Fecha de emisión"
+#~ msgstr "Emision Date"
+
+#~ msgid "Fecha de expiración"
+#~ msgstr "Expiration Date"
+
+#~ msgid "Descripción del portafolio"
+#~ msgstr "Description of the portfolio"
 
 #, python-format
 #~ msgid "ambiguous option: %(option)s could match %(matches)s"

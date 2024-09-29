@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_countries.fields import CountryField
 from django.forms import ValidationError
-
+from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     """
@@ -40,7 +40,7 @@ class Language(models.Model):
     Attributes:
         language (str): Name of the language.
     """
-    language = models.CharField(max_length=100)  # Use CharField instead of LanguageField
+    language = models.CharField(max_length=100, verbose_name=_('Language'))  # Use CharField instead of LanguageField
 
     def __str__(self):
         return self.language
@@ -155,11 +155,11 @@ class Education(models.Model):
         description (str): Additional details about the education.
     """
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE, related_name="educations")
-    institution_name = models.CharField(max_length=255)
-    degree_obtained = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    institution_name = models.CharField(max_length=255, verbose_name=_('Institution Name'))  # Name of the educational institution
+    degree_obtained = models.CharField(max_length=255, verbose_name=_('Degree Obtained'))  # Degree obtained by the freelancer
+    start_date = models.DateField(verbose_name=_('Start Date'))  # Start date of the education
+    end_date = models.DateField(null=True, blank=True, verbose_name=_('End Date'))  # End date of the education
+    description = models.TextField(null=True, blank=True, verbose_name=_('Description'))  # Additional details about the education
 
     def __str__(self):
         return f"{self.degree_obtained} - {self.institution_name}"
@@ -178,11 +178,11 @@ class WorkExperience(models.Model):
         description (str): Additional details about the work experience.
     """
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE, related_name="work_experiences")
-    company_name = models.CharField(max_length=255)
-    position = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    company_name = models.CharField(max_length=255, verbose_name=_('Company Name'))  # Name of the company
+    position = models.CharField(max_length=255, verbose_name=_('Position'))  # Position held by the freelancer
+    start_date = models.DateField(verbose_name=_('Start Date'))  # Start date of the work experience
+    end_date = models.DateField(null=True, blank=True, verbose_name=_('End Date'))  # End date of the work experience
+    description = models.TextField(null=True, blank=True, verbose_name=_('Description'))  # Additional details about the work experience
 
     def __str__(self):
         return f"{self.position} - {self.company_name}"
@@ -205,11 +205,11 @@ class Certification(models.Model):
         short_description (str): Short description of the certification.
     """
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
-    certification_name = models.CharField(max_length=255)  # Nombre de la certificación
-    issuing_organization = models.CharField(max_length=255)  # Organización emisora
-    issue_date = models.DateField()
-    expiration_date = models.DateField(blank=True, null=True)  # Puede no tener fecha de expiración
-    short_description = models.TextField(max_length=500, blank=True)  # Descripción corta (opcional)
+    certification_name = models.CharField(max_length=255, verbose_name=_('Certification Name'))  # Name of the certification
+    issuing_organization = models.CharField(max_length=255, verbose_name=_('Issuing Organization'))  # Organization that issued the certification
+    issue_date = models.DateField(verbose_name=_('Issue Date'))  # Date when the certification was issued
+    expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration Date'))  # Expiration date of the certification
+    short_description = models.TextField(max_length=500, blank=True, verbose_name=_('Short Description'))  # Short description of the certification
 
     def __str__(self):
         return f'{self.certification_name} - {self.issuing_organization}'
@@ -225,8 +225,8 @@ class Portfolio(models.Model):
         description (str): Description of the portfolio.
     """
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
-    url = models.URLField(blank=True)
-    description = models.TextField(blank=True)
+    url = models.URLField(blank=True, verbose_name=_('Portfolio URL'))  # URL of the portfolio
+    description = models.TextField(blank=True, verbose_name=_('Description'))  # Description of the portfolio
 
     def __str__(self):
         return f'{self.url} - {self.freelancer.user.username}'
