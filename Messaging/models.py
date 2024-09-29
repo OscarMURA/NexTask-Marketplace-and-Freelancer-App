@@ -1,15 +1,20 @@
+# messaging/models.py
+
 from django.db import models
-from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.conf import settings
 
-User = get_user_model()
+class Conversation(models.Model):
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
 
-class Thread(models.Model):
-    participants = models.ManyToManyField(User)
-    created_at = models.DateTimeField(default=timezone.now)
+    def __str__(self):
+        return ", ".join([user.username for user in self.participants.all()])
 
 class Message(models.Model):
-    thread = models.ForeignKey(Thread, related_name='messages', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    body = models.TextField()
-    timestamp = models.DateTimeField(default=timezone.now)
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.sender.username}: {self.content[:50]}'

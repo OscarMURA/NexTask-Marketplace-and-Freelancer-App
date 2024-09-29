@@ -1,8 +1,13 @@
+# Messaging/urls.py
+
 from django.urls import path
 from . import views
 
+app_name = 'messaging'
+
 urlpatterns = [
-    path('', views.thread_list, name='thread_list'),
-    path('thread/<int:thread_id>/', views.thread_detail, name='thread_detail'),
-    path('start-thread/<int:user_id>/', views.start_thread, name='start_thread'),
+    path('freelancer/', views.freelancer_chat, name='freelancer_chat'),
+    path('freelancer/<int:conversation_id>/', views.freelancer_chat, name='freelancer_chat'),
+    path('client/', views.client_chat, name='client_chat'),
+    path('client/<int:conversation_id>/', views.client_chat, name='client_chat'),
 ]

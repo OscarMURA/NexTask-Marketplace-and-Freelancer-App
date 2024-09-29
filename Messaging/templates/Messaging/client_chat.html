@@ -1,0 +1,132 @@
+{% extends 'Users/baseClient.html' %}
+
+{% block content %}
+<style>
+    .chat-layout {
+        display: flex;
+        height: 80vh;
+        border: 1px solid #ddd;
+    }
+
+    .conversation-list {
+        width: 30%;
+        background-color: #f9f9f9;
+        border-right: 1px solid #ccc;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .conversation-list input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .conversation-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .conversation-list li {
+        margin-bottom: 10px;
+    }
+
+    .conversation-list a {
+        text-decoration: none;
+        color: #333;
+        display: block;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.2s;
+    }
+
+    .conversation-list a:hover {
+        background-color: #e6e6e6;
+    }
+
+    #chat-window {
+        width: 70%;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .messages {
+        height: 60vh;
+        overflow-y: auto;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .message {
+        margin-bottom: 10px;
+    }
+
+    #message-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #message-form button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #message-form button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="chat-layout">
+    <!-- Lista de Conversaciones -->
+    <div class="conversation-list">
+        <form method="get" action="">
+            <input type="text" id="search" name="search" placeholder="Buscar chats o usuarios..." value="{{ request.GET.search }}">
+            <button type="submit">Buscar</button>
+        </form>
+        <ul>
+            {% for conversation in conversations %}
+                <li>
+                    <a href="{% url 'messaging:conversation_detail' conversation.id %}">
+                        {{ conversation }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Ventana del Chat -->
+    <div id="chat-window">
+        {% if conversation %}
+            <div class="messages" id="message-container">
+                {% for message in messages %}
+                    <div class="message">
+                        <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                    </div>
+                {% endfor %}
+            </div>
+            <form id="message-form" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit">Enviar</button>
+            </form>
+        {% else %}
+            <p>Selecciona una conversación para comenzar a chatear.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

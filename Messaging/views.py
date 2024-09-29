@@ -1,34 +1,87 @@
+# Messaging/views.py
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Thread, Message
+from .models import Conversation, Message
+from django.db.models import Q  # Importar Q para facilitar la búsqueda avanzada
 from .forms import MessageForm
 
 @login_required
-def thread_list(request):
-    threads = Thread.objects.filter(participants=request.user)
-    return render(request, 'messaging/thread_list.html', {'threads': threads})
+def freelancer_chat(request, conversation_id=None):
+    # Obtener las conversaciones del freelancer
+    query = request.GET.get('search')
+    conversations = Conversation.objects.filter(participants=request.user)
+    
+    # Aplicar lógica de búsqueda si existe un término de búsqueda
+    if query:
+        conversations = conversations.filter(
+            Q(participants__username__icontains=query) | Q(participants__first_name__icontains=query) | Q(participants__last_name__icontains=query)
+        ).distinct()
+    
+    conversation = None
+    messages = None
 
-@login_required
-def thread_detail(request, thread_id):
-    thread = get_object_or_404(Thread, id=thread_id, participants=request.user)
-    messages = thread.messages.all()
-    if request.method == 'POST':
-        form = MessageForm(request.POST)
-        if form.is_valid():
-            message = form.save(commit=False)
-            message.thread = thread
-            message.sender = request.user
-            message.save()
-            return redirect('thread_detail', thread_id=thread.id)
+    if conversation_id:
+        # Obtener la conversación seleccionada
+        conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+        messages = conversation.messages.all()
+
+        # Procesar el formulario de envío de mensaje
+        if request.method == 'POST':
+            form = MessageForm(request.POST)
+            if form.is_valid():
+                message = form.save(commit=False)
+                message.conversation = conversation
+                message.sender = request.user
+                message.save()
+                return redirect('messaging:freelancer_chat', conversation_id=conversation.id)
     else:
         form = MessageForm()
-    return render(request, 'messaging/thread_detail.html', {'thread': thread, 'messages': messages, 'form': form})
+
+    context = {
+        'conversations': conversations,
+        'conversation': conversation,
+        'messages': messages,
+        'form': form,
+    }
+    return render(request, 'messaging/freelancer_chat.html', context)
 
 @login_required
-def start_thread(request, user_id):
-    other_user = get_object_or_404(User, id=user_id)
-    thread = Thread.objects.filter(participants=request.user).filter(participants=other_user).first()
-    if not thread:
-        thread = Thread.objects.create()
-        thread.participants.add(request.user, other_user)
-    return redirect('thread_detail', thread_id=thread.id)
+def client_chat(request, conversation_id=None):
+    # Obtener las conversaciones del cliente
+    query = request.GET.get('search')
+    conversations = Conversation.objects.filter(participants=request.user)
+    
+    # Aplicar lógica de búsqueda si existe un término de búsqueda
+    if query:
+        conversations = conversations.filter(
+            Q(participants__username__icontains=query) | Q(participants__first_name__icontains=query) | Q(participants__last_name__icontains=query)
+        ).distinct()
+
+    conversation = None
+    messages = None
+
+    if conversation_id:
+        # Obtener la conversación seleccionada
+        conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+        messages = conversation.messages.all()
+
+        # Procesar el formulario de envío de mensaje
+        if request.method == 'POST':
+            form = MessageForm(request.POST)
+            if form.is_valid():
+                message = form.save(commit=False)
+                message.conversation = conversation
+                message.sender = request.user
+                message.save()
+                return redirect('messaging:client_chat', conversation_id=conversation.id)
+    else:
+        form = MessageForm()
+
+    context = {
+        'conversations': conversations,
+        'conversation': conversation,
+        'messages': messages,
+        'form': form,
+    }
+    return render(request, 'messaging/client_chat.html', context)
