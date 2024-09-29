@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 13:26-0500\n"
+"POT-Creation-Date: 2024-09-28 19:55-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,8 @@ msgid "Toggle navigation"
 msgstr "Alternar navegación"
 
 #: .\NextTask\templates\NextTask\base.html:59
-msgid "Home :D"
+#: .\Users\templates\Users\login.html:17
+msgid "Home"
 msgstr "Menú principal"
 
 #: .\NextTask\templates\NextTask\base.html:62
@@ -44,6 +45,7 @@ msgstr "Contacto"
 
 #: .\NextTask\templates\NextTask\base.html:71
 #: .\Users\templates\Users\client_signup.html:9
+#: .\Users\templates\Users\freelancer_signup.html:9
 #: .\Users\templates\Users\freelancer_signup.html:29
 msgid "Sign up"
 msgstr "Registro"
@@ -53,7 +55,7 @@ msgstr "Registro"
 #: .\Users\templates\Users\baseClient.html:474
 #: .\Users\templates\Users\baseClient.html:479
 msgid "Select Language"
-msgstr ""
+msgstr "Seleccione idioma"
 
 #: .\NextTask\templates\NextTask\base.html:109
 #: .\Users\templates\Users\login.html:18
@@ -68,7 +70,7 @@ msgstr "Home Nextask"
 msgid "Find Your Perfect"
 msgstr "Encuentra tu perfecto"
 
-#: .\NextTask\templates\NextTask\home.html:62 .\NextTask\views.py:8
+#: .\NextTask\templates\NextTask\home.html:62
 #: .\Projects\templates\Projects\freelancers_in_project.html:17
 #: .\Projects\templates\Projects\manageApplications.html:17
 #: .\Projects\templates\Projects\milestone_detail.html:194
@@ -133,7 +135,7 @@ msgid ""
 "connect and succeed."
 msgstr ""
 "Descubre porque NextTask es la mejor plataforma para que los freelancers y "
-"los clientes se conecten y triunfen"
+"los clientes se conecten"
 
 #: .\NextTask\templates\NextTask\home.html:91
 msgid "Reliable Service"
@@ -165,7 +167,7 @@ msgid ""
 "task."
 msgstr ""
 "Nuestro sistema de pagos se asegura de que se te pague de manera segura y "
-"oportuna por cadatrabajo."
+"oportuna por cada trabajo."
 
 #: .\NextTask\templates\NextTask\home.html:109
 msgid "Our Mission"
@@ -913,14 +915,10 @@ msgid "Post a job"
 msgstr "Publicar trabajo"
 
 #: .\Users\templates\Users\changePassword.html:8
-#, fuzzy
-#| msgid "Profile Settings"
 msgid "Profile Settings - HTML"
 msgstr "Configuración de Perfil"
 
 #: .\Users\templates\Users\changePassword.html:67
-#, fuzzy
-#| msgid "Change Password"
 msgid "Update your Password"
 msgstr "Cambiar Contraseña"
 
@@ -929,22 +927,16 @@ msgid "Update your password to keep your account secure."
 msgstr "Actualiza tu contraseña para mantenere tu cuenta segura"
 
 #: .\Users\templates\Users\changePassword.html:77
-#, fuzzy
-#| msgid "Change Password"
 msgid "Current Password"
 msgstr "Cambiar Contraseña"
 
 #: .\Users\templates\Users\changePassword.html:111
 #: .\Users\templates\Users\client_signup.html:106
 #: .\Users\templates\Users\freelancer_signup.html:99
-#, fuzzy
-#| msgid "Change Password"
 msgid "Confirm Password"
-msgstr "Cambiar Contraseña"
+msgstr "Confirmar Contraseña"
 
 #: .\Users\templates\Users\changePassword.html:145
-#, fuzzy
-#| msgid "Change Password"
 msgid "Update Password"
 msgstr "Cambiar Contraseña"
 
@@ -953,33 +945,26 @@ msgid "Back to Client Search"
 msgstr "Volver a la busqueda"
 
 #: .\Users\templates\Users\client_profile.html:136
-#, fuzzy
-#| msgid "No applications available."
 msgid "No description available."
 msgstr "No hay aplicaciones disponibles."
 
 #: .\Users\templates\Users\client_profile.html:152
-#, fuzzy
-#| msgid "Project"
 msgid "Projects"
-msgstr "Proyecto"
+msgstr "Proyectos"
 
 #: .\Users\templates\Users\client_signup.html:6
+#: .\Users\templates\Users\freelancer_signup.html:6
 msgid "Signup - NextTask"
 msgstr "Registro - NextTask"
 
 #: .\Users\templates\Users\client_signup.html:31
-#, fuzzy
-#| msgid "Sign up"
 msgid "Client Sign up"
 msgstr "Registro"
 
 #: .\Users\templates\Users\client_signup.html:32
 #: .\Users\templates\Users\freelancer_signup.html:30
-#, fuzzy
-#| msgid "Home NexTask"
 msgid "Welcome to NexTask"
-msgstr "Home Nextask"
+msgstr "Bienvenido a Nextask"
 
 #: .\Users\templates\Users\client_signup.html:38
 #: .\Users\templates\Users\freelancer_signup.html:36
@@ -995,8 +980,6 @@ msgstr "Nombre de usuario"
 #: .\Users\templates\Users\client_signup.html:66
 #: .\Users\templates\Users\freelancer_signup.html:60
 #: .\Users\templates\Users\profileSettings.html:63
-#, fuzzy
-#| msgid "Full Name"
 msgid "First Name"
 msgstr "Nombre Completo"
 
@@ -1034,18 +1017,14 @@ msgstr "Dirección"
 
 #: .\Users\templates\Users\client_signup.html:102
 #: .\Users\templates\Users\freelancer_signup.html:95
-#, fuzzy
-#| msgid "Change Password"
 msgid "Password"
 msgstr "Cambiar Contraseña"
 
 #: .\Users\templates\Users\client_signup.html:129
 #: .\Users\templates\Users\freelancer_signup.html:123
 #: .\Users\templates\Users\login.html:64
-#, fuzzy
-#| msgid "Create Project"
 msgid "Create Account"
-msgstr "Crear Proyecto"
+msgstr "Crear Cuenta"
 
 #: .\Users\templates\Users\education_register.html:10
 msgid "Education Register"
@@ -1070,14 +1049,10 @@ msgstr "Omitir"
 
 #: .\Users\templates\Users\freelancer_details.html:16
 #: .\Users\templates\Users\freelancer_details.html:25
-#, fuzzy
-#| msgid "Actions"
 msgid "Education"
 msgstr "Acciones"
 
 #: .\Users\templates\Users\freelancer_details.html:26
-#, fuzzy
-#| msgid "No applications available."
 msgid "No education details available."
 msgstr "No hay aplicaciones disponibles."
 
@@ -1088,8 +1063,6 @@ msgid "Work Experience"
 msgstr "Experiencia laboral"
 
 #: .\Users\templates\Users\freelancer_details.html:43
-#, fuzzy
-#| msgid "No projects available."
 msgid "No work experience available."
 msgstr "No hay proyectos disponibles."
 
@@ -1100,8 +1073,6 @@ msgid "Certifications"
 msgstr "Certificados"
 
 #: .\Users\templates\Users\freelancer_details.html:60
-#, fuzzy
-#| msgid "No applications available."
 msgid "No certifications available."
 msgstr "No hay aplicaciones disponibles."
 
@@ -1111,8 +1082,6 @@ msgid "Portfolio"
 msgstr "Portafolio"
 
 #: .\Users\templates\Users\freelancer_details.html:77
-#, fuzzy
-#| msgid "No projects available."
 msgid "No portfolio available."
 msgstr "No hay proyectos disponibles."
 
@@ -1123,39 +1092,27 @@ msgid "Skills"
 msgstr "Habilidades"
 
 #: .\Users\templates\Users\freelancer_details.html:94
-#, fuzzy
-#| msgid "No projects available."
 msgid "No skills available."
 msgstr "No hay proyectos disponibles."
 
 #: .\Users\templates\Users\freelancer_details.html:111
-#, fuzzy
-#| msgid "No applications available."
 msgid "No languages available."
 msgstr "No hay aplicaciones disponibles."
 
 #: .\Users\templates\Users\freelancer_profile.html:7
 #: .\Users\templates\Users\freelancer_profile.html:22
-#, fuzzy
-#| msgid "Search Freelancer"
 msgid "Back to Freelancer Search"
 msgstr "Buscar Freelancers"
 
 #: .\Users\templates\Users\freelancer_signup.html:90
-#, fuzzy
-#| msgid "Profile Picture"
 msgid "Profile Picture (optional)"
 msgstr "Foto de perfil"
 
 #: .\Users\templates\Users\freelancer_signup.html:133
-#, fuzzy
-#| msgid "Don’t have an account?"
 msgid "Already have an account?"
-msgstr "¿No tienes una cuenta?"
+msgstr "¿Ya tienes una cuenta?"
 
 #: .\Users\templates\Users\homeFreelancer.html:3
-#, fuzzy
-#| msgid "Freelancer Working"
 msgid "Freelancer Dashboard"
 msgstr "Freelancer Trabajando"
 
@@ -1164,26 +1121,16 @@ msgid "Projects you participate in"
 msgstr "Proyectos en los que has participado"
 
 #: .\Users\templates\Users\homeFreelancer.html:82
-#, fuzzy
-#| msgid "Project Milestones"
 msgid "Project List for Accept"
 msgstr "Hitos del Proyecto"
-
-#: .\Users\templates\Users\login.html:17
-#, fuzzy
-#| msgid "Home :D"
-msgid "Home"
-msgstr "Menú principal"
 
 #: .\Users\templates\Users\login.html:32
 msgid "Log in"
 msgstr "Log in"
 
 #: .\Users\templates\Users\login.html:33
-#, fuzzy
-#| msgid "Home NexTask"
 msgid "Welcome to NextTask"
-msgstr "Home Nextask"
+msgstr "Bienvenido Nextask"
 
 #: .\Users\templates\Users\login.html:59
 msgid "Log In"
@@ -1227,8 +1174,6 @@ msgstr "Título obtenido"
 #: .\Users\templates\Users\profileSettings.html:212
 #: .\Users\templates\Users\profileSettings.html:369
 #: .\Users\templates\Users\profileSettings.html:414
-#, fuzzy
-#| msgid "Due Date"
 msgid "End Date"
 msgstr "Fecha de Vencimiento"
 
@@ -1237,8 +1182,6 @@ msgid "List Educational"
 msgstr "Lista de educación"
 
 #: .\Users\templates\Users\profileSettings.html:232
-#, fuzzy
-#| msgid "No freelancers found."
 msgid "No educational records found."
 msgstr "Freelancer no encontrados"
 
@@ -1258,8 +1201,6 @@ msgstr "Organización emisora"
 
 #: .\Users\templates\Users\profileSettings.html:262
 #: .\Users\templates\Users\profileSettings.html:307
-#, fuzzy
-#| msgid "Due Date"
 msgid "Issue Date"
 msgstr "Fecha de Vencimiento"
 
@@ -1269,8 +1210,6 @@ msgid "Expiration Date"
 msgstr "Fecha de expedición"
 
 #: .\Users\templates\Users\profileSettings.html:333
-#, fuzzy
-#| msgid "No freelancers found."
 msgid "No certifications found."
 msgstr "Freelancer no encontrados"
 
@@ -1279,14 +1218,10 @@ msgid "Add New Work Experience"
 msgstr "Añadir nueva experiencia laboral"
 
 #: .\Users\templates\Users\profileSettings.html:402
-#, fuzzy
-#| msgid "Description"
 msgid "Position"
 msgstr "Descripción"
 
 #: .\Users\templates\Users\profileSettings.html:434
-#, fuzzy
-#| msgid "No freelancers found."
 msgid "No work experience found."
 msgstr "Freelancer no encontrados"
 
@@ -1312,20 +1247,14 @@ msgid "Your Skills:"
 msgstr "Tus habilidades"
 
 #: .\Users\templates\Users\profileSettings.html:532
-#, fuzzy
-#| msgid "No freelancers found."
 msgid "No skills found."
 msgstr "Freelancer no encontrados"
 
 #: .\Users\templates\Users\register_languages.html:16
-#, fuzzy
-#| msgid "Languages"
 msgid "Language Register"
 msgstr "Lenguajes"
 
 #: .\Users\templates\Users\register_languages.html:27
-#, fuzzy
-#| msgid "Languages"
 msgid "Languages List"
 msgstr "Lenguajes"
 
@@ -1347,21 +1276,15 @@ msgid "Submit"
 msgstr "Aceptar"
 
 #: .\Users\templates\Users\search_clients.html:126
-#, fuzzy
-#| msgid "Client"
 msgid "Find Client"
 msgstr "Cliente"
 
 #: .\Users\templates\Users\search_clients.html:147
 #: .\Users\templates\Users\search_freelancers.html:193
-#, fuzzy
-#| msgid "View freelancer profile"
 msgid "View Profile"
 msgstr "Ver perfil de Freelancer"
 
 #: .\Users\templates\Users\search_clients.html:153
-#, fuzzy
-#| msgid "No freelancers found."
 msgid "No clients found."
 msgstr "Freelancer no encontrados"
 
@@ -1370,8 +1293,6 @@ msgid "Select Skills"
 msgstr "Seleccionar habilidades"
 
 #: .\Users\templates\Users\welcome.html:6
-#, fuzzy
-#| msgid "Welcome, "
 msgid "Welcome"
 msgstr "Bienvenido, "
 
@@ -1402,112 +1323,92 @@ msgstr "Añadir más experiencia laboral"
 #~ msgid "Constraint “%(name)s” is violated."
 #~ msgstr "Restricción “%(name)s” es ignorada."
 
-#, fuzzy, python-format
+#, python-format
 #~| msgid "%(model_name)s with this %(field_labels)s already exists."
 #~ msgid "%(model_name)s with this %(field_label)s already exists."
 #~ msgstr "%(model_name)s con %(field_labels)s ya existe."
 
-#, fuzzy, python-format
+#, python-format
 #~| msgid "%(model_name)s with this %(field_labels)s already exists."
 #~ msgid "%(model)s instance with %(field)s %(value)r does not exist."
 #~ msgstr "%(model_name)s con %(field_labels)s ya existe."
 
-#, fuzzy
 #~| msgid "and"
 #~ msgid "jan"
 #~ msgstr "y"
 
-#, fuzzy
 #~| msgid "Contact"
 #~ msgid "oct"
 #~ msgstr "Contacto"
 
-#, fuzzy
 #~| msgid "About"
 #~ msgid "Abu"
 #~ msgstr "Sobre nosotros"
 
-#, fuzzy
 #~| msgid "Client"
 #~ msgid "Cen"
 #~ msgstr "Cliente"
 
-#, fuzzy
 #~| msgid "Contact"
 #~ msgid "Con"
 #~ msgstr "Contacto"
 
-#, fuzzy
 #~| msgid "and"
 #~ msgid "Dan"
 #~ msgstr "y"
 
-#, fuzzy
 #~| msgid "and"
 #~ msgid "Han"
 #~ msgstr "y"
 
-#, fuzzy
 #~| msgid "and"
 #~ msgid "Jad"
 #~ msgstr "y"
 
-#, fuzzy
 #~| msgid "Logo"
 #~ msgid "Loo"
 #~ msgstr "Logo"
 
-#, fuzzy
 #~| msgid "Logo"
 #~ msgid "Logorik"
 #~ msgstr "Logo"
 
-#, fuzzy
 #~| msgid "Logo"
 #~ msgid "Logol"
 #~ msgstr "Logo"
 
-#, fuzzy
 #~| msgid "We have"
 #~ msgid "Mohave"
 #~ msgstr "Tenemos"
 
-#, fuzzy
 #~| msgid "Logo"
 #~ msgid "Logooli"
 #~ msgstr "Logo"
 
-#, fuzzy
 #~| msgid "Client"
 #~ msgid "Talieng"
 #~ msgstr "Cliente"
 
-#, fuzzy
 #~| msgid "and"
 #~ msgid "Wan"
 #~ msgstr "y"
 
-#, fuzzy
 #~| msgid "We have"
 #~ msgid "Weh"
 #~ msgstr "Tenemos"
 
-#, fuzzy
 #~| msgid "About"
 #~ msgid "Djibouti"
 #~ msgstr "Sobre nosotros"
 
-#, fuzzy
 #~| msgid "Freelancer"
 #~ msgid "France"
 #~ msgstr "Freelancer"
 
-#, fuzzy
 #~| msgid "Contact"
 #~ msgid "Contract"
 #~ msgstr "Contacto"
 
-#, fuzzy
 #~| msgid "Sign up"
 #~ msgid "Sign In"
 #~ msgstr "Registro"
