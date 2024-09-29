@@ -1,5 +1,6 @@
 {% extends 'Users/baseFreelancer.html' %}
 
+{% load i18n %}
 {% load static %}
 {% block content %}
 <head>
@@ -8,15 +9,15 @@
 </head>
 <!-- Page Header -->
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Profile Settings</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Profile Settings" %}</h3>
     <ul class="d-flex align-items-center gap-2">
-        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
         <li>
             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
                 <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </li>
-        <li class="text-lime-300 fs-6">Profile Settings</li>
+        <li class="text-lime-300 fs-6">{% trans "Profile Settings" %}</li>
     </ul>
 </div>
 
@@ -30,14 +31,14 @@
                 <!-- User Information Container -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">User Information</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "User Information" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
                             <!-- Username Field -->
                             <div class="col-6">
                                 <div class="form-container">
-                                    <label for="username" class="form-label">Username</label>
+                                    <label for="username" class="form-label">{% trans "Username" %}</label>
                                     <input type="text" class="form-control shadow-none" name="username" id="username" value="{{ user.username }}">
                                     {% if form.username.errors %}
                                         <div class="error text-danger">{{ form.username.errors }}</div>
@@ -48,7 +49,7 @@
                             <!-- Email Field -->
                             <div class="col-6">
                                 <div class="form-container">
-                                    <label for="email" class="form-label">Email</label>
+                                    <label for="email" class="form-label">{% trans "Email" %}</label>
                                     <input type="email" class="form-control shadow-none" name="email" id="email" value="{{ user.email }}">
                                     {% if form.email.errors %}
                                         <div class="error text-danger">{{ form.email.errors }}</div>
@@ -59,7 +60,7 @@
                             <!-- First Name Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="first_name" class="form-label">First Name</label>
+                                    <label for="first_name" class="form-label">{% trans "First Name" %}</label>
                                     <input type="text" class="form-control shadow-none" name="first_name" id="first_name" value="{{ user.first_name }}">
                                     {% if form.first_name.errors %}
                                         <div class="error text-danger">{{ form.first_name.errors }}</div>
@@ -70,7 +71,7 @@
                             <!-- Last Name Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="last_name" class="form-label">Last Name</label>
+                                    <label for="last_name" class="form-label">{% trans "Last Name" %}</label>
                                     <input type="text" class="form-control shadow-none" name="last_name" id="last_name" value="{{ user.last_name }}">
                                     {% if form.last_name.errors %}
                                         <div class="error text-danger">{{ form.last_name.errors }}</div>
@@ -81,7 +82,7 @@
                             <!-- Country Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="country" class="form-label">Country</label>
+                                    <label for="country" class="form-label">{% trans "Country" %}</label>
                                     <input type="text" class="form-control shadow-none" name="country" id="country" value="{{ freelancer.country }}">
                                     {% if form.country.errors %}
                                         <div class="error text-danger">{{ form.country.errors }}</div>
@@ -92,7 +93,7 @@
                             <!-- City Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="city" class="form-label">City</label>
+                                    <label for="city" class="form-label">{% trans "City" %}</label>
                                     <input type="text" class="form-control shadow-none" name="city" id="city" value="{{ freelancer.city }}">
                                     {% if form.city.errors %}
                                         <div class="error text-danger">{{ form.city.errors }}</div>
@@ -103,7 +104,7 @@
                             <!-- Phone Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="phone" class="form-label">Phone</label>
+                                    <label for="phone" class="form-label">{% trans "Phone" %}</label>
                                     <input type="text" class="form-control shadow-none" name="phone" id="phone" value="{{ freelancer.phone }}">
                                     {% if form.phone.errors %}
                                         <div class="error text-danger">{{ form.phone.errors }}</div>
@@ -114,7 +115,7 @@
                             <!-- Address Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="address" class="form-label">Address</label>
+                                    <label for="address" class="form-label">{% trans "Address" %}</label>
                                     <input type="text" class="form-control shadow-none" name="address" id="address" value="{{ freelancer.address }}">
                                     {% if form.address.errors %}
                                         <div class="error text-danger">{{ form.address.errors }}</div>
@@ -126,7 +127,7 @@
                         <br>
                         <div class="mt-12 text-start"></div>
                             <button type="submit" name="update_user_info" class="btn btn-sm btn-primary">
-                                Update User Information
+                                {% trans "Update User Information" %}
                             </button>
                         </div>
                     </div>  
@@ -138,38 +139,38 @@
                     {% csrf_token %}
                     <div class="gig-info-card">
                         <div class="gig-info-header d-flex justify-content-between align-items-center">
-                            <h4 class="text-18 fw-semibold text-dark-300">Add New Education</h4>
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Add New Education" %}</h4>
                             <button type="submit" name="add_education" class="btn btn-success">+</button>
                         </div>
                         <div class="gig-info-body bg-white">
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Institution Name</label>
+                                        <label class="form-label">{% trans "Institution name" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_institution_name">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Degree Obtained</label>
+                                        <label class="form-label">{% trans "Degree Obtained" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_degree_obtained">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Start Date</label>
+                                        <label class="form-label">{% trans "Start Date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_start_date">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">End Date</label>
+                                        <label class="form-label">{% trans "End Date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_end_date">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-container">
-                                        <label class="form-label">Description</label>
+                                        <label class="form-label">{% trans "Description" %}</label>
                                         <textarea class="form-control shadow-none" rows="3" name="new_description"></textarea>
                                     </div>
                                 </div>
@@ -182,7 +183,7 @@
                 <!-- Display existing Education Records -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">List Educational</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "List Educational" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
@@ -190,31 +191,31 @@
                                 {% for education in educations %}
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Institution Name</label>
+                                            <label class="form-label">{% trans "Institution name" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ education.institution_name }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Degree Obtained</label>
+                                            <label class="form-label">{% trans "Degree Obtained" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ education.degree_obtained }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Start Date</label>
+                                            <label class="form-label">{% trans "Start Date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ education.start_date }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">End Date</label>
+                                            <label class="form-label">{% trans "End Date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{% if education.end_date %}{{ education.end_date }}{% else %}Present{% endif %}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-container">
-                                            <label class="form-label">Description</label>
+                                            <label class="form-label">{% trans "Description" %}</label>
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ education.description }}</textarea>
                                         </div>
                                     </div>
@@ -223,12 +224,12 @@
                                         <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="delete_education" value="{{ education.id }}">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p>No educational records found.</p>
+                                <p>{% trans "No educational records found." %}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -239,38 +240,38 @@
                     {% csrf_token %}
                     <div class="gig-info-card">
                         <div class="gig-info-header d-flex justify-content-between align-items-center">
-                            <h4 class="text-18 fw-semibold text-dark-300">Add New Certification</h4>
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Add New Certification" %}</h4>
                             <button type="submit" name="add_certification" class="btn btn-success">+</button>
                         </div>
                         <div class="gig-info-body bg-white">
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Certification Name</label>
+                                        <label class="form-label">{% trans "Certification Name" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_certification_name">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Issuing Organization</label>
+                                        <label class="form-label">{% trans "Issuing Organization" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_issuing_organization">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Issue Date</label>
+                                        <label class="form-label">{% trans "Issue Date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_issue_date">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Expiration Date</label>
+                                        <label class="form-label">{% trans "Expiration Date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_expiration_date">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-container">
-                                        <label class="form-label">Description</label>
+                                        <label class="form-label">{% trans "Description" %}</label>
                                         <textarea class="form-control shadow-none" rows="3" name="new_certification_description"></textarea>
                                     </div>
                                 </div>
@@ -283,7 +284,7 @@
                 <!-- Display existing Certifications -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">Certifications</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Certifications" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
@@ -291,31 +292,31 @@
                                 {% for certification in certifications %}
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Certification Name</label>
+                                            <label class="form-label">{% trans "Certification Name" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ certification.certification_name }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Issuing Organization</label>
+                                            <label class="form-label">{% trans "Issuing Organization" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ certification.issuing_organization }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Issue Date</label>
+                                            <label class="form-label">{% trans "Issue Date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ certification.issue_date }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Expiration Date</label>
+                                            <label class="form-label">{% trans "Expiration Date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{% if certification.expiration_date %}{{ certification.expiration_date }}{% else %}No Expiration{% endif %}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-container">
-                                            <label class="form-label">Description</label>
+                                            <label class="form-label">{% trans "Description" %}</label>
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ certification.short_description }}</textarea>
                                         </div>
                                     </div>
@@ -324,12 +325,12 @@
                                         <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="delete_certification" value="{{ certification.id }}">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p>No certifications found.</p>
+                                <p>{% trans "No certifications found." %}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -340,38 +341,38 @@
                     {% csrf_token %}
                     <div class="gig-info-card">
                         <div class="gig-info-header d-flex justify-content-between align-items-center">
-                            <h4 class="text-18 fw-semibold text-dark-300">Add New Work Experience</h4>
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Add New Work Experience" %}</h4>
                             <button type="submit" name="add_experience" class="btn btn-success">+</button>
                         </div>
                         <div class="gig-info-body bg-white">
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Company Name</label>
+                                        <label class="form-label">{% trans "Company Name" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_company_name">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Position</label>
+                                        <label class="form-label">{% trans "Position" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_position">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">Start Date</label>
+                                        <label class="form-label">{% trans "Start date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_experience_start_date">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">End Date</label>
+                                        <label class="form-label">{% trans "End date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_experience_end_date">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-container">
-                                        <label class="form-label">Description</label>
+                                        <label class="form-label">{% trans "Description" %}</label>
                                         <textarea class="form-control shadow-none" rows="3" name="new_experience_description"></textarea>
                                     </div>
                                 </div>
@@ -384,7 +385,7 @@
                 <!-- Display existing Work Experience -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">Work Experience</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Work Experience" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
@@ -392,31 +393,31 @@
                                 {% for work_experience in work_experiences %}
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Company Name</label>
+                                            <label class="form-label">{% trans "Company Name" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ work_experience.company_name }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Position</label>
+                                            <label class="form-label">{% trans "Position" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ work_experience.position }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">Start Date</label>
+                                            <label class="form-label">{% trans "Start date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ work_experience.start_date }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">End Date</label>
+                                            <label class="form-label">{% trans "End date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{% if work_experience.end_date %}{{ work_experience.end_date }}{% else %}Present{% endif %}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-container">
-                                            <label class="form-label">Description</label>
+                                            <label class="form-label">{% trans "Description" %}</label>
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ work_experience.description }}</textarea>
                                         </div>
                                     </div>
@@ -425,12 +426,12 @@
                                         <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="delete_experience" value="{{ work_experience.id }}">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p>No work experience found.</p>
+                                <p>{% trans "No work experience found." %}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -441,20 +442,20 @@
                     {% csrf_token %}
                     <div class="gig-info-card">
                         <div class="gig-info-header d-flex justify-content-between align-items-center">
-                            <h4 class="text-18 fw-semibold text-dark-300">Add New Portfolio</h4>
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Add New Portfolio" %}</h4>
                             <button type="submit" name="add_portfolio" class="btn btn-success">+</button>
                         </div>
                         <div class="gig-info-body bg-white">
                             <div class="row g-4">
                                 <div class="col-12">
                                     <div class="form-container">
-                                        <label class="form-label">Portfolio URL</label>
+                                        <label class="form-label">{% trans "Portfolio URL" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_portfolio_url">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-container">
-                                        <label class="form-label">Description</label>
+                                        <label class="form-label">{% trans "Description" %}</label>
                                         <textarea class="form-control shadow-none" rows="3" name="new_portfolio_description"></textarea>
                                     </div>
                                 </div>
@@ -467,7 +468,7 @@
                 <!-- Display existing Portfolio -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">List Portfolio</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "List Portfolio" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
@@ -475,13 +476,13 @@
                                 {% for portfolio in portfolios %}
                                     <div class="col-12">
                                         <div class="form-container">
-                                            <label class="form-label">Portfolio URL<span class="text-lime-300"></span></label>
+                                            <label class="form-label">{% trans "Portfolio URL" %}<span class="text-lime-300"></span></label>
                                             <input type="text" class="form-control shadow-none portfolio-url" value="{{ portfolio.url }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-container">
-                                            <label class="form-label">Description</label>
+                                            <label class="form-label">{% trans "Description" %}</label>
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ portfolio.description }}</textarea>
                                         </div>
                                     </div>
@@ -490,12 +491,12 @@
                                         <form method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="delete_portfolio" value="{{ portfolio.id }}">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p>No portfolio entries found.</p>
+                                <p>{% trans "No portfolio entries found" %}.</p>
                             {% endif %}
                         </div>
                     </div>
@@ -506,7 +507,7 @@
                     {% csrf_token %}
                     <div class="gig-info-card">
                         <div class="gig-info-header d-flex justify-content-between align-items-center">
-                            <h4 class="text-18 fw-semibold text-dark-300">Skills</h4>
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Skills" %}</h4>
                             <button type="submit" name="add_skill" class="btn btn-success">+</button>
                         </div>
                         <div class="gig-info-body bg-white p-3">
@@ -516,7 +517,7 @@
                             </div>
                 
                             <!-- Mostrar habilidades que el usuario ya tiene -->
-                            <h5 class="mt-4">Your Skills:</h5>
+                            <h5 class="mt-4">{% trans "Your Skills:" %}</h5>
                             <br>
                             <div class="list-group">
                                 {% if skills %}
@@ -528,7 +529,7 @@
                                     {% endfor %}
                                 {% else %}
                                     <div class="list-group-item">
-                                        No skills found.
+                                        {% trans "No skills found." %}
                                     </div>
                                 {% endif %}
                             </div>
