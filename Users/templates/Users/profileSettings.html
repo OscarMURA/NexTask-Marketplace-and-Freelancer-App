@@ -146,7 +146,7 @@
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">{% trans "Institution Name" %}</label>
+                                        <label class="form-label">{% trans "Institution name" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_institution_name">
                                     </div>
                                 </div>
@@ -191,7 +191,7 @@
                                 {% for education in educations %}
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">{% trans "Institution Name" %}</label>
+                                            <label class="form-label">{% trans "Institution name" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ education.institution_name }}" readonly>
                                         </div>
                                     </div>
@@ -354,19 +354,19 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">{% trans "Position" %]</label>
+                                        <label class="form-label">{% trans "Position" %}</label>
                                         <input type="text" class="form-control shadow-none" name="new_position">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">{% trans "Start Date" %}</label>
+                                        <label class="form-label">{% trans "Start date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_experience_start_date">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-container">
-                                        <label class="form-label">{% trans "End Date" %}</label>
+                                        <label class="form-label">{% trans "End date" %}</label>
                                         <input type="date" class="form-control shadow-none" name="new_experience_end_date">
                                     </div>
                                 </div>
@@ -405,13 +405,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">{% trans "Start Date" %}</label>
+                                            <label class="form-label">{% trans "Start date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{{ work_experience.start_date }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-container">
-                                            <label class="form-label">{% trans "End Date" %}</label>
+                                            <label class="form-label">{% trans "End date" %}</label>
                                             <input type="text" class="form-control shadow-none" value="{% if work_experience.end_date %}{{ work_experience.end_date }}{% else %}Present{% endif %}" readonly>
                                         </div>
                                     </div>

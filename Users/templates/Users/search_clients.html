@@ -104,7 +104,7 @@
 
 <div class="banner">
     <!-- Cambia el título de Client Results a Search Clients y lo alineamos a la izquierda -->
-    <h1>Search Clients</h1>
+    <h1>{% trans "Search Clients" %}</h1>
 </div>
 
 <!-- Barra de búsqueda -->
@@ -143,7 +143,7 @@
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ client.company_name }}</h5>
-                            <p class="card-text"><strong>Country:</strong> {{ client.country }}</p>
+                            <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ client.country }}</p>
                             <a href="{% url 'client_profile' client.id %}" class="btn btn-primary">{% trans "View Profile" %}</a>
                         </div>
                     </div>

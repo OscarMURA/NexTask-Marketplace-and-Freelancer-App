@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 19:55-0500\n"
+"POT-Creation-Date: 2024-09-28 23:48-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,6 +110,7 @@ msgid "Search Freelancers"
 msgstr "Buscar Freelancers"
 
 #: .\NextTask\templates\NextTask\home.html:74
+#: .\Users\templates\Users\search_clients.html:107
 msgid "Search Clients"
 msgstr "Buscar Clientes"
 
@@ -258,10 +259,8 @@ msgstr "Título del Proyecto"
 #: .\Projects\templates\Projects\project_detail_freelancer.html:66
 #: .\Users\templates\Users\profileSettings.html:161
 #: .\Users\templates\Users\profileSettings.html:206
-#: .\Users\templates\Users\profileSettings.html:363
-#: .\Users\templates\Users\profileSettings.html:408
 msgid "Start Date"
-msgstr "Fecha de Inicio"
+msgstr "Fecha de Inicio:"
 
 #: .\Projects\templates\Projects\createProject.html:61
 #: .\Projects\templates\Projects\create_milestone.html:53
@@ -319,7 +318,7 @@ msgstr "Categoría"
 #: .\Users\templates\Users\profileSettings.html:458
 #: .\Users\templates\Users\profileSettings.html:485
 msgid "Description"
-msgstr "Descripción"
+msgstr "Descripción:"
 
 #: .\Projects\templates\Projects\createProject.html:103
 msgid "Save Project"
@@ -446,6 +445,7 @@ msgstr "Editar Tarea"
 #: .\Projects\templates\Projects\search_freelancer.html:12
 #: .\Projects\templates\Projects\task_detail.html:56
 #: .\Projects\templates\Projects\task_detail_freelancer.html:51
+#: .\Users\templates\Users\certification_register.html:32
 #: .\Users\templates\Users\education_register.html:35
 #: .\Users\templates\Users\portfolio_register.html:32
 #: .\Users\templates\Users\work_experience_register.html:35
@@ -727,6 +727,7 @@ msgid "Find Freelancer"
 msgstr "Freelancer encontrados"
 
 #: .\Projects\templates\Projects\search_freelancer.html:71
+#: .\Users\templates\Users\search_clients.html:146
 msgid "Country:"
 msgstr "País:"
 
@@ -735,6 +736,7 @@ msgid "View freelancer profile"
 msgstr "Ver perfil de Freelancer"
 
 #: .\Projects\templates\Projects\search_freelancer.html:77
+#: .\Users\templates\Users\search_freelancers.html:198
 msgid "No freelancers found."
 msgstr "Freelancer no encontrados"
 
@@ -757,6 +759,10 @@ msgstr "Todas las Categorías"
 #: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:24
 msgid "Find Projects"
 msgstr "Encuentra tu proyecto perfecto"
+
+#: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:45
+msgid "No projects found."
+msgstr "No se encontrarón proyectos"
 
 #: .\Projects\templates\Projects\task_detail.html:30
 #: .\Projects\templates\Projects\task_detail_freelancer.html:29
@@ -856,6 +862,7 @@ msgstr "Configuración de Perfil"
 
 #: .\Users\templates\Users\baseClient.html:166
 #: .\Users\templates\Users\baseClient.html:385
+#: .\Users\templates\Users\baseFreelancer.html:199
 #: .\Users\templates\Users\baseFreelancer.html:401
 msgid "Change Password"
 msgstr "Cambiar Contraseña"
@@ -914,6 +921,29 @@ msgstr "Cerrar Sesión"
 msgid "Post a job"
 msgstr "Publicar trabajo"
 
+#: .\Users\templates\Users\certification_register.html:10
+msgid "Certification Register"
+msgstr "Certificados"
+
+#: .\Users\templates\Users\certification_register.html:25
+msgid "Add More Certifications"
+msgstr "Añadir nuevo certificado"
+
+#: .\Users\templates\Users\certification_register.html:26
+#: .\Users\templates\Users\education_register.html:29
+#: .\Users\templates\Users\portfolio_register.html:26
+#: .\Users\templates\Users\register_languages.html:38
+#: .\Users\templates\Users\work_experience_register.html:29
+msgid "Next"
+msgstr "Siguiente"
+
+#: .\Users\templates\Users\certification_register.html:33
+#: .\Users\templates\Users\education_register.html:36
+#: .\Users\templates\Users\portfolio_register.html:33
+#: .\Users\templates\Users\work_experience_register.html:36
+msgid "Skip"
+msgstr "Omitir"
+
 #: .\Users\templates\Users\changePassword.html:8
 msgid "Profile Settings - HTML"
 msgstr "Configuración de Perfil"
@@ -946,7 +976,7 @@ msgstr "Volver a la busqueda"
 
 #: .\Users\templates\Users\client_profile.html:136
 msgid "No description available."
-msgstr "No hay aplicaciones disponibles."
+msgstr "No hay descripción disponible."
 
 #: .\Users\templates\Users\client_profile.html:152
 msgid "Projects"
@@ -993,7 +1023,7 @@ msgstr "Apellidos"
 #: .\Users\templates\Users\profileSettings.html:351
 #: .\Users\templates\Users\profileSettings.html:396
 msgid "Company Name"
-msgstr "Nombre de la compañia"
+msgstr "Página web"
 
 #: .\Users\templates\Users\client_signup.html:78
 msgid "Company Website"
@@ -1033,19 +1063,6 @@ msgstr "Registro de educación"
 #: .\Users\templates\Users\education_register.html:28
 msgid "Add More Education"
 msgstr "Añadir más educación"
-
-#: .\Users\templates\Users\education_register.html:29
-#: .\Users\templates\Users\portfolio_register.html:26
-#: .\Users\templates\Users\register_languages.html:38
-#: .\Users\templates\Users\work_experience_register.html:29
-msgid "Next"
-msgstr "Siguiente"
-
-#: .\Users\templates\Users\education_register.html:36
-#: .\Users\templates\Users\portfolio_register.html:33
-#: .\Users\templates\Users\work_experience_register.html:36
-msgid "Skip"
-msgstr "Omitir"
 
 #: .\Users\templates\Users\freelancer_details.html:16
 #: .\Users\templates\Users\freelancer_details.html:25
@@ -1162,20 +1179,18 @@ msgstr "Añadir nueva educación"
 
 #: .\Users\templates\Users\profileSettings.html:149
 #: .\Users\templates\Users\profileSettings.html:194
-msgid "Institution Name"
+msgid "Institution name"
 msgstr "Nombre de la institución"
 
 #: .\Users\templates\Users\profileSettings.html:155
 #: .\Users\templates\Users\profileSettings.html:200
 msgid "Degree Obtained"
-msgstr "Título obtenido"
+msgstr "Título recibido"
 
 #: .\Users\templates\Users\profileSettings.html:167
 #: .\Users\templates\Users\profileSettings.html:212
-#: .\Users\templates\Users\profileSettings.html:369
-#: .\Users\templates\Users\profileSettings.html:414
 msgid "End Date"
-msgstr "Fecha de Vencimiento"
+msgstr "Fecha de fin"
 
 #: .\Users\templates\Users\profileSettings.html:186
 msgid "List Educational"
@@ -1183,7 +1198,7 @@ msgstr "Lista de educación"
 
 #: .\Users\templates\Users\profileSettings.html:232
 msgid "No educational records found."
-msgstr "Freelancer no encontrados"
+msgstr "No se encontrarón registros de educación"
 
 #: .\Users\templates\Users\profileSettings.html:243
 msgid "Add New Certification"
@@ -1192,7 +1207,7 @@ msgstr "Añadir nuevo certificado"
 #: .\Users\templates\Users\profileSettings.html:250
 #: .\Users\templates\Users\profileSettings.html:295
 msgid "Certification Name"
-msgstr "Nombre del certificado"
+msgstr "Certificados"
 
 #: .\Users\templates\Users\profileSettings.html:256
 #: .\Users\templates\Users\profileSettings.html:301
@@ -1207,23 +1222,34 @@ msgstr "Fecha de Vencimiento"
 #: .\Users\templates\Users\profileSettings.html:268
 #: .\Users\templates\Users\profileSettings.html:313
 msgid "Expiration Date"
-msgstr "Fecha de expedición"
+msgstr "Fecha de fin"
 
 #: .\Users\templates\Users\profileSettings.html:333
 msgid "No certifications found."
-msgstr "Freelancer no encontrados"
+msgstr "No se encontrarón certificados"
 
 #: .\Users\templates\Users\profileSettings.html:344
 msgid "Add New Work Experience"
 msgstr "Añadir nueva experiencia laboral"
 
+#: .\Users\templates\Users\profileSettings.html:357
 #: .\Users\templates\Users\profileSettings.html:402
 msgid "Position"
-msgstr "Descripción"
+msgstr "Posición:"
+
+#: .\Users\templates\Users\profileSettings.html:363
+#: .\Users\templates\Users\profileSettings.html:408
+msgid "Start date"
+msgstr "Fecha de Inicio:"
+
+#: .\Users\templates\Users\profileSettings.html:369
+#: .\Users\templates\Users\profileSettings.html:414
+msgid "End date"
+msgstr "Fecha de fin:"
 
 #: .\Users\templates\Users\profileSettings.html:434
 msgid "No work experience found."
-msgstr "Freelancer no encontrados"
+msgstr "No se encontró experiencia laboral"
 
 #: .\Users\templates\Users\profileSettings.html:445
 msgid "Add New Portfolio"
@@ -1248,7 +1274,7 @@ msgstr "Tus habilidades"
 
 #: .\Users\templates\Users\profileSettings.html:532
 msgid "No skills found."
-msgstr "Freelancer no encontrados"
+msgstr "No se encontrarón habilidades"
 
 #: .\Users\templates\Users\register_languages.html:16
 msgid "Language Register"
@@ -1271,6 +1297,10 @@ msgstr "Registro de habilidades"
 msgid "Add Skill"
 msgstr "Añadir habilidad"
 
+#: .\Users\templates\Users\register_skills.html:28
+msgid "Selected Skills:"
+msgstr "Seleccionar habilidades"
+
 #: .\Users\templates\Users\register_skills.html:41
 msgid "Submit"
 msgstr "Aceptar"
@@ -1286,7 +1316,7 @@ msgstr "Ver perfil de Freelancer"
 
 #: .\Users\templates\Users\search_clients.html:153
 msgid "No clients found."
-msgstr "Freelancer no encontrados"
+msgstr "No se encontrarón clientes"
 
 #: .\Users\templates\Users\search_freelancers.html:166
 msgid "Select Skills"
@@ -1302,7 +1332,7 @@ msgstr "¡Acabas de completar tu registro!"
 
 #: .\Users\templates\Users\work_experience_register.html:9
 msgid "Work Experience Register"
-msgstr "Experiencia laboral registrada"
+msgstr "Registro de experiencia laboral"
 
 #: .\Users\templates\Users\work_experience_register.html:28
 msgid "Add More Work Experience"
