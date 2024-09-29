@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'Payments',
     'Projects',
     'Reports',
-    'translations',
 ]
 
 MIDDLEWARE = [
