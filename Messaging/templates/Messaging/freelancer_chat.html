@@ -1,4 +1,4 @@
-{% extends 'Users/baseFreelancer.html' %}  <!-- or baseFreelancer.html for freelancer -->
+{% extends 'Users/baseFreelancer.html' %}
 
 {% block content %}
 <style>
@@ -140,6 +140,7 @@
         <p>Selecciona una conversación para comenzar a chatear.</p>
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const conversationLinks = document.querySelectorAll('.conversation-link');
@@ -149,58 +150,93 @@
             link.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                // Fetch conversation ID or user ID
                 const conversationId = link.getAttribute('data-conversation-id');
                 const userId = link.getAttribute('data-user-id');
 
-                // Define the URL to fetch the chat messages (API endpoint or Django view)
                 let url = '';
                 if (conversationId) {
                     url = `/messaging/api/conversation/${conversationId}/`;
+                    connectWebSocket(conversationId);
                 } else if (userId) {
-                    url = `/messaging/api/start_conversation/${userId}/`;
+                    url = `/messaging/start/${userId}/`;
                 }
 
-                // Fetch the chat data
                 fetch(url, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Clear current chat window
-                        chatWindow.innerHTML = '';
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiar la ventana del chat
+                    chatWindow.innerHTML = '';
 
-                        // Display chat messages
-                        let messagesHtml = '<div class="messages" id="message-container">';
-                        data.messages.forEach(message => {
-                            messagesHtml += `<div class="message"><strong>${message.sender}</strong>: ${message.content}</div>`;
-                        });
-                        messagesHtml += '</div>';
-
-                        // Add message form
-                        messagesHtml += `
-                            <form id="message-form" method="post">
-                                <input type="hidden" name="csrfmiddlewaretoken" value="${data.csrf_token}">
-                                <input type="text" id="message-input" name="content" placeholder="Escribe un mensaje...">
-                                <button type="submit">Enviar</button>
-                            </form>
-                        `;
-
-                        chatWindow.innerHTML = messagesHtml;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching chat data:', error);
+                    // Mostrar los mensajes del chat
+                    let messagesHtml = '<div class="messages" id="message-container">';
+                    data.messages.forEach(message => {
+                        messagesHtml += `<div class="message"><strong>${message.sender}</strong>: ${message.content}</div>`;
                     });
+                    messagesHtml += '</div>';
+
+                    // Agregar el formulario para enviar mensajes
+                    messagesHtml += `
+                        <form id="message-form">
+                            <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                            <button type="submit">Enviar</button>
+                        </form>
+                    `;
+
+                    chatWindow.innerHTML = messagesHtml;
+
+                    // Manejar el envío del mensaje
+                    const messageForm = document.getElementById('message-form');
+                    messageForm.addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        const messageInput = document.getElementById('message-input');
+                        const message = messageInput.value;
+
+                        // Asegurar que no se envíen mensajes vacíos
+                        if (message.trim() !== '') {
+                            socket.send(JSON.stringify({
+                                'message': message
+                            }));
+                            messageInput.value = '';  // Limpiar el campo de texto
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error obteniendo los mensajes del chat:', error);
+                });
             });
         });
+
+        let socket = null;
+        
+        function connectWebSocket(conversationId) {
+            if (socket) {
+                socket.close();
+            }
+
+            const ws_url = `ws://${window.location.host}/ws/messaging/${conversationId}/`;
+            socket = new WebSocket(ws_url);
+
+            // Al recibir mensajes por el WebSocket
+            socket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                const messageContainer = document.getElementById('message-container');
+                const newMessage = `<div class="message"><strong>${data.sender}</strong>: ${data.message}</div>`;
+                messageContainer.innerHTML += newMessage;
+
+                // Scroll automático al último mensaje
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            };
+
+            // Al cerrar la conexión del WebSocket
+            socket.onclose = function (e) {
+                console.error('Chat socket cerrado inesperadamente');
+            };
+        }
     });
 </script>
 

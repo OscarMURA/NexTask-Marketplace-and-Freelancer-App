@@ -1,5 +1,3 @@
-# Messaging/views.py
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Conversation, Message
@@ -79,20 +77,21 @@ def start_conversation(request, user_id):
     # Get the user with whom the conversation is to be initiated
     other_user = get_object_or_404(User, id=user_id)
 
-    # Create or get an existing conversation with both participants
-    conversation, created = Conversation.objects.get_or_create(
-        participants__in=[request.user, other_user],
-        participants__count=2
-    )
-    if created:
+    # Busca si ya existe una conversación entre los dos usuarios
+    conversation = Conversation.objects.filter(participants=request.user).filter(participants=other_user).distinct().first()
+
+    if not conversation:
+        conversation = Conversation.objects.create()
         conversation.participants.add(request.user, other_user)
 
     return redirect('messaging:client_chat', conversation_id=conversation.id)
 
 def get_conversation_messages(request, conversation_id):
-    conversation = get_object_or_404(Conversation, id=conversation_id)
-    messages = conversation.messages.all().order_by('timestamp')  # Ensure messages are ordered by time
-    data = {
-        "messages": [{"sender": msg.sender.username, "content": msg.content} for msg in messages]
-    }
-    return JsonResponse(data)
+    conversation = Conversation.objects.get(id=conversation_id)
+    messages = conversation.messages.all()
+    return JsonResponse({
+        'messages': [
+            {'sender': message.sender.username, 'content': message.content}
+            for message in messages
+        ]
+    })
