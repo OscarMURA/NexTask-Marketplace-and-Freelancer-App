@@ -1,5 +1,7 @@
 {% extends 'Users/baseClient.html' %}
 {% load static %}
+{% load i18n %}
+
 {% block content %}
 <head>
     <!-- django-quill-editor Media -->
@@ -7,15 +9,15 @@
 </head>
 <!-- Page Header -->
 <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Create a Project</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Create a Project" %}</h3>
     <ul class="d-flex align-items-center gap-2">
-        <li class="text-dark-200 fs-6">Dashboard</li>
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
         <li>
             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
                 <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </li>
-        <li class="text-lime-300 fs-6">Create a Project</li>
+        <li class="text-lime-300 fs-6">{% trans "Create a Project" %}</li>
     </ul>
 </div>
 
@@ -28,13 +30,13 @@
                 <!-- Project Info -->
                 <div class="gig-info-card">
                     <div class="gig-info-header">
-                        <h4 class="text-18 fw-semibold text-dark-300">Project Info</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Project Info" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white">
                         <div class="row g-4">
                             <div class="col-12">
                                 <div class="form-container">
-                                    <label for="id_title" class="form-label">Project Title <span class="text-lime-300">*</span></label>
+                                    <label for="id_title" class="form-label">{% trans "Project Title" %} <span class="text-lime-300">*</span></label>
                                     <!-- Campo del título con maxlength de 75 -->
                                     <input type="text" class="form-control shadow-none" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" placeholder="Title name here" maxlength="75">
                                     <!-- Mostrar errores si los hay -->
@@ -45,7 +47,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_start_date" class="form-label">Start Date</label>
+                                    <label for="id_start_date" class="form-label">{% trans "Start Date" %}</label>
                                     <!-- Campo de la fecha de inicio -->
                                     <input type="date" class="form-control shadow-none" name="start_date" id="id_start_date" value="{{ form.start_date.value|default_if_none:'' }}">
                                     <div id="start-date-error" class="error text-danger"></div>
@@ -56,7 +58,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_due_date" class="form-label">Due Date</label>
+                                    <label for="id_due_date" class="form-label">{% trans "Due Date" %}</label>
                                     <!-- Campo de la fecha de vencimiento -->
                                     <input type="date" class="form-control shadow-none" name="due_date" id="id_due_date" value="{{ form.due_date.value|default_if_none:'' }}">
                                     <div id="due-date-error" class="error text-danger"></div>
@@ -67,7 +69,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_budget" class="form-label">Budget</label>
+                                    <label for="id_budget" class="form-label">{% trans "Budget" %}</label>
                                     <!-- Campo del presupuesto -->
                                     <input type="text" class="form-control shadow-none" name="budget" id="id_budget" value="{{ form.budget.value|default_if_none:'' }}" placeholder="Budget here">
                                     <div id="budget-error" class="error text-danger"></div>
@@ -79,13 +81,13 @@
                             <!-- Campo del Categoria -->
                             <div class="col-md-6">
                                 <div class="form-container">
-                                    <label for="id_category" class="form-label">Category<span class="text-lime-300">*</span></label>
+                                    <label for="id_category" class="form-label">{% trans "Category" %}<span class="text-lime-300">*</span></label>
                                     {{ form.category }} <!-- Esto cargará el <select> con las opciones de categorías del formulario -->
                                 </div>
                             </div>                           
                             <!-- Description with Quill -->
                             <div class="col-12">
-                                <label for="id_description" class="form-label">Description*</label>
+                                <label for="id_description" class="form-label">{% trans "Description" %}*</label>
                                 {{ form.description }}  <!-- Renderiza el campo de Quill aquí -->
                             </div>
                             <!-- Mostrar errores si los hay -->
@@ -98,13 +100,13 @@
                 <!-- Botón de enviar -->
                 <div class="button-group">
                     <button type="submit" class="w-btn-secondary-lg">
-                        Save Project
+                        {% trans "Save Project" %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                     <a href="{% url 'home_client' %}" class="w-btn-danger-lg">
-                        Cancel
+                        {% trans "Cancel" %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>

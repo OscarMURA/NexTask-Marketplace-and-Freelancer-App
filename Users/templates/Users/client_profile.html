@@ -1,5 +1,6 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <style>
@@ -104,7 +105,7 @@
 <div class="container">
     <!-- Botón de regreso a la búsqueda -->
     <div>
-        <a href="{% url 'search_clients' %}" class="btn-back">&larr; Back to Client Search</a>
+        <a href="{% url 'search_clients' %}" class="btn-back">&larr; {% trans "Back to Client Search" %}</a>
     </div>
 
     <div class="profile-header">
@@ -126,13 +127,13 @@
     <!-- Descripción del cliente -->
     {% if client.description %}
         <div class="profile-details">
-            <h2>Description</h2>
+            <h2>{% trans "Description" %}</h2>
             <p>{{ client.description }}</p>
         </div>
     {% else %}
         <div class="profile-details">
             <h2>Description</h2>
-            <p class="no-info">No description available.</p>
+            <p class="no-info">{% trans "No description available." %}</p>
         </div>
     {% endif %}
 
@@ -148,8 +149,8 @@
         </div>
     {% else %}
         <div class="profile-details">
-            <h2>Projects</h2>
-            <p class="no-info">No projects available.</p>
+            <h2>{% trans "Projects" %}</h2>
+            <p class="no-info">{% trans "No projects available." %}</p>
         </div>
     {% endif %}
 </div>

@@ -1,6 +1,6 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
-
+{% load i18n %}
 {% block content %}
 <!-- Estilos CSS incluidos directamente en el archivo HTML -->
 <style>
@@ -104,7 +104,7 @@
 
 <div class="banner">
     <!-- Cambia el título de Client Results a Search Clients y lo alineamos a la izquierda -->
-    <h1>Search Clients</h1>
+    <h1>{% trans "Search Clients" %}</h1>
 </div>
 
 <!-- Barra de búsqueda -->
@@ -117,13 +117,13 @@
         <!-- Filtro por país -->
         <div class="form-group">
             <select name="country" class="form-control">
-                <option value="">Country</option>
+                <option value="">{% trans "Country" %}</option>
                 {% for country in countries %}
                     <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Find Client</button>
+        <button type="submit" class="btn btn-primary">{% trans "Find Client" %}</button>
     </form>
 </div>
 
@@ -143,14 +143,14 @@
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ client.company_name }}</h5>
-                            <p class="card-text"><strong>Country:</strong> {{ client.country }}</p>
-                            <a href="{% url 'client_profile' client.id %}" class="btn btn-primary">View Profile</a>
+                            <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ client.country }}</p>
+                            <a href="{% url 'client_profile' client.id %}" class="btn btn-primary">{% trans "View Profile" %}</a>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <p class="no-results">No clients found.</p>
+            <p class="no-results">{% trans "No clients found." %}</p>
         {% endif %}
     </div>
 </div>

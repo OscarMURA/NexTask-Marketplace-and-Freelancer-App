@@ -16,6 +16,7 @@ from Projects.models import *
 from Projects.models import Application
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomPasswordChangeForm
+from django.utils.translation import gettext as _
 
 
 @never_cache

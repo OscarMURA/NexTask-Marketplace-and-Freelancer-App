@@ -1,16 +1,20 @@
 {% extends 'Users/baseFreelancer.html' %}
+{% load i18n %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">Application Submitted!</h4>
-        <p>Your application has been successfully submitted. We will notify you once it's reviewed.</p>
+        <h4 class="alert-heading">{% trans "Application Submitted!" %}</h4>
+        <p>{% trans "Your application has been successfully submitted. We will notify you once it's reviewed." %}</p>
         <hr>
-        <p class="mb-0">You can view your applied projects in your <a href="{% url 'home_freelancer' %}">dashboard</a>.</p>
+        <p class="mb-0">
+            {% trans "You can view your applied projects in your" %}
+            <a href="{% url 'home_freelancer' %}">{% trans "dashboard" %}</a>.
+        </p>
     </div>
     <div class="mt-4">
         <!-- Botón para cerrar (redirigir al dashboard) -->
-        <a href="{% url 'home_freelancer' %}" class="btn btn-primary">Go to Dashboard</a>
+        <a href="{% url 'home_freelancer' %}" class="btn btn-primary">{% trans "Go to Dashboard" %}</a>
     </div>
 </div>
 {% endblock %}

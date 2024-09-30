@@ -3787,6 +3787,51 @@ body {
   align-items: center; /* Alinea los títulos verticalmente */
   width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
 }
+
+/* Ocultar etiquetas visualmente pero mantenerlas accesibles */
+.visually-hidden { 
+  position: absolute; 
+  width: 1px; 
+  height: 1px; 
+  padding: 0; 
+  margin: -1px; 
+  overflow: hidden; 
+  clip: rect(0, 0, 0, 0); 
+  white-space: nowrap; 
+  border: 0; 
+}
+
+/* Estilos para el formulario del selector de idioma */
+.language-selector-form {
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para el selector de idioma */
+.language-select {
+  padding: 5px 10px;
+  border: 1px solid transparent; /* Borde transparente por defecto */
+  border-radius: 4px;
+  background-color: #f8f9fa; /* Color de fondo ligero */
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none; /* Remueve estilos por defecto del navegador */
+  -webkit-appearance: none; /* Remueve estilos por defecto en Safari */
+  -moz-appearance: none; /* Remueve estilos por defecto en Firefox */
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23666" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 6l4 4 4-4H4z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+/* Estilos al enfocar el selector de idioma */
+.language-select:focus {
+  border-color: #6f42c1; /* Borde morado */
+  box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.25); /* Sombra morada su ave */
+  outline: none; /* Remueve el contorno por defecto */
+}
+
 /*******************
 Footer   End
 ********************/

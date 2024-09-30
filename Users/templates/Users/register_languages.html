@@ -1,6 +1,6 @@
 {% extends 'NextTask/base.html' %}
 {% load crispy_forms_tags %}
-
+{% load i18n %}
 {% block extra_css %}
 <style>
     .checkbox-item {
@@ -13,7 +13,7 @@
 <div class="container">
     <section class="py-110 bg-offWhite">
         <div class="container bg-white rounded-3 p-3">
-            <h2 class="section-title mb-2">Language Register</h2>
+            <h2 class="section-title mb-2">{% trans "Language Register" %}</h2>
             <form method="POST" id="languageForm">
                 {% csrf_token %}
 
@@ -24,7 +24,7 @@
 
                 <!-- Render checkboxes -->
                 <div class="form-group" id="languagesList">
-                    <label for="id_languages">Languages List</label>
+                    <label for="id_languages">{% trans "Languages List" %}</label>
                     {% for checkbox in form.languages %}
                         <div class="checkbox-item">
                             {{ checkbox.tag }} <label>{{ checkbox.choice_label }}</label>
@@ -34,8 +34,8 @@
 
                 <div class="d-grid mt-4">
                     <div class="d-flex justify-content-between">
-                        <a href="{% url 'portfolio_register' %}" class="btn btn-outline-secondary">Previous</a>
-                        <button type="submit" class="w-btn-secondary-lg">Next</button>
+                        <a href="{% url 'portfolio_register' %}" class="btn btn-outline-secondary">{% trans "Previous" %}</a>
+                        <button type="submit" class="w-btn-secondary-lg">{% trans "Next" %}</button>
                     </div>
                 </div>
             </form>
