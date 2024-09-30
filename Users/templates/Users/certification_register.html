@@ -1,12 +1,13 @@
 {% extends 'NextTask/base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
     <div class="container">
         <section class="py-110 bg-offWhite">
             <div class="container bg-white rounded-3 p-3">
-                <h2 class="section-title mb-2">Certification Register</h2>
+                <h2 class="section-title mb-2">{% trans "Certification Register" %}</h2>
                 <form method="POST" id="certificationForm">
                     {% csrf_token %}
                     {{ certification_formset.management_form }}
@@ -21,15 +22,15 @@
 
                     <div class="d-grid mt-4">
                         <div class="d-flex justify-content-between">
-                            <button type="button" id="add-more-certifications" class="w-btn-plus-lg">Add More Certifications</button>
-                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">Next</button>
+                            <button type="button" id="add-more-certifications" class="w-btn-plus-lg">{% trans "Add More Certifications" %}</button>
+                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">{% trans "Next" %}</button>
                         </div>
                     </div>
 
                     <div class="d-grid mt-4">
                         <div class="d-flex justify-content-between">
-                            <a href="{% url back_url %}" class="w-btn-danger-lg">Back</a>
-                            <button type="submit" name="skip" value="skip" class="w-btn-danger-lg">Skip</button>
+                            <a href="{% url back_url %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+                            <button type="submit" name="skip" value="skip" class="w-btn-danger-lg">{% trans "Skip" %}</button>
                         </div>
                     </div>
                 </form>

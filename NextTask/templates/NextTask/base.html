@@ -1,12 +1,13 @@
 {% load static %}
 {% load crispy_forms_tags %}
+{% load i18n %}  <!-- Cargar el template tag i18n -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="{% static 'img\others\icon.png' %}" type="image/png" />
+    <link rel="icon" href="{% static 'img/others/icon.png' %}" type="image/png" />
     <!-- GLightBox -->
     <link rel="stylesheet" href="{% static 'css/glightbox.min.css' %}" />
     <!-- Aos -->
@@ -47,35 +48,65 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-navbar">
             <div class="container">
               <a class="navbar-brand" href="#" style="margin-left: -35px;">
-                <img src="{% static 'img/others/logoApp.png' %}" alt="Logo" style="height: 80px; width: auto;">
+                <img src="{% static 'img/others/logoApp.png' %}" alt="{% trans 'Logo' %}" style="height: 80px; width: auto;"> <!-- Añadir traducción al atributo alt -->
               </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}" >Home :D</a>
+                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">{% trans 'Home' %}</a>
+                        </li>
+                        <!-- Select Language   -->
+<li class="align-items-center d-lg-flex">
+    <form action="{% url 'set_language' %}" method="post" class="language-selector-form">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ redirect_to }}">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        <label for="language-select" class="visually-hidden">{% trans "Select Language" %}</label>
+        <select 
+            name="language" 
+            id="language-select" 
+            class="form-control shadow-none" 
+            aria-label="{% trans 'Select Language' %}"
+            onchange="this.form.submit()"
+        >
+            {% for language in languages %}
+                {% if language.code == 'es' or language.code == 'en' %}
+                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                        {{ language.name_local }} ({{ language.code }})
+                    </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </form>
+</li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{% trans 'About' %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="#">{% trans 'Services' %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Services</a>
+                            <a class="nav-link" href="#">{% trans 'Contact' %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
+                            <a href="{% url 'register_freelancer' %}" class="nav-link">{% trans 'Sign up' %}</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{% url 'register_freelancer' %}" class="nav-link" href="#">Sign up</a>
-                        </li>
+
                     </ul>
-                    <div class="align-items-center d-none d-lg-flex">
+                    <div class="align-items-center d-lg-flex">
                         <a href="{% url 'login' %}" class="w-btn-secondary-lg">
                           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="17" viewBox="0 0 13 17" fill="none">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 7.55556C8.55134 7.55556 10.2143 5.86419 10.2143 3.77778C10.2143 1.69137 8.55134 0 6.5 0C4.44866 0 2.78571 1.69137 2.78571 3.77778C2.78571 5.86419 4.44866 7.55556 6.5 7.55556ZM6.5 17C10.0899 17 13 15.3086 13 13.2222C13 11.1358 10.0899 9.44444 6.5 9.44444C2.91015 9.44444 0 11.1358 0 13.2222C0 15.3086 2.91015 17 6.5 17Z" fill="white"/>
-                          </svg>Login</a>
-                      </div>
+                          </svg>{% trans 'Login' %}
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>

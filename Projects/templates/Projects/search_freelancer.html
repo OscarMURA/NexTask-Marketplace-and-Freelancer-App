@@ -1,6 +1,6 @@
 {% extends 'Users/baseClient.html' %}
 {% load static %}
-
+{% load i18n %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -9,8 +9,9 @@
 
 
 <div class="text mt-4">
-    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg"> Back </a>
-    <h1 class="text-center">Freelancer Results</h1>
+    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+    
+    <h1 class="text-center">{% trans "Freelancer Results" %}</h1>
 </div>
 
 <!-- Barra de búsqueda -->
@@ -32,7 +33,7 @@
 
         <div class="form-group mx-2">
             <select name="languages" class="form-control">
-                <option value="">Languages</option>
+                <option value="">{% trans "Languages" %}</option>
                 {% for language in languages %}
                     <option value="{{ language.id }}" {% if request.GET.languages == language.id %}selected{% endif %}>{{ language.language }}</option>
                 {% endfor %}
@@ -41,14 +42,14 @@
 
         <div class="form-group mx-2">
             <select name="country" class="form-control">
-                <option value="">Country</option>
+                <option value="">{% trans "Country" %}</option>
                 {% for country in countries %}
                     <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary mx-2">Find Freelancer</button>
+        <button type="submit" class="btn btn-primary mx-2">{% trans "Find Freelancer" %}</button>
     </form>
 </div>
 
@@ -67,13 +68,13 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ freelancer.user.username }}</h5>
                     <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
-                    <p class="card-text"><strong>Country:</strong> {{ freelancer.country }}</p>
-                    <a href="{% url 'freelancer_profile' project.id freelancer.user.id %}" class="btn btn-primary">View freelancer profile</a>
+                    <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ freelancer.country }}</p>
+                    <a href="{% url 'freelancer_profile' project.id freelancer.user.id %}" class="btn btn-primary">{% trans "View freelancer profile" %}</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <p>No freelancers found.</p>
+        <p>{% trans "No freelancers found." %}</p>
         {% endfor %}
     </div>
 </div>

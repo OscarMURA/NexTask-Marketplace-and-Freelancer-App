@@ -1,10 +1,10 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
-
+{% load i18n %}
 {% block content %}
 
 <div>
-    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; Back to Freelancer Search</a>
+    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; {% trans "Back to Freelancer Search" %}</a>
 </div>
 
 <div class="container">
@@ -19,6 +19,6 @@
 
 <!-- Botón para regresar a la búsqueda de freelancers -->
 <div>
-    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; Back to Freelancer Search</a>
+    <a href="{% url 'search_freelancers' %}" class="btn-back">&larr; {% trans "Back to Freelancer Search" %}</a>
 </div>
 {% endblock %}

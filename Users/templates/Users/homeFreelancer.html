@@ -1,18 +1,19 @@
-{% extends 'Users/baseFreelancer.html' %} {% load static %} {% block content %}
-<title>Freelancer Dashboard</title>
+{% extends 'Users/baseFreelancer.html' %} {% load static %} {% block content %} {% load i18n %}
+
+<title>{% trans "Freelancer Dashboard" %}</title>
 <!-- Page Header -->
 <div
   class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
 >
   <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Dashboard</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Dashboard" %}</h3>
     <ul class="d-flex align-items-center gap-2">
-      <li class="text-dark-200 fs-6">Dashboard</li>
+      <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
     </ul>
   </div>
   <div>
     <a href="" class="w-btn-secondary-lg">
-      Post a job</a
+      {% trans "Post a job" %}</a
     >
   </div>
 </div>
@@ -23,7 +24,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">$52</h3>
-        <p class="text-18 text-dark-200">Total Balance</p>
+        <p class="text-18 text-dark-200">{% trans "Total Balance" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-1.png' %}" alt="" />
@@ -36,7 +37,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ total_projects }}</h3>
-        <p class="text-18 text-dark-200">Total Projects</p>
+        <p class="text-18 text-dark-200">{% trans "Total Projects" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-2.png' %}" alt="" />
@@ -49,7 +50,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">35</h3>
-        <p class="text-18 text-dark-200">Complete Order</p>
+        <p class="text-18 text-dark-200">{% trans "Complete Order" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-3.png' %}" alt="" />
@@ -62,7 +63,7 @@
     >
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">02</h3>
-        <p class="text-18 text-dark-200">Active Order</p>
+        <p class="text-18 text-dark-200">{% trans "Active Order" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-4.png' %}" alt="" />
@@ -75,11 +76,11 @@
 <!-- Content -->
 <div>
   <div>
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">Projects you participate in</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Projects you participate in" %}</h3>
     <div class="text mt-4">
       <div class="button-group">
-        <a href="{% url 'manage_applications_freelancer' %}" class="w-btn-secondary-lg">Project List for Accept</a>
-        <a href="{% url 'search_projects' %}" class="w-btn-secondary-lg">Search Projects</a>
+        <a href="{% url 'manage_applications_freelancer' %}" class="w-btn-secondary-lg">{% trans "Project List for Accept" %}</a>
+        <a href="{% url 'search_projects' %}" class="w-btn-secondary-lg">{% trans "Search Projects" %}</a>
       </div>
       <p>.</p>
       <p></p>
@@ -119,7 +120,7 @@
       </div>
     </div>
     {% empty %}
-    <p class="text-center w-100">No projects available.</p>
+    <p class="text-center w-100">{% trans "No projects available." %}</p>
     {% endfor %}
   </div>
 </div>

@@ -1,7 +1,7 @@
 {% extends 'Users/baseFreelancer.html' %}
 
-
 {% load static %}
+{% load i18n %}
 
 {% if messages %}
     <div class="container mt-4">
@@ -28,7 +28,6 @@
     </script>
 {% endif %}
 
-
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -39,19 +38,19 @@
                     
                     <div class="text-center my-3">
                         <p class="card-text">
-                            <strong>Client:</strong> 
+                            <strong>{% trans "Client:" %}</strong> 
                             <a href="{% url 'client_profile' project.client.user.id %}" class="text-decoration-none" style="color: #635FD9;">
                                 {{ project.client.user.username }}
                             </a>
                         </p>
-                        <p class="card-text"><strong>Category:</strong> {{ project.get_category_display }}</p>
-                        <p class="card-text"><strong>Start Date:</strong> {{ project.start_date }}</p>
-                        <p class="card-text"><strong>Due Date:</strong> {{ project.due_date }}</p>
-                        <p class="card-text"><strong>Budget:</strong> ${{ project.budget }}</p>
+                        <p class="card-text"><strong>{% trans "Category:" %}</strong> {{ project.get_category_display }}</p>
+                        <p class="card-text"><strong>{% trans "Start Date:" %}</strong> {{ project.start_date }}</p>
+                        <p class="card-text"><strong>{% trans "Due Date:" %}</strong> {{ project.due_date }}</p>
+                        <p class="card-text"><strong>{% trans "Budget:" %}</strong> ${{ project.budget }}</p>
 
                         <!-- Mostrar descripción usando Quill renderizado -->
                         <div class="mt-4">
-                            <h4 style="color: #1A1773;">Description:</h4>
+                            <h4 style="color: #1A1773;">{% trans "Description:" %}</h4>
                             <div class="quill-content" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                 {{ project.description|safe }}
                             </div>
@@ -62,15 +61,15 @@
                                 {% if request.user.is_freelancer %}
                                     <form method="POST" action="{% url 'apply_to_project' project.id %}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;">Apply to Project</button>
+                                        <button type="submit" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;">{% trans "Apply to Project" %}</button>
                                     </form>
                                 {% else %}
-                                    <p class="text-danger">Only freelancers can apply to projects.</p>
+                                    <p class="text-danger">{% trans "Only freelancers can apply to projects." %}</p>
                                 {% endif %}
                             {% else %}
                                 <!-- Siempre mostrar el botón y redirigir a login si el usuario no está autenticado -->
-                                <a href="{% url 'login' %}?next={% url 'apply_to_project' project.id %}" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;">Apply to Project</a>
-                                <a href="{% url 'register_freelancer' %}" class="btn btn-secondary" style="padding: 10px 20px;">Register as Freelancer</a>
+                                <a href="{% url 'login' %}" next={% url 'apply_to_project' project.id %}" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;>{% trans "Apply to Project" %}</a>
+                                <a href="{% url 'register_freelancer' %}" class="btn btn-secondary" style="padding: 10px 20px;">{% trans "Register as Freelancer" %}</a>
                             {% endif %}
                         </div>
                     </div>
@@ -79,4 +78,5 @@
         </div>
     </div>
 </div>
+{% endblock %}
 {% endblock %}
