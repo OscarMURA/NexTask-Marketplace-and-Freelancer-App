@@ -10,10 +10,13 @@ from .models import Project, Milestone,Task
 from .forms import MilestoneForm, TaskForm
 from django.db.models import Q
 from Users.models import FreelancerProfile, Skill, Language
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from Comments.forms import CommentForm
+from Comments.models import Comment
 def create_project(request):
     """
     Create a new project.
@@ -343,20 +346,22 @@ def delete_task(request, task_id):
 
 def task_detail(request, task_id):
     """
-    Retrieve and display the details of a specific task.
-
-    Uses the task ID to get the task from the database and renders it 
-    in the 'task_detail.html' template.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        task_id (int): The ID of the task to be retrieved.
-
-    Returns:
-        HttpResponse: Renders the 'task_detail.html' template with the task context.
+    Recupera y muestra los detalles de una tarea específica para un cliente.
+    Permite a los clientes y a los freelancers asociados agregar comentarios a la tarea.
     """
     task = get_object_or_404(Task, id=task_id)
-    return render(request, 'Projects/task_detail.html', {'task': task})
+    
+    context = {'task': task}
+
+    comments_context = handle_comments(request, task, request.user)
+    print("Comentarios Contexto:", comments_context)  # Línea de depuración
+
+    
+    if 'redirect' in comments_context and comments_context['redirect']:
+        return redirect(request.path)  # Redirige a la misma página después de un POST exitoso
+
+    context.update(comments_context)
+    return render(request, 'Projects/task_detail.html', context)
 
 def search_freelancer(request, project_id):
     """
@@ -723,7 +728,8 @@ def milestone_detail_view_freelancer(request, pk):
         return render(request, 'Projects/no_profile.html')  # Render an appropriate template
 
     # Filter tasks only for the freelancer
-    tasks = milestone.tasks.filter(assigned_to=freelancer_profile)
+    #tasks = milestone.tasks.filter(assigned_to=freelancer_profile)
+    tasks = milestone.tasks.all()
 
     return render(request, 'Projects/milestone_detail_freelancer.html', {
         'milestone': milestone,
@@ -773,22 +779,21 @@ def edit_task_freelancer(request, task_id):
 
 def task_detail_view_freelancer(request, task_id):
     """
-    Retrieve and display the details of a specific task for a freelancer.
-
-    Uses the task ID to get the task from the database and renders it in 
-    the 'task_detail_freelancer.html' template.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        task_id (int): The ID of the task to be retrieved.
-
-    Returns:
-        HttpResponse: Renders the 'task_detail_freelancer.html' template with the task context.
+    Recupera y muestra los detalles de una tarea específica para un freelancer.
+    Permite a los freelancers y al cliente agregar comentarios a la tarea.
     """
     task = get_object_or_404(Task, id=task_id)
-    return render(request, 'Projects/task_detail_freelancer.html', {
-        'task': task
-    })
+    context = {'task': task} 
+
+    comments_context = handle_comments(request, task, request.user)
+    print("Comentarios Contexto:", comments_context)  # Línea de depuración
+
+    
+    if 'redirect' in comments_context and comments_context['redirect']:
+        return redirect(request.path)  # Redirige a la misma página después de un POST exitoso
+
+    context.update(comments_context)
+    return render(request, 'Projects/task_detail_freelancer.html', context)
 
 def manage_applications_freelancer(request):
     """
@@ -857,3 +862,56 @@ def freelancers_in_project(request, project_id):
     })
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Task, ProjectFreelancer, Project
+from Comments.forms import CommentForm
+from Users.models import ClientProfile, FreelancerProfile
+
+def handle_comments(request, task, user):
+    print(f"Manejando comentarios para la tarea: {task.title}")
+    project = task.milestone.project
+
+
+    # Obtener todos los comentarios existentes ordenados por fecha de creación
+    comments = task.comments.all().order_by('created_at')
+
+    # Implementar Paginación: 5 comentarios por página
+    paginator = Paginator(comments, 5)  # 5 comentarios por página
+    page = request.GET.get('page')
+
+    try:
+        comments_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        # Si la página no es un entero, muestra la primera página
+        comments_paginated = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera del rango, muestra la última página
+        comments_paginated = paginator.page(paginator.num_pages)
+
+    # Manejar el formulario de comentario
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        print("Form is bound:", form.is_bound)
+        if form.is_valid():
+            # Crear y guardar el comentario
+            comment = form.save(commit=False)
+            comment.task = task
+            comment.author = user
+            comment.save()
+            print("Comentario guardado exitosamente.")
+            # Redirigir a la misma página para evitar reenvío del formulario
+            return {'redirect': True}
+        else:
+            print("Errores en el formulario:", form.errors)
+    else:
+        form = CommentForm()
+
+    print("Comentarios Contexto:", {'comments': comments_paginated, 'form': form})
+    return {
+        'comments': comments_paginated,
+        'form': form,
+        'paginator': paginator,
+        'page_obj': comments_paginated,
+        'is_paginated': comments_paginated.has_other_pages(),
+    }

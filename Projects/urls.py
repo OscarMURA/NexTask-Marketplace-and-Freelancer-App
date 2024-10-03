@@ -85,7 +85,7 @@ urlpatterns = [
     path('tasks/<int:task_id>/edit/', views.edit_task_freelancer, name='edit_task_freelancer'),  
     
     # Function to view task details for freelancers
-    path('tasks/<int:task_id>/', views.task_detail_view_freelancer, name='task_detail_freelancer'),  
+    path('freelancer/task/<int:task_id>/', views.task_detail_view_freelancer, name='task_detail_freelancer'),  
     
     # Function to manage freelancer applications
     path('projects/freelancer/manage_applications/', views.manage_applications_freelancer, name='manage_applications_freelancer'),  

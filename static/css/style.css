@@ -3832,6 +3832,39 @@ body {
   outline: none; /* Remueve el contorno por defecto */
 }
 
+
+.pagination {
+  justify-content: center;
+}
+
+.pagination .page-link {
+  color: #ffffff;
+  background-color: #a37cec;
+  border: 1px solid #6f42c1;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.pagination .page-link:hover {
+  color: #ffffff;
+  background-color: #a37cec;
+  border-color: #5936a3;
+}
+
+.pagination .page-item.active .page-link {
+  color: #ffffff;
+  background-color: #5e3c9c;
+  border-color: #6f42c1;
+  cursor: default;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #a37cec;
+  background-color: #ffffff;
+  border-color: #6f42c1;
+  cursor: not-allowed;
+}
+
 /*******************
 Footer   End
 ********************/
