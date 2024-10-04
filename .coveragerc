@@ -1,0 +1,5 @@
+[run]
+# Ignora archivos o directorios específicos
+omit =
+    */views.py
+    */test_views/*
