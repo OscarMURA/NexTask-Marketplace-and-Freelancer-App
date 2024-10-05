@@ -1,4 +1,3 @@
-# myapp/tests/test_models.py
 import pytest
 from django_countries.fields import Country
 from Users.models import User, FreelancerProfile, Skill, Education, WorkExperience, Certification, Portfolio, ClientProfile

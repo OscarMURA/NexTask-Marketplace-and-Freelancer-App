@@ -611,3 +611,49 @@ def test_skill_unique_constraint():
         # Intentar crear una habilidad con el mismo nombre debería fallar
         Skill.objects.create(name="Python")
 
+@pytest.mark.django_db
+def test_valid_form():
+    form_data = {
+        'username': 'testuser',
+        'email': 'test@example.com',
+        'first_name': 'Test',
+        'last_name': 'User',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+        'country': 'US',
+        'city': 'New York',
+        'phone': '123-456-7890',
+        'address': '123 Test St',
+    }
+    form = FreelancerSignUpForm(data=form_data)
+    assert form.is_valid()
+
+@pytest.mark.django_db
+def test_empty_username():
+    form_data = {
+        'email': 'test@example.com',
+        'first_name': 'Test',
+        'last_name': 'User',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+    }
+    form = FreelancerSignUpForm(data=form_data)
+    assert not (form.is_valid())
+
+@pytest.mark.django_db
+def test_avatar_upload():
+    form_data = {
+        'username': 'freelancer',
+        'email': 'freelancer@example.com',
+        'first_name': 'Freelancer',
+        'last_name': 'One',
+        'password1': 'securepassword123',
+        'password2': 'securepassword123',
+        'avatar': 'testImage.png',  # Adjust as needed
+        'country': 'US',
+        'city': 'Los Angeles',
+        'phone': '987-654-3210',
+        'address': '456 Freelance Ave',
+        }
+    form = FreelancerSignUpForm(data=form_data)
+    assert (form.is_valid())
