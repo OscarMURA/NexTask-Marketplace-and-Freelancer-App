@@ -245,3 +245,4 @@ def test_freelancer_profile_update(freelancer_profile):
 
     updated_profile = FreelancerProfile.objects.get(id=freelancer_profile.id)
     assert updated_profile.city == "Los Angeles"
+
