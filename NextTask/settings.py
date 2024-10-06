@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'Projects',
     'Reports',
     'Comments',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',  # Agregamos esta línea
     'django.middleware.locale.LocaleMiddleware',
     
 ]

@@ -6,4 +6,3 @@ urlpatterns = [
     path('notifications/create/', views.create_notification, name='create_notification'),
     path('notifications/read/<int:notification_id>/', views.mark_as_read, name='mark_as_read'),
 ]
-
