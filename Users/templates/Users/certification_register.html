@@ -37,7 +37,7 @@
 
                 <div class="d-grid mt-4">
                     <div class="d-flex justify-content-end">
-                        <button type="submit" name="skip_all" value="skip_all" class="w-btn-outline-grey">{% trans "Skip All" %}</button>
+                        <button type="button" id="skip-all-btn" name="skip_all" value="skip_all" class="w-btn-outline-grey">{% trans "Skip All" %}</button>
                     </div>
                 </div>
             </div>
@@ -78,6 +78,16 @@
                 }
             }
         };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('skip-all-btn').onclick = function() {
+                window.location.href = "{% url 'home_freelancer' %}";
+            };
+        });
+        
+        
+
+       
     </script>
 
     <style>
