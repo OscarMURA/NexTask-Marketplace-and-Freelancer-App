@@ -22,15 +22,15 @@
 
                     <div class="d-grid mt-4">
                         <div class="d-flex justify-content-between">
-                            <button type="button" id="add-more-portfolio" class="w-btn-plus-lg">{% trans "Add More Portfolio" %}</button>
+                            <button type="button" id="add-more-portfolio" class="w-btn-plus-lg w-btn-plus-lg-dark-green">{% trans "Add More Portfolio" %}</button>
                             <button type="submit" class="w-btn-secondary-lg" id="nextBtn">{% trans "Next" %}</button>
                         </div>
                     </div>
 
                     <div class="d-grid mt-4">
                         <div class="d-flex justify-content-between">
-                            <a href="{% url back_url %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
-                            <button type="submit" name="skip" value="skip" class="w-btn-danger-lg">{% trans "Skip" %}</button>
+                            <a href="{% url back_url %}" class="w-btn-outline-grey">{% trans "Back" %}</a>
+                            <button type="submit" name="skip" value="skip" class="w-btn-outline-grey">{% trans "Skip" %}</button>
                         </div>
                     </div>
                 </form>
@@ -73,4 +73,42 @@
             }
         };
     </script>
+
+    <style>
+        /* Botón Añadir más portafolio (verde oscuro) */
+        .w-btn-plus-lg-dark-green {
+            background-color: #006400; /* Verde oscuro */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Botones Omitir y Atrás (contorno gris) */
+        .w-btn-outline-grey {
+            border: 2px solid grey;
+            color: grey;
+            background-color: transparent;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .w-btn-outline-grey:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Botón Siguiente (morado) */
+        .w-btn-secondary-lg {
+            background-color: #6a0dad; /* Morado */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 {% endblock %}
