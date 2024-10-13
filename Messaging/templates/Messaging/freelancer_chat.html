@@ -208,27 +208,15 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const conversationLinks = document.querySelectorAll('.conversation-link');
-    const chatWindow = document.getElementById('chat-window');
-
-    const currentUserId = parseInt('{{ request.user.id }}');  // Verifica que el ID del usuario sea correcto
-
-    conversationLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const conversationId = link.getAttribute('data-conversation-id');
-            const userId = link.getAttribute('data-user-id');
-
-            let url = '';
-            if (conversationId) {
-                url = `/messaging/api/conversation/${conversationId}/`;  // Ruta para obtener los mensajes de la conversación
-            } else if (userId) {
-                url = `/messaging/start/${userId}/`;  // Ruta para iniciar una nueva conversación
-            }
-
-            fetch(url, {
+    document.addEventListener('DOMContentLoaded', function () {
+        const conversationLinks = document.querySelectorAll('.conversation-link');
+        const chatWindow = document.getElementById('chat-window');
+        let currentConversationId = null;
+        const currentUserId = parseInt('{{ request.user.id }}');
+    
+        // Función para cargar mensajes en la ventana del chat
+        function loadMessages(conversationId) {
+            fetch(`/messaging/api/conversation/${conversationId}/`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -236,110 +224,134 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Data recibida del servidor:", data);  // Verificar que el sender sea correcto
-                chatWindow.innerHTML = '';
-
+                const messageContainer = document.getElementById('message-container'); // Solo actualizamos los mensajes
+                if (!messageContainer) {
+                    // Si el contenedor de mensajes no existe, lo creamos la primera vez que cargamos la conversación
+                    chatWindow.innerHTML = `
+                        <div class="messages message-container" id="message-container"></div>
+                        <form id="message-form" method="post">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
+                            <button type="submit">Enviar</button>
+                        </form>
+                    `;
+                    setupMessageForm(conversationId);
+                }
+    
                 let lastDate = null;
-                let messagesHtml = '<div class="messages message-container" id="message-container">';
+                let messagesHtml = '';
                 data.forEach(message => {
                     const currentDate = new Date(message.timestamp);
                     const dateLabel = getDateLabel(currentDate);
-
+    
                     if (lastDate !== dateLabel) {
-                        messagesHtml += `<div class="date-separator">${dateLabel}</div>`;  // Agrega un separador de fecha si cambia el día
+                        messagesHtml += `<div class="date-separator">${dateLabel}</div>`;
                         lastDate = dateLabel;
                     }
-
+    
                     const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
                     const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
                     const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
+    
                     messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
                 });
-                messagesHtml += '</div>';
-
-                messagesHtml += `
-                    <form id="message-form" method="post">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                        <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
-                        <button type="submit">Enviar</button>
-                    </form>
-                `;
-
-                chatWindow.innerHTML = messagesHtml;
-
-                const messageForm = document.getElementById('message-form');
-                const messageInput = document.getElementById('message-input');
-                const messageContainer = document.getElementById('message-container');
-
-                messageForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-
-                    const message = messageInput.value.trim();
-
-                    if (message !== '') {
-                        const submitButton = messageForm.querySelector('button');
-                        submitButton.disabled = true;
-
-                        fetch(`/messaging/api/conversation/${conversationId}/send/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ content: message })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
-                            const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
-                            const newMessageTime = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                            // Check if the day has changed
-                            const newMessageDate = new Date(data.timestamp);
-                            const newDateLabel = getDateLabel(newMessageDate);
-
-                            if (lastDate !== newDateLabel) {
-                                messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
-                                lastDate = newDateLabel;
-                            }
-
-                            messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
-                            messageInput.value = '';
-                            messageContainer.scrollTop = messageContainer.scrollHeight;
-                            submitButton.disabled = false;
-                        })
-                        .catch(error => {
-                            console.error('Error enviando el mensaje:', error);
-                            submitButton.disabled = false;
-                        });
-                    } else {
-                        messageInput.value = '';
-                    }
-                });
+    
+                messageContainer.innerHTML = messagesHtml; // Solo actualizamos el contenedor de mensajes
+                messageContainer.scrollTop = messageContainer.scrollHeight;
             })
             .catch(error => {
                 console.error('Error obteniendo los mensajes del chat:', error);
             });
-        });
-    });
-
-    // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
-    function getDateLabel(date) {
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-
-        if (date.toDateString() === today.toDateString()) {
-            return 'Today';
-        } else if (date.toDateString() === yesterday.toDateString()) {
-            return 'Yesterday';
-        } else {
-            return date.toLocaleDateString();
         }
-    }
-});
-</script>
+    
+        // Configurar el envío de mensajes
+        function setupMessageForm(conversationId) {
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const messageContainer = document.getElementById('message-container');
+    
+            messageForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+    
+                const message = messageInput.value.trim();
+    
+                if (message !== '') {
+                    const submitButton = messageForm.querySelector('button');
+                    submitButton.disabled = true;
+    
+                    fetch(`/messaging/api/conversation/${conversationId}/send/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ content: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
+                        const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
+                        const newMessageTime = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+                        const newMessageDate = new Date(data.timestamp);
+                        const newDateLabel = getDateLabel(newMessageDate);
+    
+                        messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
+                        messageInput.value = '';
+                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                        submitButton.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error enviando el mensaje:', error);
+                        submitButton.disabled = false;
+                    });
+                } else {
+                    messageInput.value = '';
+                }
+            });
+        }
+    
+        // Intervalo para actualizar los mensajes automáticamente cada 3 segundos
+        function startAutoRefresh() {
+            setInterval(function () {
+                if (currentConversationId) {
+                    loadMessages(currentConversationId);  // Cargar mensajes si hay una conversación activa
+                }
+            }, 1000);  // Actualizar cada 3 segundo
+        }
+    
+        // Configurar los enlaces de las conversaciones
+        conversationLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+    
+                const conversationId = link.getAttribute('data-conversation-id');
+                currentConversationId = conversationId;
+                loadMessages(conversationId);
+            });
+        });
+    
+        // Función para obtener la etiqueta de fecha
+        function getDateLabel(date) {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+    
+            if (date.toDateString() === today.toDateString()) {
+                return 'Today';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+    
+        // Iniciar la actualización automática al cargar la página
+        startAutoRefresh();
+    });
+    
+    </script>
+    
 
 {% endblock %}

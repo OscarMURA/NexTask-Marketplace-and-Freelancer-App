@@ -121,3 +121,13 @@ class MessageListCreateView(generics.ListCreateAPIView):
 class ConversationDetailView(generics.RetrieveAPIView):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    
+def get_messages(request, conversation_id):
+    if request.method == 'GET':
+        messages = Message.objects.filter(conversation_id=conversation_id).order_by('timestamp')
+        message_list = [{
+            'sender': message.sender.username,
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        } for message in messages]
+        return JsonResponse({'messages': message_list})
