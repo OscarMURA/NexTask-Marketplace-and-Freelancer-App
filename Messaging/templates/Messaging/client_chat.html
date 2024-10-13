@@ -1,0 +1,345 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .chat-layout {
+        display: flex;
+        height: 80vh;
+        border: 1px solid #ddd;
+    }
+
+    .conversation-list {
+        width: 30%;
+        background-color: #f9f9f9;
+        border-right: 1px solid #ccc;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .conversation-list input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .conversation-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .conversation-list li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .conversation-list a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.2s;
+        width: 100%;
+    }
+
+    .conversation-list a img {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+
+    .conversation-list a:hover {
+        background-color: #e6e6e6;
+    }
+
+    #chat-window {
+        width: 70%;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .messages {
+        height: 60vh;
+        overflow-y: auto;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .message-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Espacio entre mensajes */
+    }
+
+    .message {
+        max-width: 60%;
+        padding: 10px;
+        border-radius: 15px;
+        margin-bottom: 10px;
+        word-wrap: break-word;
+        width: fit-content;
+        display: inline-block;
+    }
+
+    /* Mensajes enviados (alineados a la derecha) */
+    .message.sent {
+        background-color: #dcf8c6;
+        margin-left: auto; /* Alinear a la derecha */
+        text-align: right;
+        border-radius: 15px 15px 0px 15px;
+    }
+
+    /* Mensajes recibidos (alineados a la izquierda) */
+    .message.received {
+        background-color: #ffffff;
+        text-align: left;
+        border: 1px solid #ccc;
+        border-radius: 15px 15px 15px 0px;
+    }
+
+    /* Diseño de la fecha centrada como burbuja */
+    .date-separator {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 0.85em;
+        color: gray;
+        position: relative;
+    }
+
+    .date-separator::before,
+    .date-separator::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 40%;
+        height: 1px;
+        background: #ccc;
+    }
+
+    .date-separator::before {
+        left: 0;
+    }
+
+    .date-separator::after {
+        right: 0;
+    }
+
+    #message-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #message-form button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #message-form button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="chat-layout">
+    <!-- Lista de Usuarios Disponibles -->
+    <div class="conversation-list">
+        <input type="text" id="search" placeholder="Buscar chats o usuarios.">
+        <h5>Usuarios disponibles para iniciar conversación:</h5>
+        <br>
+        <ul>
+            {% for user in users %}
+                <li>
+                    <a href="#" class="conversation-link" data-user-id="{{ user.id }}">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                        {% else %}
+                            <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Profile Image">
+                        {% endif %}
+                        {{ user.username }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <h5>Conversaciones activas:</h5>
+        <br>
+        <ul>
+            {% for conversation in conversations %}
+                {% for participant in conversation.participants.all %}
+                    {% if participant != request.user %}
+                        <li>
+                            <a href="#" class="conversation-link" data-conversation-id="{{ conversation.id }}">
+                                {% if participant.profile_picture %}
+                                    <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}">
+                                {% else %}
+                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Profile Image">
+                                {% endif %}
+                                {{ participant.username }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Ventana del Chat -->
+    <div id="chat-window">
+        <p>Selecciona una conversación para comenzar a chatear.</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const conversationLinks = document.querySelectorAll('.conversation-link');
+    const chatWindow = document.getElementById('chat-window');
+
+    const currentUserId = parseInt('{{ request.user.id }}');  // Verifica que el ID del usuario sea correcto
+
+    conversationLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const conversationId = link.getAttribute('data-conversation-id');
+            const userId = link.getAttribute('data-user-id');
+
+            let url = '';
+            if (conversationId) {
+                url = `/messaging/api/conversation/${conversationId}/`;  // Ruta para obtener los mensajes de la conversación
+            } else if (userId) {
+                url = `/messaging/start/${userId}/`;  // Ruta para iniciar una nueva conversación
+            }
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data recibida del servidor:", data);  // Verificar que el sender sea correcto
+                chatWindow.innerHTML = '';
+
+                let lastDate = null;
+                let messagesHtml = '<div class="messages message-container" id="message-container">';
+                data.forEach(message => {
+                    const currentDate = new Date(message.timestamp);
+                    const dateLabel = getDateLabel(currentDate);
+
+                    if (lastDate !== dateLabel) {
+                        messagesHtml += `<div class="date-separator">${dateLabel}</div>`;  // Agrega un separador de fecha si cambia el día
+                        lastDate = dateLabel;
+                    }
+
+                    const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
+                    const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
+                    const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
+                });
+                messagesHtml += '</div>';
+
+                messagesHtml += `
+                    <form id="message-form" method="post">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
+                        <button type="submit">Enviar</button>
+                    </form>
+                `;
+
+                chatWindow.innerHTML = messagesHtml;
+
+                const messageForm = document.getElementById('message-form');
+                const messageInput = document.getElementById('message-input');
+                const messageContainer = document.getElementById('message-container');
+
+                messageForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    const message = messageInput.value.trim();
+
+                    if (message !== '') {
+                        const submitButton = messageForm.querySelector('button');
+                        submitButton.disabled = true;
+
+                        fetch(`/messaging/api/conversation/${conversationId}/send/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ content: message })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
+                            const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
+                            const newMessageTime = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                            // Check if the day has changed
+                            const newMessageDate = new Date(data.timestamp);
+                            const newDateLabel = getDateLabel(newMessageDate);
+
+                            if (lastDate !== newDateLabel) {
+                                messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
+                                lastDate = newDateLabel;
+                            }
+
+                            messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
+                            messageInput.value = '';
+                            messageContainer.scrollTop = messageContainer.scrollHeight;
+                            submitButton.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error enviando el mensaje:', error);
+                            submitButton.disabled = false;
+                        });
+                    } else {
+                        messageInput.value = '';
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error obteniendo los mensajes del chat:', error);
+            });
+        });
+    });
+
+    // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
+    function getDateLabel(date) {
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        if (date.toDateString() === today.toDateString()) {
+            return 'Today';
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            return 'Yesterday';
+        } else {
+            return date.toLocaleDateString();
+        }
+    }
+});
+</script>
+
+{% endblock %}
