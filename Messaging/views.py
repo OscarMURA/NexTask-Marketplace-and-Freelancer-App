@@ -7,6 +7,7 @@ from rest_framework import generics
 from .serializers import MessageSerializer, ConversationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -131,3 +132,33 @@ def get_messages(request, conversation_id):
             'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
         } for message in messages]
         return JsonResponse({'messages': message_list})
+
+@login_required
+def search_users(request):
+    query = request.GET.get('q', '').strip()
+    if query:
+        # Filtrar los usuarios cuyo nombre de usuario comienza con la cadena ingresada (case insensitive)
+        users = User.objects.filter(Q(username__istartswith=query)).exclude(id=request.user.id)[:10]
+        users_data = [
+            {
+                'id': user.id,
+                'username': user.username,
+                'profile_picture': '/static/img/defaultFreelancerProfileImage.jpg'  # Usa la imagen predeterminada o personaliza aquí
+            }
+            for user in users
+        ]
+        return JsonResponse({'users': users_data})
+    return JsonResponse({'users': []})
+    
+
+def check_conversation(request, user_id):
+    current_user = request.user
+    other_user = get_object_or_404(User, id=user_id)
+
+    # Verificar si ya existe una conversación entre los usuarios
+    conversation = Conversation.objects.filter(participants=current_user).filter(participants=other_user).first()
+
+    if conversation:
+        return JsonResponse({'conversation_exists': True, 'conversation_id': conversation.id})
+    else:
+        return JsonResponse({'conversation_exists': False})

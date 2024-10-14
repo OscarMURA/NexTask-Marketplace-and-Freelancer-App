@@ -162,21 +162,8 @@
     <!-- Lista de Usuarios Disponibles -->
     <div class="conversation-list">
         <input type="text" id="search" placeholder="Buscar chats o usuarios.">
-        <h5>Usuarios disponibles para iniciar conversación:</h5>
-        <br>
-        <ul>
-            {% for user in users %}
-                <li>
-                    <a href="#" class="conversation-link" data-user-id="{{ user.id }}">
-                        {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
-                        {% else %}
-                            <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Profile Image">
-                        {% endif %}
-                        {{ user.username }}
-                    </a>
-                </li>
-            {% endfor %}
+        <ul id="user-results">
+            <!-- Los resultados de la búsqueda de usuarios se mostrarán aquí dinámicamente -->
         </ul>
         <hr>
         <h5>Conversaciones activas:</h5>
@@ -208,27 +195,109 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const conversationLinks = document.querySelectorAll('.conversation-link');
-    const chatWindow = document.getElementById('chat-window');
-
-    const currentUserId = parseInt('{{ request.user.id }}');  // Verifica que el ID del usuario sea correcto
-
-    conversationLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const conversationId = link.getAttribute('data-conversation-id');
-            const userId = link.getAttribute('data-user-id');
-
-            let url = '';
-            if (conversationId) {
-                url = `/messaging/api/conversation/${conversationId}/`;  // Ruta para obtener los mensajes de la conversación
-            } else if (userId) {
-                url = `/messaging/start/${userId}/`;  // Ruta para iniciar una nueva conversación
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+        const userResults = document.getElementById('user-results');
+        const chatWindow = document.getElementById('chat-window');
+        const currentUserId = parseInt('{{ request.user.id }}');  // Verifica que el ID del usuario sea correcto
+    
+        // Buscar usuarios y mostrar los resultados en el cuadro de búsqueda
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.trim();
+    
+            if (query.length > 0) {
+                fetch(`/messaging/search-users/?q=${query}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    userResults.innerHTML = '';
+    
+                    if (data.users.length > 0) {
+                        data.users.forEach(user => {
+                            const userElement = document.createElement('li');
+                            userElement.innerHTML = `
+                                <a href="#" class="conversation-link" data-user-id="${user.id}">
+                                    <img src="${user.profile_picture}" alt="${user.username}" width="40" height="40" style="border-radius: 50%;">
+                                    ${user.username}
+                                </a>
+                            `;
+                            userResults.appendChild(userElement);
+                        });
+                        // Añadir eventos de click para iniciar la conversación con los usuarios buscados
+                        addClickEventToSearchResults();
+                    } else {
+                        userResults.innerHTML = '<li>No se encontraron usuarios.</li>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error buscando usuarios:', error);
+                });
+            } else {
+                userResults.innerHTML = '';  // Limpiar si el campo está vacío
             }
-
-            fetch(url, {
+        });
+    
+        // Función para manejar el click en los usuarios del cuadro de búsqueda
+        function addClickEventToSearchResults() {
+            const searchResultsLinks = document.querySelectorAll('.conversation-link');
+    
+            searchResultsLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+    
+                    const userId = link.getAttribute('data-user-id');
+    
+                    // Validar si userId es válido
+                    if (userId && userId !== 'null') {
+                        // Verificar si la conversación ya existe o es nueva
+                        fetch(`/messaging/api/check-conversation/${userId}/`, { // Ruta para verificar si la conversación ya existe
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.conversation_exists) {
+                                // Si la conversación ya existe, cargarla
+                                loadExistingConversation(data.conversation_id);
+                            } else {
+                                // Si la conversación es nueva, renderizar un chat vacío
+                                renderEmptyChatWindow(userId);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error verificando la conversación:', error);
+                        });
+                    } else {
+                        console.error('Error: userId no es válido:', userId);
+                    }
+                });
+            });
+        }
+    
+        // Función para manejar el click en las conversaciones activas
+        const conversationLinks = document.querySelectorAll('.conversation-link');
+        conversationLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+    
+                const conversationId = link.getAttribute('data-conversation-id');
+                const userId = link.getAttribute('data-user-id');
+    
+                if (conversationId) {
+                    loadExistingConversation(conversationId);  // Cargar los mensajes de la conversación activa
+                }
+            });
+        });
+    
+        // Función para cargar una conversación existente
+        function loadExistingConversation(conversationId) {
+            fetch(`/messaging/api/conversation/${conversationId}/`, {  // Ruta para obtener los mensajes de la conversación activa
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -236,110 +305,158 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Data recibida del servidor:", data);  // Verificar que el sender sea correcto
-                chatWindow.innerHTML = '';
-
-                let lastDate = null;
-                let messagesHtml = '<div class="messages message-container" id="message-container">';
-                data.forEach(message => {
-                    const currentDate = new Date(message.timestamp);
-                    const dateLabel = getDateLabel(currentDate);
-
-                    if (lastDate !== dateLabel) {
-                        messagesHtml += `<div class="date-separator">${dateLabel}</div>`;  // Agrega un separador de fecha si cambia el día
-                        lastDate = dateLabel;
-                    }
-
-                    const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
-                    const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
-                    const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                    messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
-                });
-                messagesHtml += '</div>';
-
-                messagesHtml += `
-                    <form id="message-form" method="post">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                        <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
-                        <button type="submit">Enviar</button>
-                    </form>
-                `;
-
-                chatWindow.innerHTML = messagesHtml;
-
-                const messageForm = document.getElementById('message-form');
-                const messageInput = document.getElementById('message-input');
-                const messageContainer = document.getElementById('message-container');
-
-                messageForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-
-                    const message = messageInput.value.trim();
-
-                    if (message !== '') {
-                        const submitButton = messageForm.querySelector('button');
-                        submitButton.disabled = true;
-
-                        fetch(`/messaging/api/conversation/${conversationId}/send/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ content: message })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
-                            const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
-                            const newMessageTime = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                            // Check if the day has changed
-                            const newMessageDate = new Date(data.timestamp);
-                            const newDateLabel = getDateLabel(newMessageDate);
-
-                            if (lastDate !== newDateLabel) {
-                                messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
-                                lastDate = newDateLabel;
-                            }
-
-                            messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
-                            messageInput.value = '';
-                            messageContainer.scrollTop = messageContainer.scrollHeight;
-                            submitButton.disabled = false;
-                        })
-                        .catch(error => {
-                            console.error('Error enviando el mensaje:', error);
-                            submitButton.disabled = false;
-                        });
-                    } else {
-                        messageInput.value = '';
-                    }
-                });
+                renderChatWindow(data, conversationId);  // Renderizar los mensajes de la conversación
             })
             .catch(error => {
                 console.error('Error obteniendo los mensajes del chat:', error);
             });
-        });
-    });
-
-    // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
-    function getDateLabel(date) {
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-
-        if (date.toDateString() === today.toDateString()) {
-            return 'Today';
-        } else if (date.toDateString() === yesterday.toDateString()) {
-            return 'Yesterday';
-        } else {
-            return date.toLocaleDateString();
         }
-    }
-});
-</script>
+    
+        // Función para renderizar una ventana de chat vacía al seleccionar un usuario desde la búsqueda
+        function renderEmptyChatWindow(userId) {
+            chatWindow.innerHTML = '<p>Selecciona una conversación para comenzar a chatear o busca un usuario para iniciar una nueva conversación.</p>';
+        }
+    
+        // Función para renderizar la ventana de chat y agregar el formulario para enviar mensajes
+        function renderChatWindow(data, conversationId) {
+            chatWindow.innerHTML = '';  // Limpiar la ventana de chat
+    
+            let lastDate = null;
+            let messagesHtml = '<div class="messages message-container" id="message-container">';
+            data.forEach(message => {
+                const currentDate = new Date(message.timestamp);
+                const dateLabel = getDateLabel(currentDate);
+    
+                if (lastDate !== dateLabel) {
+                    messagesHtml += `<div class="date-separator">${dateLabel}</div>`;  // Agregar un separador de fecha si cambia el día
+                    lastDate = dateLabel;
+                }
+    
+                const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
+                const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
+                const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+                messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
+            });
+            messagesHtml += '</div>';
+    
+            // Agregar el formulario para enviar mensajes
+            messagesHtml += `
+                <form id="message-form" method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
+                    <button type="submit">Enviar</button>
+                </form>
+            `;
+    
+            chatWindow.innerHTML = messagesHtml;
+    
+            // Añadir el evento de envío del formulario de mensajes
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const messageContainer = document.getElementById('message-container');
+    
+            messageForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+    
+                const message = messageInput.value.trim();
+    
+                if (message !== '') {
+                    const submitButton = messageForm.querySelector('button');
+                    submitButton.disabled = true;
+    
+                    fetch(`/messaging/api/conversation/${conversationId}/send/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ content: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        appendMessageToChat(data, conversationId);  // Añadir el mensaje al chat
+                        messageInput.value = '';
+                        submitButton.disabled = false;
+    
+                        // Actualizar "Conversaciones activas" después de enviar el mensaje
+                        updateActiveConversations(conversationId);
+                    })
+                    .catch(error => {
+                        console.error('Error enviando el mensaje:', error);
+                        submitButton.disabled = false;
+                    });
+                } else {
+                    messageInput.value = '';
+                }
+            });
+        }
+    
+        // Función para agregar un mensaje al chat actual
+        function appendMessageToChat(data, conversationId) {
+            const messageContainer = document.getElementById('message-container');
+            const currentDate = new Date(data.timestamp);
+            const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
+            const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
+            const newMessageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const newMessageDate = new Date(data.timestamp);
+            const newDateLabel = getDateLabel(newMessageDate);
+    
+            if (document.querySelectorAll(`.date-separator`).length === 0 || newDateLabel !== lastDate) {
+                messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
+                lastDate = newDateLabel;
+            }
+    
+            messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    
+        // Función para actualizar "Conversaciones activas"
+        function updateActiveConversations(conversationId) {
+            fetch('/messaging/freelancer/', {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Actualizar la lista de conversaciones activas con el nuevo HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const updatedConversations = doc.querySelector('.conversation-list ul');
+                document.querySelector('.conversation-list ul').innerHTML = updatedConversations.innerHTML;
+    
+                // Automáticamente abrir la nueva conversación en la lista de activas
+                const newConversationLink = document.querySelector(`.conversation-link[data-conversation-id="${conversationId}"]`);
+                if (newConversationLink) {
+                    newConversationLink.click();  // Abrir la conversación recién creada automáticamente
+                }
+            })
+            .catch(error => {
+                console.error('Error actualizando conversaciones activas:', error);
+            });
+        }
+    
+        // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
+        function getDateLabel(date) {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+    
+            if (date.toDateString() === today.toDateString()) {
+                return 'Today';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+    });
+    </script>
+    
+    
+
 
 {% endblock %}
