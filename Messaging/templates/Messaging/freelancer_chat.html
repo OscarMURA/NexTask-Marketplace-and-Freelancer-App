@@ -358,42 +358,43 @@
     
             messageForm.addEventListener('submit', function (event) {
                 event.preventDefault();
-    
-                const message = messageInput.value.trim();
-    
-                if (message !== '') {
-                    const submitButton = messageForm.querySelector('button');
-                    submitButton.disabled = true;
-    
-                    fetch(`/messaging/api/conversation/${conversationId}/send/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ content: message })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        appendMessageToChat(data, conversationId);  // Añadir el mensaje al chat
-                        messageInput.value = '';
-                        submitButton.disabled = false;
-    
-                        // Actualizar "Conversaciones activas" después de enviar el mensaje
-                        updateActiveConversations(conversationId);
-                    })
-                    .catch(error => {
-                        console.error('Error enviando el mensaje:', error);
-                        submitButton.disabled = false;
-                    });
-                } else {
-                    messageInput.value = '';
-                }
+                
+                // Enviar el mensaje sin recargar la página
+                sendMessage(conversationId, messageInput, messageForm, messageContainer);
             });
         }
     
-        // Función para agregar un mensaje al chat actual
+        // Nueva función para enviar el mensaje sin recargar la página
+        function sendMessage(conversationId, messageInput, messageForm, messageContainer) {
+            const message = messageInput.value.trim();
+    
+            if (message !== '') {
+                const submitButton = messageForm.querySelector('button');
+                submitButton.disabled = true;
+    
+                fetch(`/messaging/api/conversation/${conversationId}/send/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessageToChat(data, conversationId);  // Añadir el mensaje al chat sin recargar
+                    messageInput.value = '';  // Limpiar el campo de entrada
+                    submitButton.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error enviando el mensaje:', error);
+                    submitButton.disabled = false;
+                });
+            }
+        }
+    
+        // Función para agregar un mensaje al chat actual sin recargar la página
         function appendMessageToChat(data, conversationId) {
             const messageContainer = document.getElementById('message-container');
             const currentDate = new Date(data.timestamp);
@@ -403,13 +404,16 @@
             const newMessageDate = new Date(data.timestamp);
             const newDateLabel = getDateLabel(newMessageDate);
     
-            if (document.querySelectorAll(`.date-separator`).length === 0 || newDateLabel !== lastDate) {
+            // Verificar si es necesario agregar un separador de fecha
+            const lastDateSeparator = document.querySelectorAll('.date-separator');
+            const lastDate = lastDateSeparator.length > 0 ? lastDateSeparator[lastDateSeparator.length - 1].textContent : null;
+            
+            if (newDateLabel !== lastDate) {
                 messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
-                lastDate = newDateLabel;
             }
     
             messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
-            messageContainer.scrollTop = messageContainer.scrollHeight;
+            messageContainer.scrollTop = messageContainer.scrollHeight;  // Desplazar el scroll hacia abajo automáticamente
         }
     
         // Función para actualizar "Conversaciones activas"
@@ -455,6 +459,7 @@
         }
     });
     </script>
+    
     
     
 

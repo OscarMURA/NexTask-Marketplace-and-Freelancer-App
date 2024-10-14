@@ -8,6 +8,7 @@ from .serializers import MessageSerializer, ConversationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db.models import Q
+from django.db.models import Count
 
 User = get_user_model()
 
@@ -35,7 +36,7 @@ def freelancer_chat(request, conversation_id=None):
     current_user = request.user  # Usuario actual
 
     # Obtener todas las conversaciones activas del usuario actual
-    conversations = Conversation.objects.filter(participants=current_user)
+    conversations = Conversation.objects.filter(participants=current_user).annotate(num_messages=Count('messages')).filter(num_messages__gt=0)
 
     # Inicializamos active_users como una consulta vacía para evitar el error UnboundLocalError
     active_users = User.objects.none()
@@ -149,7 +150,7 @@ def search_users(request):
         ]
         return JsonResponse({'users': users_data})
     return JsonResponse({'users': []})
-    
+
 
 def check_conversation(request, user_id):
     current_user = request.user
