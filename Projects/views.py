@@ -827,10 +827,13 @@ def manage_applications_freelancer(request):
                 # Create the contract
                 Contract.objects.create(project=application.project, freelancer=application.freelancer)
 
+                # Obtener el nombre y apellido del usuario que acepta la aplicación
+                accepting_user = request.user  # El usuario que acepta la aplicación
+
                 # Crear la notificación para el cliente
                 Notification.objects.create(
                     recipient=application.project.client.user,  # Suponiendo que 'user' es el campo que representa al cliente
-                    message=f"Tu aplicación para el proyecto '{application.project.title}' ha sido aceptada.",
+                    message=f"Tu aplicación para el proyecto '{application.project.title}' ha sido aceptada por {accepting_user.first_name} {accepting_user.last_name}.",
                     created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
                 )
                 print("Notificación creada con éxito")  # Mensaje de depuración
