@@ -26,9 +26,9 @@ def notification_list(request):
 
     # Utiliza el tipo de usuario para redirigir a la plantilla correcta
     if request.user.is_freelancer:
-        return render(request, 'notifications/notifications_list_freelancer.html', {'notifications': notifications})
+        return render(request, 'notifications_list_freelancer.html', {'notifications': notifications})
     elif request.user.is_client:
-        return render(request, 'notifications/notifications_list_client.html', {'notifications': notifications})
+        return render(request, 'notifications_list_client.html', {'notifications': notifications})
     else:
         print("hola no debería pasar esto")
         messages.error(request, "No se pudo determinar el tipo de usuario.")
