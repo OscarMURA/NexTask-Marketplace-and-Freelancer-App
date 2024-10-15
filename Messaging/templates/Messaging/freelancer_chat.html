@@ -228,7 +228,7 @@
                             userResults.appendChild(userElement);
                         });
                         // Añadir eventos de click para iniciar la conversación con los usuarios buscados
-                        addClickEventToSearchResults();
+                        addClickEventToSearchResults();  // Esta función se llama después de agregar los usuarios
                     } else {
                         userResults.innerHTML = '<li>No se encontraron usuarios.</li>';
                     }
@@ -266,8 +266,8 @@
                                 // Si la conversación ya existe, cargarla
                                 loadExistingConversation(data.conversation_id);
                             } else {
-                                // Si la conversación es nueva, renderizar un chat vacío
-                                renderEmptyChatWindow(userId);
+                                // Si la conversación es nueva, crear una nueva conversación
+                                startNewConversation(userId);
                             }
                         })
                         .catch(error => {
@@ -309,6 +309,31 @@
             })
             .catch(error => {
                 console.error('Error obteniendo los mensajes del chat:', error);
+            });
+        }
+    
+        // Función para iniciar una nueva conversación
+        function startNewConversation(userId) {
+            // Realizar la solicitud para crear una nueva conversación
+            fetch(`/messaging/start/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.conversation_id) {
+                    // Cargar la conversación recién creada
+                    loadExistingConversation(data.conversation_id);
+                } else {
+                    console.error('Error al iniciar una nueva conversación:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error iniciando una nueva conversación:', error);
             });
         }
     
@@ -416,33 +441,6 @@
             messageContainer.scrollTop = messageContainer.scrollHeight;  // Desplazar el scroll hacia abajo automáticamente
         }
     
-        // Función para actualizar "Conversaciones activas"
-        function updateActiveConversations(conversationId) {
-            fetch('/messaging/freelancer/', {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(html => {
-                // Actualizar la lista de conversaciones activas con el nuevo HTML
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const updatedConversations = doc.querySelector('.conversation-list ul');
-                document.querySelector('.conversation-list ul').innerHTML = updatedConversations.innerHTML;
-    
-                // Automáticamente abrir la nueva conversación en la lista de activas
-                const newConversationLink = document.querySelector(`.conversation-link[data-conversation-id="${conversationId}"]`);
-                if (newConversationLink) {
-                    newConversationLink.click();  // Abrir la conversación recién creada automáticamente
-                }
-            })
-            .catch(error => {
-                console.error('Error actualizando conversaciones activas:', error);
-            });
-        }
-    
         // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
         function getDateLabel(date) {
             const today = new Date();
@@ -458,7 +456,8 @@
             }
         }
     });
-    </script>
+</script>
+    
     
     
     
