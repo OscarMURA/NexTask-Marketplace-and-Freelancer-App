@@ -592,6 +592,8 @@ def profile_settings_client(request):
     except FreelancerProfile.DoesNotExist:
         # Create a new ClientProfile if it does not exist
         client = ClientProfile.objects.create(user=user)
+    
+    show_modal = False
 
     if request.method == 'POST':
         # Check which form is being submitted
@@ -612,13 +614,13 @@ def profile_settings_client(request):
             client.address = request.POST.get('address', client.address)
             client.save()  # Save updated freelancer info
 
-            messages.success(request, "User information updated successfully.")  # Success message
-            return redirect('profile_settings_client')  # Redirect to profile settings
+            show_modal = True
 
     # Render profile settings page
     return render(request, 'Users/profileSettingsClient.html', {
         'user': user,
-        'client': client
+        'client': client,
+        'show_modal': show_modal
     })
     
     

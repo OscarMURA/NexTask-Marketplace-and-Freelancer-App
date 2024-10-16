@@ -6,7 +6,12 @@
 <head>
     <!-- django-quill-editor Media -->
     {% include 'django_quill/media.html' %}
+
+    <!-- Incluimos Bootstrap desde CDN para el modal -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <!-- Page Header -->
 <div>
     <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Profile Settings" %}</h3>
@@ -19,6 +24,24 @@
         </li>
         <li class="text-lime-300 fs-6">{% trans "Profile Settings" %}</li>
     </ul>
+</div>
+
+<!-- Modal para mostrar la actualización exitosa del perfil -->
+<div class="modal fade" id="profileUpdateModal" tabindex="-1" aria-labelledby="profileUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileUpdateModalLabel">Profile Updated</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Your profile information has been updated successfully.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Form Section -->
@@ -160,6 +183,16 @@
     </div>
 </div>
 
+<script>
+    // Mostrar modal automáticamente si se ha actualizado el perfil
+    document.addEventListener('DOMContentLoaded', function() {
+        const showModal = {{ show_modal|yesno:"true,false" }};
+        if (showModal) {
+            var myModal = new bootstrap.Modal(document.getElementById('profileUpdateModal'));
+            myModal.show();
+        }
+    });
+</script>
 
 <style> 
     .form-container {
@@ -252,6 +285,18 @@
 .btn-primary:hover {
     background-color: #45a049; /* Color al pasar el ratón */
 }
+    .btn-primary {
+        background-color: #4CAF50; /* Color de fondo */
+        color: white; /* Color del texto */
+        border: none; /* Sin bordes */
+        padding: 5px 10px; /* Relleno */
+        border-radius: 5px; /* Bordes redondeados */
+        cursor: pointer; /* Cursor como puntero */
+    }
+ 
+    .btn-primary:hover {
+        background-color: #45a049; /* Color al pasar el ratón */
+    }
 </style>
 
 {% endblock %}
