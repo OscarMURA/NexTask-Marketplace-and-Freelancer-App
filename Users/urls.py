@@ -39,8 +39,8 @@ urlpatterns = [
     # URL for changing password
     path("ChangePassword/", views.change_password, name="change_password"),
 
-    # URL for profile settings
-    path("profileSettings/", views.profile_settings, name="profile_settings"),
+    # URL for profile settings freelancer
+    path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
 
     # URL for searching freelancers
     path('search/', views.search_freelancers, name='search_freelancers'),

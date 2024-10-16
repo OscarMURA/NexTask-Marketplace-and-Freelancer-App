@@ -288,17 +288,6 @@ def portfolio_register_view(request):
         'next_url': 'register_languages',
     })
 
-
-@login_required
-def profile_settings(request):
-    """
-    View for rendering the profile settings page for users.
-
-    Returns:
-        Rendered template for changing the user's password.
-    """
-    return render(request, 'Users/changePassword.html')  # Render profile settings template
-
 @login_required
 def register_skills_view(request):
     """
@@ -419,7 +408,7 @@ def change_password(request):
 
 
 @login_required
-def profile_settings(request):
+def profile_settings_freelancer(request):
     """
     View for managing the profile settings of a freelancer.
 
@@ -472,7 +461,7 @@ def profile_settings(request):
             freelancer.save()  # Save updated freelancer info
 
             messages.success(request, "User information updated successfully.")  # Success message
-            return redirect('profile_settings')  # Redirect to profile settings
+            return redirect('profile_settings_freelancer')  # Redirect to profile settings
 
         elif 'add_education' in request.POST:
             # Add new education record
@@ -496,7 +485,7 @@ def profile_settings(request):
                 messages.success(request, 'Educational record deleted successfully.')  # Success message
             except Education.DoesNotExist:
                 messages.error(request, 'The education record could not be found.')  # Error message
-            return redirect('profile_settings')
+            return redirect('profile_settings_freelancer')
 
         elif 'add_certification' in request.POST:
             # Add new certification
@@ -520,7 +509,7 @@ def profile_settings(request):
                 messages.success(request, 'Certification deleted successfully.')  # Success message
             except Certification.DoesNotExist:
                 messages.error(request, 'The certification could not be found.')  # Error message
-            return redirect('profile_settings')
+            return redirect('profile_settings_freelancer')
 
         elif 'add_experience' in request.POST:
             # Add new work experience
@@ -544,7 +533,7 @@ def profile_settings(request):
                 messages.success(request, 'Work experience deleted successfully.')  # Success message
             except WorkExperience.DoesNotExist:
                 messages.error(request, 'The work experience could not be found.')  # Error message
-            return redirect('profile_settings')
+            return redirect('profile_settings_freelancer')
 
         elif 'add_portfolio' in request.POST:
             # Add new portfolio entry
@@ -565,7 +554,7 @@ def profile_settings(request):
                 messages.success(request, 'Portfolio entry deleted successfully.')  # Success message
             except Portfolio.DoesNotExist:
                 messages.error(request, 'The portfolio entry could not be found.')  # Error message
-            return redirect('profile_settings')
+            return redirect('profile_settings_freelancer')
 
         # Process skills
         selected_skills_ids = request.POST.getlist('skills')  # Assume 'skills' is the name of your field in the form
@@ -580,10 +569,10 @@ def profile_settings(request):
             freelancer.skills.set(selected_skills_ids)  # Update selected skills
 
         freelancer.save()  # Save changes to the freelancer's profile
-        return redirect('profile_settings')  # Redirect to profile settings
+        return redirect('profile_settings_freelancer')  # Redirect to profile settings
 
     # Render profile settings page
-    return render(request, 'Users/profileSettings.html', {
+    return render(request, 'Users/profileSettingsFreelancer.html', {
         'user': user,
         'freelancer': freelancer,
         'educations': educations,
