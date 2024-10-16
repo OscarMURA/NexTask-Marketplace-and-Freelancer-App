@@ -582,6 +582,44 @@ def profile_settings_freelancer(request):
         'skills': skills,
         'all_skills': Skill.objects.all()  # Pass all available skills to the template
     })
+
+
+@login_required
+def profile_settings_client(request):
+    user = request.user  # Get the currently logged-in user
+    try:
+        client = ClientProfile.objects.get(user=user)
+    except FreelancerProfile.DoesNotExist:
+        # Create a new ClientProfile if it does not exist
+        client = ClientProfile.objects.create(user=user)
+
+    if request.method == 'POST':
+        # Check which form is being submitted
+        if 'update_user_info' in request.POST:
+            # Update user info (first name, last name, email, username)
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+            user.email = request.POST.get('email', user.email)
+            user.username = request.POST.get('username', user.username)
+            user.save()  # Save updated user info
+
+            # Update client profile info 
+            client.company_name = request.POST.get('company_name', client.company_name)
+            client.company_website = request.POST.get('company_website', client.company_website)
+            client.phone = request.POST.get('phone', client.phone)
+            client.city = request.POST.get('city', client.city)
+            client.country = request.POST.get('country', client.country)
+            client.address = request.POST.get('address', client.address)
+            client.save()  # Save updated freelancer info
+
+            messages.success(request, "User information updated successfully.")  # Success message
+            return redirect('profile_settings_client')  # Redirect to profile settings
+
+    # Render profile settings page
+    return render(request, 'Users/profileSettingsClient.html', {
+        'user': user,
+        'client': client
+    })
     
     
 def search_freelancers(request):

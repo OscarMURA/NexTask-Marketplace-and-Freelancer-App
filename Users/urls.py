@@ -42,6 +42,9 @@ urlpatterns = [
     # URL for profile settings freelancer
     path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
 
+    # URL for profile settings client
+    path("profileSettingsClient/", views.profile_settings_client, name="profile_settings_client"),
+
     # URL for searching freelancers
     path('search/', views.search_freelancers, name='search_freelancers'),
 
