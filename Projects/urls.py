@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     
     # Function to create a new project
@@ -96,5 +97,13 @@ urlpatterns = [
     path('projects/deleted/', views.deleted_projects, name='deleted_projects'),
     path('projects/<int:project_id>/restore/', views.restore_project, name='restore_project'),
     path('projects/<int:project_id>/permanent_delete/', views.permanently_delete_project, name='permanent_delete_project'),
+    
+    path('milestones/<int:project_id>/deleted/', views.deleted_milestones, name='deleted_milestones'),
+    path('milestones/<int:milestone_id>/restore/', views.restore_milestone, name='restore_milestone'),
+    path('milestones/<int:milestone_id>/permanent_delete/', views.permanently_delete_milestone, name='permanent_delete_milestone'),
+    
+    path('tasks/<int:milestone_id>/deleted/', views.deleted_tasks, name='deleted_tasks'),
+    path('tasks/<int:task_id>/restore/', views.restore_task, name='restore_task'),
+    path('tasks/<int:task_id>/permanent_delete/', views.permanently_delete_task, name='permanent_delete_task'),
   
 ]

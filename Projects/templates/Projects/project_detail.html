@@ -214,9 +214,10 @@
     <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Project Milestones" %}</h2>
     <!-- Botón para añadir un nuevo hito -->
     <div class="text mt-4">
-      <div class="button-group">
+      <div class="button-group"> 
         <a href="{% url 'add_milestone' project.id %}" class="w-btn-secondary-lg">{% trans "Add milestones" %}</a>
         <a href="{% url 'home_client' %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+        <a href="{% url 'deleted_milestones' project.id %}" class="w-btn-secondary-lg">{% trans "Deleted milestones" %}</a>
       </div>
       <p>.</p>
       <p></p>
@@ -320,7 +321,7 @@
                           </svg>
                         </span>
                         <h4 class="text-18 fw-normal text-center mb-2">
-                            {% trans "Are you sure you want to delete the milestone “{{ milestone.title }}”?" %}
+                            {% trans "Are you sure you want to delete the milestone " %} “{{ milestone.title }}”?
                         </h4>
                         <div class="d-flex gap-3 mt-30">
                           <!-- Formulario para eliminar el proyecto -->
