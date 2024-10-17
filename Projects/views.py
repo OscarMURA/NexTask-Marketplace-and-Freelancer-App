@@ -17,6 +17,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from Comments.forms import CommentForm
 from Comments.models import Comment
+from django.http import HttpRequest, HttpResponse
+import random
+
 def create_project(request):
     """
     Create a new project.
@@ -48,7 +51,7 @@ def create_project(request):
 
     return render(request, 'Projects/createProject.html', {'form': form})
 
-def home_client(request):
+def home_client(request: HttpRequest) -> HttpResponse:
     """
     Display the home page for the client.
 
@@ -61,15 +64,30 @@ def home_client(request):
     Returns:
         HttpResponse: Renders the 'homeClient.html' template with projects and budget context.
     """
-    client_profile = request.user.clientprofile  # Assuming the user has a client profile
-    projects = client_profile.projects.all()  # Get all projects associated with the client
-    total_projects = projects.count()  # Total number of projects
-    total_balance = client_profile.get_total_budget()  # Total budget
+    client_profile = request.user.clientprofile
+    projects = client_profile.projects.all()
+    total_projects = projects.count()
+    total_balance = client_profile.get_total_budget()
+
+    # Lista de colores para asignar a los proyectos
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
+
+    # Creación de eventos con colores asignados
+    events = [
+        {
+            'title': project.title,
+            'start': project.start_date.isoformat(),
+            'end': project.due_date.isoformat(),
+            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+        }
+        for project in projects
+    ]
 
     return render(request, 'Projects/homeClient.html', {
         'projects': projects,
         'total_projects': total_projects,
         'total_balance': total_balance,
+        'events_json': events,
     })
 
 def project_detail(request, project_id):
