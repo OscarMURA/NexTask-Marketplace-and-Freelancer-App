@@ -1,0 +1,88 @@
+<!-- Projects/templates/Projects/deleted_projects.html -->
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="container mt-5">
+    
+    <div
+    class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
+  >
+    
+    <div >
+      <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Deleted Projects" %}</h3>
+      <ul class="d-flex align-items-center gap-2">
+        <li class="text-dark-200 fs-6">{% trans "Deleted Projects" %}</li>
+      </ul>
+    </div>
+    <div> 
+      <div class="button-group">
+        <a href="{% url 'home_client' %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+      </div>
+    </div>
+  </div>
+
+    
+    
+    {% if deleted_projects %}
+        <table class="w-100 dashboard-table">
+            <thead class="pb-3 table-dark">
+                <tr>
+                    <th scope="col" class="ps-4">{% trans "Project Title" %}</th>
+                    <th scope="col">{% trans "Client" %}</th>
+                    <th scope="col">{% trans "Deletion Date" %}</th>
+                    <th scope="col" class="text-end pe-5">{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in deleted_projects %}
+                    <tr>
+                        <!-- Project Title with clickable row -->
+                        <td >
+                            <div class="d-flex gap-3 align-items-center project-name">
+                                <div>
+                                    <p class="mb-0 text-primary">{{ project.title }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- Client Name -->
+                        <td >
+                            <p class="mb-0 text-dark-200">{{ project.client.user.get_full_name }}</p>
+                        </td>
+                        
+                        <!-- Deletion Date -->
+                        <td >
+                            <p class="mb-0 text-dark-200">{{ project.updated_at|date:"F j, Y, g:i a" }}</p>
+                        </td>
+                        
+                        <!-- Actions: Restore and Delete Permanently -->
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <!-- Restore Project -->
+                                <form action="{% url 'restore_project' project.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">{% trans "Restore" %}</button>
+                                </form>
+                                
+                                <!-- Delete Permanently -->
+                                <form action="{% url 'permanent_delete_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to permanently delete this project?" %}');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">{% trans "Delete Permanently" %}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            {% trans "There are no deleted projects." %}
+        </div>
+    {% endif %}
+        <p> . </p>
+</div>
+
+{% endblock %}

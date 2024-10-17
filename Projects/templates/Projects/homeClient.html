@@ -12,10 +12,13 @@
       <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
     </ul>
   </div>
-  <div>
+  <div> 
+    <div class="button-group">
     <a href="{% url 'createProject' %}" class="w-btn-secondary-lg">
       {% trans "Create Project" %}</a>
-    
+      <a href="{% url 'deleted_projects' %}" class="w-btn-secondary-lg">
+        {% trans "See deleted projects" %}</a>
+    </div>
   </div>
 </div>
 <div class="row">
@@ -170,7 +173,7 @@
                           </svg>
                         </span>
                         <h4 class="text-18 fw-normal text-center mb-2">
-                            {% trans "Are you sure you want to delete the project “{{ project.title }}”?" %}
+                            {% trans "Are you sure you want to delete the project"  %} “{{ project.title }}”  ?
                         </h4>
                         <div class="d-flex gap-3 mt-30">
                           <!-- Formulario para eliminar el proyecto -->
