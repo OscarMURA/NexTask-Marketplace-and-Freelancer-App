@@ -200,7 +200,7 @@
             </thead>
             <tbody>
                 <!-- Itera sobre cada tarea asociada al hito -->
-                {% for task in milestone.tasks.all %}
+                {% for task in tasks %}
                 <tr>
                     <!-- Título de la tarea -->
                     <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">

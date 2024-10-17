@@ -91,6 +91,10 @@ urlpatterns = [
     path('projects/freelancer/manage_applications/', views.manage_applications_freelancer, name='manage_applications_freelancer'),  
     
     # Function to view freelancers associated with a specific project
-    path('projects/<int:project_id>/freelancers/', views.freelancers_in_project, name='freelancers_in_project'),  
+    path('projects/<int:project_id>/freelancers/', views.freelancers_in_project, name='freelancers_in_project'), 
     
+    path('projects/deleted/', views.deleted_projects, name='deleted_projects'),
+    path('projects/<int:project_id>/restore/', views.restore_project, name='restore_project'),
+    path('projects/<int:project_id>/permanent_delete/', views.permanently_delete_project, name='permanent_delete_project'),
+  
 ]

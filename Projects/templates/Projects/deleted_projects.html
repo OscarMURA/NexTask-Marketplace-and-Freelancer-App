@@ -1,0 +1,61 @@
+<!-- Projects/templates/Projects/deleted_projects.html -->
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proyectos Eliminados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Proyectos Eliminados</h1>
+
+        {% if deleted_projects %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Cliente</th>
+                        <th>Fecha de Eliminación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in deleted_projects %}
+                        <tr>
+                            <td>{{ project.title }}</td>
+                            <td>{{ project.client.user.username }}</td>
+                            <td>{{ project.updated_at|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <form action="{% url 'restore_project' project.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">Restaurar</button>
+                                </form>
+                                <form action="{% url 'permanent_delete_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este proyecto de forma permanente?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar Permanentemente</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No hay proyectos eliminados.
+            </div>
+        {% endif %}
+
+        <a href="{% url 'home_client' %}" class="btn btn-primary">Volver al Inicio</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock %}

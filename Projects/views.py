@@ -87,7 +87,12 @@ def project_detail(request, project_id):
         HttpResponse: Renders the 'project_detail.html' template with the project context.
     """
     project = get_object_or_404(Project, id=project_id)
-    return render(request, 'Projects/project_detail.html', {'project': project})
+    milestones = project.milestones.all().filter(is_deleted=False)
+
+    return render(request, 'Projects/project_detail.html', {
+        'project': project,
+        'milestones': milestones,
+    })
 
 def edit_project(request, project_id):
     """
@@ -135,7 +140,8 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     if request.method == "POST":
-        project.delete()
+        project.is_deleted = True
+        project.save()
         messages.success(request, "Proyecto eliminado exitosamente")
         return redirect('home_client') 
 
@@ -214,7 +220,8 @@ def milestone_detail_view(request, pk):
         HttpResponse: Renders the 'milestone_detail.html' template with the milestone context.
     """
     milestone = get_object_or_404(Milestone, pk=pk)
-    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})
+    tasks = milestone.tasks.all().filter(is_deleted=False)
+    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone, 'tasks': tasks})
 
 def delete_milestone(request, milestone_id):
     """
@@ -232,12 +239,12 @@ def delete_milestone(request, milestone_id):
         HttpResponse: Redirects to the project detail page after deletion.
     """
     milestone = get_object_or_404(Milestone, id=milestone_id)
-    project_id = milestone.project.id
 
     if request.method == "POST":
-        milestone.delete()
+        milestone.is_deleted = True
+        milestone.save()
         messages.success(request, "Milestone eliminado exitosamente")
-        return redirect('project_detail', project_id=project_id)
+        return redirect('project_detail', project_id=milestone.project.id)
 
     return redirect(reverse('home_client'))
 
@@ -335,14 +342,14 @@ def delete_task(request, task_id):
         HttpResponse: Redirects to the milestone detail page after deletion.
     """
     task = get_object_or_404(Task, id=task_id)
-    milestone_id = task.milestone.id
 
     if request.method == 'POST':
-        task.delete()
-        messages.success(request, "Task deleted successfully.")
-        return redirect('milestone_detail', pk=milestone_id)
+        task.is_deleted = True
+        task.save()
+        messages.success(request, "Tarea eliminada exitosamente.")
+        return redirect('milestone_detail', pk=task.milestone.id)
 
-    return redirect('milestone_detail', pk=milestone_id)
+    return redirect('milestone_detail', pk=task.milestone.id)
 
 def task_detail(request, task_id):
     """
@@ -915,3 +922,41 @@ def handle_comments(request, task, user):
         'page_obj': comments_paginated,
         'is_paginated': comments_paginated.has_other_pages(),
     }
+    
+def restore_project(request, project_id):
+    """
+    Restaura un proyecto eliminado.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id, is_deleted=True)
+
+    if request.method == "POST":
+        project.is_deleted = False
+        project.save()
+        messages.success(request, "Proyecto restaurado exitosamente")
+        return redirect('home_client') 
+
+    return redirect(reverse('deleted_projects'))
+
+def permanently_delete_project(request, project_id):
+    """
+    Elimina permanentemente un proyecto.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id, is_deleted=True)
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, "Proyecto eliminado permanentemente")
+        return redirect('deleted_projects') 
+
+    return redirect(reverse('deleted_projects'))
+
+def deleted_projects(request):
+    """
+    Muestra una lista de proyectos eliminados.
+    """
+    client_profile = request.user.clientprofile
+    deleted_projects = Project.all_objects.filter(client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_projects.html', {
+        'deleted_projects': deleted_projects,
+    })
