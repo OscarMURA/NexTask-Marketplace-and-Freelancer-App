@@ -138,11 +138,15 @@
                                 </div>
                             </div>
                     
-                            <!-- Country Field -->
+                           <!-- Country Field -->
                             <div class="col-md-6">
                                 <div class="form-container">
                                     <label for="country" class="form-label">{% trans "Country" %}</label>
-                                    <input type="text" class="form-control shadow-none" name="country" id="country" value="{{ freelancer.country }}">
+                                    <select name="country" id="country" class="form-control shadow-none">
+                                        {% for code, name in countries %}
+                                            <option value="{{ code }}" {% if code == freelancer.country %}selected{% endif %}>{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
                                     {% if form.country.errors %}
                                         <div class="error text-danger">{{ form.country.errors }}</div>
                                     {% endif %}

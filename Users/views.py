@@ -15,6 +15,8 @@ from django.db.models.functions import Concat
 from Projects.models import *
 from Projects.models import Application
 from django.utils.translation import gettext as _
+from django_countries import countries
+
 
 
 
@@ -591,7 +593,8 @@ def profile_settings_freelancer(request):
         'all_skills': Skill.objects.all(), 
         'show_update_modal': show_update_modal,
         'show_add_modal': show_add_modal,
-        'show_delete_modal': show_delete_modal
+        'show_delete_modal': show_delete_modal,
+        'countries': countries
     })
 
 
@@ -631,7 +634,8 @@ def profile_settings_client(request):
     return render(request, 'Users/profileSettingsClient.html', {
         'user': user,
         'client': client,
-        'show_modal': show_modal
+        'show_modal': show_modal,
+        'countries': countries
     })
     
     
