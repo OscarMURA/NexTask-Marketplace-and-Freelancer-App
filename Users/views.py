@@ -443,6 +443,10 @@ def profile_settings_freelancer(request):
         portfolios = []
         skills = []
 
+    show_update_modal = False
+    show_add_modal = False
+    show_delete_modal = False
+
     if request.method == 'POST':
         # Check which form is being submitted
         if 'update_user_info' in request.POST:
@@ -460,8 +464,8 @@ def profile_settings_freelancer(request):
             freelancer.address = request.POST.get('address', freelancer.address)
             freelancer.save()  # Save updated freelancer info
 
-            messages.success(request, "User information updated successfully.")  # Success message
-            return redirect('profile_settings_freelancer')  # Redirect to profile settings
+            show_update_modal = True
+
 
         elif 'add_education' in request.POST:
             # Add new education record
@@ -475,6 +479,7 @@ def profile_settings_freelancer(request):
                     description=request.POST.get('new_description')
                 )
                 new_education.save()  # Save new education record
+                show_add_modal = True
 
         elif 'delete_education' in request.POST:
             # Delete education record
@@ -482,10 +487,9 @@ def profile_settings_freelancer(request):
             try:
                 education = Education.objects.get(id=education_id, freelancer=freelancer)
                 education.delete()  # Delete the education record
-                messages.success(request, 'Educational record deleted successfully.')  # Success message
+                show_delete_modal = True
             except Education.DoesNotExist:
                 messages.error(request, 'The education record could not be found.')  # Error message
-            return redirect('profile_settings_freelancer')
 
         elif 'add_certification' in request.POST:
             # Add new certification
@@ -499,6 +503,8 @@ def profile_settings_freelancer(request):
                     short_description=request.POST.get('new_certification_description')
                 )
                 new_certification.save()  # Save new certification
+                show_add_modal = True
+
 
         elif 'delete_certification' in request.POST:
             # Delete certification
@@ -506,10 +512,9 @@ def profile_settings_freelancer(request):
             try:
                 certification = Certification.objects.get(id=certification_id, freelancer=freelancer)
                 certification.delete()  # Delete the certification
-                messages.success(request, 'Certification deleted successfully.')  # Success message
+                show_delete_modal = True
             except Certification.DoesNotExist:
                 messages.error(request, 'The certification could not be found.')  # Error message
-            return redirect('profile_settings_freelancer')
 
         elif 'add_experience' in request.POST:
             # Add new work experience
@@ -523,6 +528,7 @@ def profile_settings_freelancer(request):
                     description=request.POST.get('new_experience_description')
                 )
                 new_experience.save()  # Save new work experience
+                show_add_modal = True
 
         elif 'delete_experience' in request.POST:
             # Delete work experience
@@ -530,10 +536,10 @@ def profile_settings_freelancer(request):
             try:
                 experience = WorkExperience.objects.get(id=experience_id, freelancer=freelancer)
                 experience.delete()  # Delete the work experience
-                messages.success(request, 'Work experience deleted successfully.')  # Success message
+                show_delete_modal = True
+
             except WorkExperience.DoesNotExist:
                 messages.error(request, 'The work experience could not be found.')  # Error message
-            return redirect('profile_settings_freelancer')
 
         elif 'add_portfolio' in request.POST:
             # Add new portfolio entry
@@ -544,6 +550,7 @@ def profile_settings_freelancer(request):
                     description=request.POST.get('new_portfolio_description')
                 )
                 new_portfolio.save()  # Save new portfolio entry
+                show_add_modal = True
 
         elif 'delete_portfolio' in request.POST:
             # Delete portfolio entry
@@ -551,10 +558,10 @@ def profile_settings_freelancer(request):
             try:
                 portfolio = Portfolio.objects.get(id=portfolio_id, freelancer=freelancer)
                 portfolio.delete()  # Delete the portfolio entry
-                messages.success(request, 'Portfolio entry deleted successfully.')  # Success message
+                show_delete_modal = True
+
             except Portfolio.DoesNotExist:
                 messages.error(request, 'The portfolio entry could not be found.')  # Error message
-            return redirect('profile_settings_freelancer')
 
         # Process skills
         selected_skills_ids = request.POST.getlist('skills')  # Assume 'skills' is the name of your field in the form
@@ -564,12 +571,13 @@ def profile_settings_freelancer(request):
         if new_skill_name:
             new_skill, created = Skill.objects.get_or_create(name=new_skill_name)  # Create or get the new skill
             freelancer.skills.add(new_skill)  # Add new skill to the freelancer's profile
+            show_add_modal = True
+
 
         if selected_skills_ids:
             freelancer.skills.set(selected_skills_ids)  # Update selected skills
 
         freelancer.save()  # Save changes to the freelancer's profile
-        return redirect('profile_settings_freelancer')  # Redirect to profile settings
 
     # Render profile settings page
     return render(request, 'Users/profileSettingsFreelancer.html', {
@@ -580,7 +588,10 @@ def profile_settings_freelancer(request):
         'work_experiences': work_experiences,
         'portfolios': portfolios,
         'skills': skills,
-        'all_skills': Skill.objects.all()  # Pass all available skills to the template
+        'all_skills': Skill.objects.all(), 
+        'show_update_modal': show_update_modal,
+        'show_add_modal': show_add_modal,
+        'show_delete_modal': show_delete_modal
     })
 
 
