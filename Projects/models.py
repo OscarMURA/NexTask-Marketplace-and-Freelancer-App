@@ -93,6 +93,7 @@ class Milestone(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="milestones")
     title = models.CharField(max_length=255)
     description = QuillField()  # Description of the milestone
+    start_date = models.DateField()  # Start date of the milestone
     due_date = models.DateField()  # Due date of the milestone
     file = models.FileField(upload_to='milestone_files/', null=True, blank=True)  # Optional file associated with the milestone
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='development')

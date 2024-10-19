@@ -90,22 +90,38 @@ def home_client(request: HttpRequest) -> HttpResponse:
         'events_json': events,
     })
 
+@login_required
 def project_detail(request, project_id):
     """
-    Retrieve and display the details of a specific project.
-
-    Uses the project ID to get the project from the database and renders it 
-    in the 'project_detail.html' template.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        project_id (int): The ID of the project to be retrieved.
-
-    Returns:
-        HttpResponse: Renders the 'project_detail.html' template with the project context.
+    Retrieve and display the details of a specific project along with its milestones and tasks.
     """
-    project = get_object_or_404(Project, id=project_id)
-    return render(request, 'Projects/project_detail.html', {'project': project})
+    project = get_object_or_404(Project, pk=project_id)
+    milestones = project.milestones.all()
+    # Puedes agregar aquí la lógica de tareas si quieres mostrar también las tareas dentro de los hitos
+    tasks = Task.objects.filter(milestone__project=project)
+
+    # Lista de colores para los hitos
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
+
+    # Lógica para renderizar los hitos en FullCalendar
+    timeline_data = [
+        {
+            'title': milestone.title,
+            'start': milestone.start_date.isoformat(),  # Use ISO format for the date
+            'end': milestone.due_date.isoformat(),  # Also convert due date to ISO format
+            'milestone': milestone.title,
+            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+        }
+        for milestone in milestones
+    ]
+    
+    context = {
+        'project': project,
+        'timeline_data': timeline_data,
+        'milestones': milestones,
+        'tasks': tasks,  # Si es necesario mostrar las tareas asociadas
+    }
+    return render(request, 'Projects/project_detail.html', context)
 
 def edit_project(request, project_id):
     """
