@@ -8,6 +8,11 @@
         <section class="py-110 bg-offWhite">
             <div class="container bg-white rounded-3 p-3">
                 <h2 class="section-title mb-2">{% trans "Portfolio Register" %}</h2>
+
+                <div id="error-message" class="error-message" style="display: none;">
+                    Por favor, rellena todos los campos obligatorios antes de continuar.
+                </div>
+                
                 <form method="POST" id="portfolioForm">
                     {% csrf_token %}
                     {{ portfolio_formset.management_form }}
@@ -46,6 +51,28 @@
 
     <script>
         // Función para verificar si todos los formularios visibles están completos
+// Función para mostrar el mensaje de error en el formulario
+function showErrorMessage(message) {
+    let errorMessageDiv = document.getElementById('error-message');
+    console.log("Error message div found:", errorMessageDiv);
+    errorMessageDiv.textContent = message;
+    errorMessageDiv.style.display = 'block';  // Ensure the message is shown
+    errorMessageDiv.classList.add('show');
+    
+    // Automatically hide the message after 3 seconds (3000 milliseconds)
+    setTimeout(function() {
+        hideErrorMessage();
+    }, 3000);
+}
+
+
+// Función para ocultar el mensaje de error
+function hideErrorMessage() {
+    let errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.classList.remove('show');
+}
+
+// Función para verificar si todos los formularios visibles están completos
 function areFormsComplete() {
     let forms = document.querySelectorAll('.dynamic-form');
     let allFormsComplete = true;
@@ -76,9 +103,11 @@ document.getElementById('add-more-portfolio').onclick = function(e) {
     e.preventDefault();
 
     if (!areFormsComplete()) {
-        alert("Por favor, rellena todos los formularios antes de añadir más.");
+        showErrorMessage("Por favor, rellena todos los formularios antes de añadir más.");
         return;
     }
+
+    hideErrorMessage();
 
     let formContainer = document.getElementById('portfolio-form-container');
     let totalFormsInput = document.querySelector('#id_portfolio_set-TOTAL_FORMS');
@@ -98,7 +127,9 @@ document.getElementById('portfolioForm').onsubmit = function(e) {
     if (!e.submitter || e.submitter.name !== "skip") {
         if (!areFormsComplete()) {
             e.preventDefault();
-            alert("Por favor, completa todos los formularios antes de continuar.");
+            showErrorMessage("Por favor, completa todos los formularios antes de continuar.");
+        } else {
+            hideErrorMessage();
         }
     }
 };
@@ -113,8 +144,6 @@ document.addEventListener('click', function(e) {
         totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
     }
 });
-
-        
 
     </script>
     
@@ -155,5 +184,23 @@ document.addEventListener('click', function(e) {
             border-radius: 5px;
             cursor: pointer;
         }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+    
+        .error-message.show {
+            display: block;
+        }
+
+
+
     </style>
 {% endblock %}

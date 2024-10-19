@@ -8,6 +8,11 @@
         <section class="py-110 bg-offWhite">
             <div class="container bg-white rounded-3 p-3">
                 <h2 class="section-title mb-2">{% trans "Certification Register" %}</h2>
+
+                <div id="error-message" class="error-message" style="display: none;">
+                    Por favor, rellena todos los campos obligatorios antes de continuar.
+                </div>
+            
                 <form method="POST" id="certificationForm">
                     {% csrf_token %}
                     {{ certification_formset.management_form }}
@@ -44,66 +49,90 @@
         </section>
     </div>
 
+    
+    
+
     <script>
     // Función para verificar si todos los formularios visibles están completos
+// Función para mostrar el mensaje de error en el formulario
+function showErrorMessage(message) {
+    let errorMessageDiv = document.getElementById('error-message');
+    console.log("Error message div found:", errorMessageDiv);
+    errorMessageDiv.textContent = message;
+    errorMessageDiv.style.display = 'block';  // Ensure the message is shown
+    errorMessageDiv.classList.add('show');
+    
+    // Automatically hide the message after 3 seconds (3000 milliseconds)
+    setTimeout(function() {
+        hideErrorMessage();
+    }, 3000);
+}
+
+
+// Función para ocultar el mensaje de error
+function hideErrorMessage() {
+    let errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.classList.remove('show');
+}
+
+// Función para verificar si todos los formularios visibles están completos
 function areFormsComplete() {
     let forms = document.querySelectorAll('.dynamic-form');
     let allFormsComplete = true;
 
     forms.forEach(function(form, formIndex) {
-        // Seleccionar todos los inputs relevantes, ignorando el checkbox DELETE
         let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
         let isFormComplete = true;
 
         inputs.forEach(function(input, inputIndex) {
-            console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`); // Debugging log
+            console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`);
 
-            // Verificar si el input tiene un valor vacío
             if (input.value.trim() === "") {
-                isFormComplete = false;  // Si cualquier campo está vacío, el formulario no está completo
+                isFormComplete = false;
             }
         });
 
         if (!isFormComplete) {
-            allFormsComplete = false;  // Si un formulario está incompleto, marcar todo como incompleto
+            allFormsComplete = false;
         }
     });
 
-    console.log("Forms complete status:", allFormsComplete); // Debugging log
-    return allFormsComplete;  // True si todos los formularios visibles están completos
+    console.log("Forms complete status:", allFormsComplete);
+    return allFormsComplete;
 }
 
 // Manejar la adición de más formularios
 document.getElementById('add-more-certifications').onclick = function(e) {
     e.preventDefault();
 
-    // Verificar si todos los formularios actuales están completos antes de añadir más
     if (!areFormsComplete()) {
-        alert("Por favor, rellena todos los formularios antes de añadir más.");
+        showErrorMessage("Por favor, rellena todos los formularios antes de añadir más.");
         return;
     }
+
+    hideErrorMessage();  // Ocultar el mensaje de error si todo está bien
 
     let formContainer = document.getElementById('certification-form-container');
     let totalFormsInput = document.querySelector('#id_certification_set-TOTAL_FORMS');
     let totalForms = parseInt(totalFormsInput.value);
 
-    // Clonar el primer formulario y reiniciar sus campos
     let newForm = formContainer.children[0].cloneNode(true);
     newForm.innerHTML = newForm.innerHTML.replace(/certification_set-(\d+)-/g, `certification_set-${totalForms}-`);
     let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
     inputs.forEach(input => input.value = ''); // Limpiar los valores del nuevo formulario
 
     formContainer.appendChild(newForm);
-    totalFormsInput.value = totalForms + 1;  // Incrementar el número total de formularios
+    totalFormsInput.value = totalForms + 1;
 };
 
 // Validar el formulario al presionar "Next" o "Submit"
 document.getElementById('certificationForm').onsubmit = function(e) {
-    // Verificar que no sea el botón de "Skip"
     if (!e.submitter || e.submitter.name !== "skip") {
         if (!areFormsComplete()) {
-            e.preventDefault();  // Prevenir el envío del formulario si no está completo
-            alert("Por favor, completa todos los formularios antes de continuar.");
+            e.preventDefault();
+            showErrorMessage("Por favor, completa todos los formularios antes de continuar.");
+        } else {
+            hideErrorMessage();
         }
     }
 };
@@ -115,7 +144,7 @@ document.addEventListener('click', function(e) {
         formToDelete.remove();
 
         let totalFormsInput = document.querySelector('#id_certification_set-TOTAL_FORMS');
-        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;  // Actualizar el número total de formularios
+        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
     }
 });
 
@@ -158,5 +187,22 @@ document.addEventListener('click', function(e) {
             border-radius: 5px;
             cursor: pointer;
         }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+    
+        .error-message.show {
+            display: block;
+        }
+
+
     </style>
 {% endblock %}
