@@ -49,47 +49,79 @@
 
     <!-- JavaScript for adding dynamic form entries -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById('add-more-work-experience').onclick = function(e) {
-                e.preventDefault();
+        // Función para verificar si todos los formularios visibles están completos
+function areFormsComplete() {
+    let forms = document.querySelectorAll('.dynamic-form');
+    let allFormsComplete = true;
 
-                let formContainer = document.getElementById('workexperience-form-container');
-                // Correctly targeting the TOTAL_FORMS input
-                let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+    forms.forEach(function(form, formIndex) {
+        let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
+        let isFormComplete = true;
 
-                if (!totalFormsInput) {
-                    console.error("TOTAL_FORMS input not found. Ensure the formset is rendered correctly.");
-                    return;  // Stop execution if TOTAL_FORMS is missing
-                }
+        inputs.forEach(function(input, inputIndex) {
+            console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`);
 
-                let totalForms = parseInt(totalFormsInput.value);
-                let newForm = formContainer.children[0].cloneNode(true);
-
-                // Update the form index to the next number
-                newForm.innerHTML = newForm.innerHTML.replace(/work_experiences-(\d+)-/g, `work_experiences-${totalForms}-`);
-
-                // Clear input values in the cloned form
-                let inputs = newForm.querySelectorAll('input, textarea');
-                inputs.forEach(input => input.value = '');
-
-                // Append the new form to the container
-                formContainer.appendChild(newForm);
-
-                // Increment TOTAL_FORMS value to reflect the new form
-                totalFormsInput.value = totalForms + 1;
-            };
+            if (input.value.trim() === "") {
+                isFormComplete = false;
+            }
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById('skip-all-btn').onclick = function() {
-                window.location.href = "{% url 'home_freelancer' %}";
-            };
-        });
-        
-        
+        if (!isFormComplete) {
+            allFormsComplete = false;
+        }
+    });
 
-        
+    console.log("Forms complete status:", allFormsComplete);
+    return allFormsComplete;
+}
+
+// Manejar la adición de más formularios
+document.getElementById('add-more-work-experience').onclick = function(e) {
+    e.preventDefault();
+
+    if (!areFormsComplete()) {
+        alert("Por favor, rellena todos los formularios antes de añadir más.");
+        return;
+    }
+
+    let formContainer = document.getElementById('workexperience-form-container');
+    let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+    let totalForms = parseInt(totalFormsInput.value);
+
+    let newForm = formContainer.children[0].cloneNode(true);
+    newForm.innerHTML = newForm.innerHTML.replace(/work_experiences-(\d+)-/g, `work_experiences-${totalForms}-`);
+    let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
+    inputs.forEach(input => input.value = '');
+
+    formContainer.appendChild(newForm);
+    totalFormsInput.value = totalForms + 1;
+};
+
+// Validar el formulario al presionar "Next" o "Submit"
+document.getElementById('workExperienceForm').onsubmit = function(e) {
+    if (!e.submitter || e.submitter.name !== "skip") {
+        if (!areFormsComplete()) {
+            e.preventDefault();
+            alert("Por favor, completa todos los formularios antes de continuar.");
+        }
+    }
+};
+
+// Manejar la eliminación de formularios
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('delete-form-btn')) {
+        let formToDelete = e.target.closest('.dynamic-form');
+        formToDelete.remove();
+
+        let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+    }
+});
+
+
     </script>
+    
+    
 
     <style>
         /* Botón Añadir más experiencia laboral (verde oscuro) */

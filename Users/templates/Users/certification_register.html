@@ -45,50 +45,82 @@
     </div>
 
     <script>
-        document.getElementById('add-more-certifications').onclick = function(e) {
-            e.preventDefault();
-            let formContainer = document.getElementById('certification-form-container');
-            let totalFormsInput = document.querySelector('#id_certification_set-TOTAL_FORMS');
-            let totalForms = parseInt(totalFormsInput.value);
-            let newForm = formContainer.children[0].cloneNode(true);
-            newForm.innerHTML = newForm.innerHTML.replace(/certification_set-(\d+)-/g, `certification_set-${totalForms}-`);
-            let inputs = newForm.querySelectorAll('input, textarea');
-            inputs.forEach(input => input.value = '');
-            formContainer.appendChild(newForm);
-            totalFormsInput.value = totalForms + 1;
-        };
+    // Función para verificar si todos los formularios visibles están completos
+function areFormsComplete() {
+    let forms = document.querySelectorAll('.dynamic-form');
+    let allFormsComplete = true;
 
-        document.getElementById('certificationForm').onsubmit = function(e) {
-            if (!e.submitter || e.submitter.name !== "skip") {
-                let forms = document.querySelectorAll('.dynamic-form');
-                let isEmpty = true;
+    forms.forEach(function(form, formIndex) {
+        // Seleccionar todos los inputs relevantes, ignorando el checkbox DELETE
+        let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
+        let isFormComplete = true;
 
-                forms.forEach(function(form) {
-                    let inputs = form.querySelectorAll('input, textarea');
-                    inputs.forEach(function(input) {
-                        if (input.value.trim() !== "") {
-                            isEmpty = false;
-                        }
-                    });
-                });
+        inputs.forEach(function(input, inputIndex) {
+            console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`); // Debugging log
 
-                if (isEmpty) {
-                    e.preventDefault();
-                    alert("Please fill out the form before proceeding to the next step.");
-                }
+            // Verificar si el input tiene un valor vacío
+            if (input.value.trim() === "") {
+                isFormComplete = false;  // Si cualquier campo está vacío, el formulario no está completo
             }
-        };
-
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById('skip-all-btn').onclick = function() {
-                window.location.href = "{% url 'home_freelancer' %}";
-            };
         });
-        
-        
 
-       
+        if (!isFormComplete) {
+            allFormsComplete = false;  // Si un formulario está incompleto, marcar todo como incompleto
+        }
+    });
+
+    console.log("Forms complete status:", allFormsComplete); // Debugging log
+    return allFormsComplete;  // True si todos los formularios visibles están completos
+}
+
+// Manejar la adición de más formularios
+document.getElementById('add-more-certifications').onclick = function(e) {
+    e.preventDefault();
+
+    // Verificar si todos los formularios actuales están completos antes de añadir más
+    if (!areFormsComplete()) {
+        alert("Por favor, rellena todos los formularios antes de añadir más.");
+        return;
+    }
+
+    let formContainer = document.getElementById('certification-form-container');
+    let totalFormsInput = document.querySelector('#id_certification_set-TOTAL_FORMS');
+    let totalForms = parseInt(totalFormsInput.value);
+
+    // Clonar el primer formulario y reiniciar sus campos
+    let newForm = formContainer.children[0].cloneNode(true);
+    newForm.innerHTML = newForm.innerHTML.replace(/certification_set-(\d+)-/g, `certification_set-${totalForms}-`);
+    let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
+    inputs.forEach(input => input.value = ''); // Limpiar los valores del nuevo formulario
+
+    formContainer.appendChild(newForm);
+    totalFormsInput.value = totalForms + 1;  // Incrementar el número total de formularios
+};
+
+// Validar el formulario al presionar "Next" o "Submit"
+document.getElementById('certificationForm').onsubmit = function(e) {
+    // Verificar que no sea el botón de "Skip"
+    if (!e.submitter || e.submitter.name !== "skip") {
+        if (!areFormsComplete()) {
+            e.preventDefault();  // Prevenir el envío del formulario si no está completo
+            alert("Por favor, completa todos los formularios antes de continuar.");
+        }
+    }
+};
+
+// Manejar la eliminación de formularios
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('delete-form-btn')) {
+        let formToDelete = e.target.closest('.dynamic-form');
+        formToDelete.remove();
+
+        let totalFormsInput = document.querySelector('#id_certification_set-TOTAL_FORMS');
+        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;  // Actualizar el número total de formularios
+    }
+});
+
     </script>
+    
 
     <style>
         /* Botón Añadir más certificaciones (verde oscuro) */

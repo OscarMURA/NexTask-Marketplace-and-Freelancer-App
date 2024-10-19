@@ -50,64 +50,78 @@
 
     <!-- JavaScript to handle dynamic formset additions -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById('add-more-education').onclick = function(e) {
-                e.preventDefault();
-                
-                let formContainer = document.getElementById('education-form-container');
-                // Using the correct prefix for the educations formset
-                let totalFormsInput = document.querySelector('#id_educations-TOTAL_FORMS');
+     // Función para verificar si todos los formularios visibles están completos
+function areFormsComplete() {
+    let forms = document.querySelectorAll('.dynamic-form');
+    let allFormsComplete = true;
 
-                if (!totalFormsInput) {
-                    console.error("TOTAL_FORMS input not found. Ensure the formset is rendered correctly.");
-                    return;
-                }
+    forms.forEach(function(form, formIndex) {
+        let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
+        let isFormComplete = true;
 
-                let totalForms = parseInt(totalFormsInput.value);
-                let newForm = formContainer.children[0].cloneNode(true);
+        inputs.forEach(function(input, inputIndex) {
+            console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`);
 
-                // Update the formset index using the correct prefix (educations)
-                newForm.innerHTML = newForm.innerHTML.replace(/educations-(\d+)-/g, `educations-${totalForms}-`);
-
-                // Clear all input fields in the cloned form
-                let inputs = newForm.querySelectorAll('input, textarea');
-                inputs.forEach(input => input.value = '');
-
-                // Append the new form to the form container
-                formContainer.appendChild(newForm);
-
-                // Increment TOTAL_FORMS count
-                totalFormsInput.value = totalForms + 1;
-            };
+            if (input.value.trim() === "") {
+                isFormComplete = false;
+            }
         });
 
-        document.getElementById('educationForm').onsubmit = function(e) {
-            if (!e.submitter || e.submitter.name !== "skip") {
-                let forms = document.querySelectorAll('.dynamic-form');
-                let isEmpty = true;
+        if (!isFormComplete) {
+            allFormsComplete = false;
+        }
+    });
 
-                forms.forEach(function(form) {
-                    let inputs = form.querySelectorAll('input, textarea');
-                    inputs.forEach(function(input) {
-                        if (input.value.trim() !== "") {
-                            isEmpty = false;
-                        }
-                    });
-                });
+    console.log("Forms complete status:", allFormsComplete);
+    return allFormsComplete;
+}
 
-                if (isEmpty) {
-                    e.preventDefault();
-                    alert("Please fill out the form before proceeding to the next step.");
-                }
-            }
-        };
+// Manejar la adición de más formularios
+document.getElementById('add-more-education').onclick = function(e) {
+    e.preventDefault();
 
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById('skip-all-btn').onclick = function() {
-                window.location.href = "{% url 'home_freelancer' %}";
-            };
-        });           
+    if (!areFormsComplete()) {
+        alert("Por favor, rellena todos los formularios antes de añadir más.");
+        return;
+    }
+
+    let formContainer = document.getElementById('education-form-container');
+    let totalFormsInput = document.querySelector('#id_educations-TOTAL_FORMS');
+    let totalForms = parseInt(totalFormsInput.value);
+
+    let newForm = formContainer.children[0].cloneNode(true);
+    newForm.innerHTML = newForm.innerHTML.replace(/educations-(\d+)-/g, `educations-${totalForms}-`);
+    let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
+    inputs.forEach(input => input.value = '');
+
+    formContainer.appendChild(newForm);
+    totalFormsInput.value = totalForms + 1;
+};
+
+// Validar el formulario al presionar "Next" o "Submit"
+document.getElementById('educationForm').onsubmit = function(e) {
+    if (!e.submitter || e.submitter.name !== "skip") {
+        if (!areFormsComplete()) {
+            e.preventDefault();
+            alert("Por favor, completa todos los formularios antes de continuar.");
+        }
+    }
+};
+
+// Manejar la eliminación de formularios
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('delete-form-btn')) {
+        let formToDelete = e.target.closest('.dynamic-form');
+        formToDelete.remove();
+
+        let totalFormsInput = document.querySelector('#id_educations-TOTAL_FORMS');
+        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+    }
+});
+
+
     </script>
+    
 
     <style>
         /* Botón Añadir más educación (verde oscuro) */
