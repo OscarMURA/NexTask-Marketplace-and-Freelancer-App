@@ -195,13 +195,15 @@
 </div>
 
 <script>
+    
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('search');
         const userResults = document.getElementById('user-results');
         const chatWindow = document.getElementById('chat-window');
+        let currentConversationId = null;
         const currentUserId = parseInt('{{ request.user.id }}');  // Verifica que el ID del usuario sea correcto
     
-        // Buscar usuarios y mostrar los resultados en el cuadro de búsqueda
+        // Función para buscar usuarios y mostrar los resultados en el cuadro de búsqueda
         searchInput.addEventListener('input', function () {
             const query = searchInput.value.trim();
     
@@ -287,16 +289,15 @@
                 event.preventDefault();
     
                 const conversationId = link.getAttribute('data-conversation-id');
-                const userId = link.getAttribute('data-user-id');
-    
                 if (conversationId) {
                     loadExistingConversation(conversationId);  // Cargar los mensajes de la conversación activa
                 }
             });
         });
     
-        // Función para cargar una conversación existente
+        // Función para cargar una conversación existente y actualizar el currentConversationId
         function loadExistingConversation(conversationId) {
+            currentConversationId = conversationId;  // Actualizar la conversación activa
             fetch(`/messaging/api/conversation/${conversationId}/`, {  // Ruta para obtener los mensajes de la conversación activa
                 method: 'GET',
                 headers: {
@@ -306,6 +307,7 @@
             .then(response => response.json())
             .then(data => {
                 renderChatWindow(data, conversationId);  // Renderizar los mensajes de la conversación
+                startAutoRefresh();  // Reiniciar el polling para esta conversación
             })
             .catch(error => {
                 console.error('Error obteniendo los mensajes del chat:', error);
@@ -337,12 +339,7 @@
             });
         }
     
-        // Función para renderizar una ventana de chat vacía al seleccionar un usuario desde la búsqueda
-        function renderEmptyChatWindow(userId) {
-            chatWindow.innerHTML = '<p>Selecciona una conversación para comenzar a chatear o busca un usuario para iniciar una nueva conversación.</p>';
-        }
-    
-        // Función para renderizar la ventana de chat y agregar el formulario para enviar mensajes
+        // Función para renderizar la ventana de chat
         function renderChatWindow(data, conversationId) {
             chatWindow.innerHTML = '';  // Limpiar la ventana de chat
     
@@ -383,13 +380,11 @@
     
             messageForm.addEventListener('submit', function (event) {
                 event.preventDefault();
-                
-                // Enviar el mensaje sin recargar la página
                 sendMessage(conversationId, messageInput, messageForm, messageContainer);
             });
         }
     
-        // Nueva función para enviar el mensaje sin recargar la página
+        // Función para enviar el mensaje sin recargar la página
         function sendMessage(conversationId, messageInput, messageForm, messageContainer) {
             const message = messageInput.value.trim();
     
@@ -408,8 +403,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    appendMessageToChat(data, conversationId);  // Añadir el mensaje al chat sin recargar
-                    messageInput.value = '';  // Limpiar el campo de entrada
+                    appendMessageToChat(data, conversationId);
+                    messageInput.value = '';
                     submitButton.disabled = false;
                 })
                 .catch(error => {
@@ -419,26 +414,24 @@
             }
         }
     
-        // Función para agregar un mensaje al chat actual sin recargar la página
+        // Función para añadir el mensaje al chat actual
         function appendMessageToChat(data, conversationId) {
             const messageContainer = document.getElementById('message-container');
             const currentDate = new Date(data.timestamp);
             const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
             const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
             const newMessageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const newMessageDate = new Date(data.timestamp);
-            const newDateLabel = getDateLabel(newMessageDate);
+            const newDateLabel = getDateLabel(currentDate);
     
-            // Verificar si es necesario agregar un separador de fecha
             const lastDateSeparator = document.querySelectorAll('.date-separator');
             const lastDate = lastDateSeparator.length > 0 ? lastDateSeparator[lastDateSeparator.length - 1].textContent : null;
-            
+    
             if (newDateLabel !== lastDate) {
                 messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
             }
     
             messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
-            messageContainer.scrollTop = messageContainer.scrollHeight;  // Desplazar el scroll hacia abajo automáticamente
+            messageContainer.scrollTop = messageContainer.scrollHeight;
         }
     
         // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
@@ -455,8 +448,67 @@
                 return date.toLocaleDateString();
             }
         }
+    
+        // Función para refrescar los mensajes cada segundo
+        function startAutoRefresh() {
+            setInterval(function () {
+                if (currentConversationId) {
+                    loadMessages(currentConversationId);
+                }
+            }, 1000);  // Refrescar cada segundo
+        }
+    
+        // Función para cargar mensajes en tiempo real
+        function loadMessages(conversationId) {
+            fetch(`/messaging/api/conversation/${conversationId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageContainer = document.getElementById('message-container');
+                if (messageContainer) {
+                    let lastDate = null;
+                    let messagesHtml = '';
+    
+                    data.forEach(message => {
+                        const currentDate = new Date(message.timestamp);
+                        const dateLabel = getDateLabel(currentDate);
+    
+                        if (lastDate !== dateLabel) {
+                            messagesHtml += `<div class="date-separator">${dateLabel}</div>`;
+                            lastDate = dateLabel;
+                        }
+    
+                        const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
+                        const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
+                        const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+                        messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
+                    });
+    
+                    messageContainer.innerHTML = messagesHtml;
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                }
+            })
+            .catch(error => {
+                console.error('Error obteniendo los mensajes del chat:', error);
+            });
+        }
+    
+        // Iniciar la auto-actualización cuando se carga la página
+        startAutoRefresh();
     });
+    
+    
+    
+    
 </script>
+
+
+
     
     
     
