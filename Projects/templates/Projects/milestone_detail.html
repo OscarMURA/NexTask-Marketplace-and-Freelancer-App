@@ -261,9 +261,34 @@
         <!-- Mensaje si no hay tareas -->
         <p>{% trans "No tasks available for this milestone." %}</p>
     {% endif %}
+    <!-- Sección de la línea de tiempo de tareas -->
+    <div class="timeline-section container mt-5">
+        <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Task Timeline" %}</h2>
+        <div id="task-timeline"></div> <!-- Aquí se renderiza la línea de tiempo -->
 
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" />
 
-
-
-
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('task-timeline');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    events: [
+                        {% for task in timeline_data %}
+                        {
+                            title: '{{ task.title }}',
+                            start: '{{ task.start }}',
+                            end: '{{ task.end }}',  <!-- Mostramos la fecha de fin si existe -->
+                            description: '{{ task.description }}',
+                            color: '{{ task.color }}',  <!-- Color de la tarea basado en el estado -->
+                        },
+                        {% endfor %}
+                    ],
+                    eventDisplay: 'block',
+                });
+                calendar.render();
+            });
+        </script>
+    </div>
 {% endblock %}

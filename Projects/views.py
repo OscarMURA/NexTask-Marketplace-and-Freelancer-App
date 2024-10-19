@@ -248,7 +248,32 @@ def milestone_detail_view(request, pk):
         HttpResponse: Renders the 'milestone_detail.html' template with the milestone context.
     """
     milestone = get_object_or_404(Milestone, pk=pk)
-    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})
+    tasks = milestone.tasks.all()
+    # Asignar colores basados en el estado de la tarea
+    color_map = {
+        'pending': '#FFC107',  # Amarillo para tareas pendientes
+        'in_progress': '#007BFF',  # Azul para tareas en progreso
+        'completed': '#28A745',  # Verde para tareas completadas
+    }
+
+    # Datos para FullCalendar
+    timeline_data = [
+        {
+            'title': task.title,
+            'start': task.start_date.isoformat(),
+            'end': task.due_date.isoformat() if task.due_date else task.start_date.isoformat(),
+            'description': task.title,
+            'color': color_map.get(task.status, '#378006'),  # Asignar color según el estado o usar uno por defecto
+        }
+        for task in tasks
+    ]
+    
+    context = {
+        'milestone': milestone,
+        'tasks': tasks,
+        'timeline_data': timeline_data,
+    }
+    return render(request, 'Projects/milestone_detail.html', context)
 
 def delete_milestone(request, milestone_id):
     """
