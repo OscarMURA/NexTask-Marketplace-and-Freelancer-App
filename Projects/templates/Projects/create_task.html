@@ -46,7 +46,16 @@
                                     {% endif %}
                                 </div>
                             </div>
-
+                            <!-- Start Date -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_start_date" class="form-label">{% trans "Start Date" %} <span class="text-lime-300">*</span></label>
+                                    {{ form.start_date }} <!-- Campo de la fecha de inicio -->
+                                    {% if form.start_date.errors %}
+                                        <div class="error text-danger">{{ form.start_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
                             <!-- Fecha de vencimiento -->
                             <div class="col-md-6">
                                 <div class="form-container">

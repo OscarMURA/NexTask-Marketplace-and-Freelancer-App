@@ -54,8 +54,9 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'priority', 'status', 'assigned_to', 'attachments']
+        fields = ['title', 'description', 'start_date', 'due_date', 'priority', 'status', 'assigned_to', 'attachments']
         widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control shadow-none'}),
             'priority': forms.Select(attrs={'class': 'form-select shadow-none'}),
             'status': forms.Select(attrs={'class': 'form-select shadow-none'}),

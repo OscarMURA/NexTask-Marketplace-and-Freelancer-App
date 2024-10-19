@@ -132,6 +132,7 @@ class Task(models.Model):
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=255)
     description = QuillField()  # Description of the task
+    start_date = models.DateField()  # Start date of the task
     due_date = models.DateField()  # Due date of the task
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')  # Priority of the task
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pending')  # Status of the task
