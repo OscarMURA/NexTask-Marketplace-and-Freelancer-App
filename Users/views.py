@@ -637,9 +637,12 @@ def profile_settings_freelancer(request):
         
         new_skill_name = request.POST.get('new_skill', '').strip()  # Get new skill
         if new_skill_name:
-            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)  # Create or get the new skill
+            formatted_skill_name = new_skill_name.capitalize()
+
+            new_skill, created = Skill.objects.get_or_create(name=formatted_skill_name)  # Create or get the new skill
             freelancer.skills.add(new_skill)  # Add new skill to the freelancer's profile
-            show_add_modal = True
+            request.session['show_add_modal'] = True
+            return redirect('profile_settings_freelancer')
 
 
         if selected_skills_ids:
