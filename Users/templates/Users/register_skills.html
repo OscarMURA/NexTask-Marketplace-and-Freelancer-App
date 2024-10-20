@@ -41,6 +41,12 @@
                         <button type="submit" class="w-btn-secondary-lg">{% trans "Submit" %}</button>
                     </div>
                 </div>
+
+                <div class="d-grid mt-4">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="skip-all-btn" name="skip_all" value="skip_all" class="w-btn-outline-grey">{% trans "Skip All" %}</button>
+                    </div>
+                </div>
             </form>
             
         </div>
@@ -150,5 +156,14 @@
             document.getElementById('new-skills').value = Array.from(newSkills).join(',');
         }
     });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('skip-all-btn').onclick = function() {
+            window.location.href = "{% url 'home_freelancer' %}";
+        };
+    });
+    
+    
     </script>
 {% endblock %}

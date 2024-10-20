@@ -3,8 +3,8 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings  # Para acceder a las configuraciones de MEDIA_URL y MEDIA_ROOT
 from django.conf.urls.static import static  # Para servir archivos estáticos y multimedia
-from . import views 
-from django.conf.urls.i18n import i18n_patterns  # Importa la función i18n_patterns
+from . import views
+from django.conf.urls.i18n import i18n_patterns
 
 
 urlpatterns = i18n_patterns(
@@ -15,6 +15,7 @@ urlpatterns = i18n_patterns(
     path('auth/', include('social_django.urls', namespace='social')),  # Ruta para autenticación social (Google, etc.)
     path('', views.home, name='home'),  # Ruta para la página principal
     path('projects/', include('Projects.urls')),  # Incluye las rutas de la app Projects
+    path('messaging/', include('Messaging.urls', namespace='messaging')),  # Incluye las rutas de la app Messaging con namespace
     path('notifications/', include('Notifications.urls')),  # Incluye las rutas de la app Notifications
 )
 

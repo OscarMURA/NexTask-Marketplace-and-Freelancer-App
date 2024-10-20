@@ -1,8 +1,0 @@
-<h2>Your Conversations</h2>
-<ul>
-    {% for thread in threads %}
-    <li><a href="{% url 'thread_detail' thread.id %}">
-        Conversation with {{ thread.participants.exclude(id=request.user.id).first.username }}
-    </a></li>
-    {% endfor %}
-</ul>

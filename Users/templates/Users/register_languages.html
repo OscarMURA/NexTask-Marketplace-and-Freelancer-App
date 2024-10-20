@@ -1,10 +1,34 @@
 {% extends 'NextTask/base.html' %}
 {% load crispy_forms_tags %}
 {% load i18n %}
+
 {% block extra_css %}
 <style>
     .checkbox-item {
         margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        display: none; /* Hide all items initially */
+    }
+
+    .checkbox-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    #languagesList {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 15px;
+        display: none; /* Hide the container initially */
+    }
+
+    .checkbox-item input {
+        margin-right: 10px;
     }
 </style>
 {% endblock %}
@@ -17,14 +41,14 @@
             <form method="POST" id="languageForm">
                 {% csrf_token %}
 
-                <!-- Search bar -->
-                <div class="form-group d-flex align-items-center">
+                <!-- Search bar and counter -->
+                <div class="form-group d-flex justify-content-between align-items-center">
                     <input type="text" id="searchLanguages" class="form-control me-2" placeholder="Type your language">
+                    <span id="languageCounter">Selected: 0</span>
                 </div>
 
                 <!-- Render checkboxes -->
                 <div class="form-group" id="languagesList">
-                    <label for="id_languages">{% trans "Languages List" %}</label>
                     {% for checkbox in form.languages %}
                         <div class="checkbox-item">
                             {{ checkbox.tag }} <label>{{ checkbox.choice_label }}</label>
@@ -38,43 +62,66 @@
                         <button type="submit" class="w-btn-secondary-lg">{% trans "Next" %}</button>
                     </div>
                 </div>
+                <div class="d-grid mt-4">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="skip-all-btn" name="skip_all" value="skip_all" class="w-btn-outline-grey">{% trans "Skip All" %}</button>
+                    </div>
+                </div>
             </form>
         </div>
     </section>
 </div>
 
-
 <script>
-    
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchLanguages');
+        const languageList = document.getElementById('languagesList');
+        const checkboxes = document.querySelectorAll('#languagesList .checkbox-item');
 
-    document.getElementById('searchLanguages').addEventListener('keyup', function() {
-        var filter = this.value.toLowerCase().trim();  // Get the value the user typed in
-        
+        // Filter checkboxes based on user input
+        searchInput.addEventListener('keyup', function () {
+            const filter = this.value.toLowerCase().trim();
+            let resultsFound = false;
 
-        var checkboxes = document.querySelectorAll('#languagesList .checkbox-item');  // All checkbox divs
-
-        // Loop through each checkbox item and hide/show based on matching label text
-        checkboxes.forEach(function(checkbox) {
-            var label = checkbox.querySelector('label').textContent.toLowerCase().trim();  // Get the label text
-            
-            if (label.includes(filter)) {
+            // Loop through each checkbox item and hide/show based on matching label text
+            checkboxes.forEach(function (checkbox) {
+                const label = checkbox.querySelector('label').textContent.toLowerCase().trim();
                 
-                checkbox.style.display = 'block';  // Show checkbox if it matches
-            } else {
-                
-                checkbox.style.display = 'none';  // Hide checkbox if it doesn't match
+                if (label.includes(filter)) {
+                    checkbox.style.display = 'block'; // Show checkbox if it matches
+                    resultsFound = true;
+                } else {
+                    checkbox.style.display = 'none'; // Hide checkbox if it doesn't match
+                }
+            });
+
+            // Show or hide the languages container depending on whether results are found
+            languageList.style.display = resultsFound ? 'block' : 'none';
+        });
+
+        // Prevent form submission when pressing Enter in the search field
+        document.getElementById('languageForm').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent form submission on Enter key
             }
+        });
+
+        // Update language counter when checkboxes are selected/deselected
+        document.querySelectorAll('#languagesList input[type="checkbox"]').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const checkedCount = document.querySelectorAll('#languagesList input[type="checkbox"]:checked').length;
+                document.getElementById('languageCounter').textContent = 'Selected: ' + checkedCount;
+            });
         });
     });
 
-    // Prevent form submission when pressing Enter in the search field
-    document.getElementById('languageForm').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();  // Prevent form submission on Enter key
-        }
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('skip-all-btn').onclick = function() {
+            window.location.href = "{% url 'home_freelancer' %}";
+        };
     });
+    
+    
 </script>
 
 {% endblock %}
-
-

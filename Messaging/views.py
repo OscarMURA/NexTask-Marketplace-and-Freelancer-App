@@ -1,63 +1,171 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Thread, Message
-from .forms import MessageForm
+from .models import Conversation, Message
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from rest_framework import generics
+from .serializers import MessageSerializer, ConversationSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.db.models import Q
+from django.db.models import Count
+from .models import User
+from django.conf import settings
+
+User = get_user_model()
 
 @login_required
-def thread_list(request):
-    """
-    Displays a list of conversation threads that the user participates in.
+def client_chat(request, conversation_id=None):
+    users = User.objects.exclude(id=request.user.id)
+    conversations = Conversation.objects.filter(participants=request.user)
 
-    Args:
-        request: The HTTP request object.
+    conversation = None
+    messages = []
+    if conversation_id:
+        conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+        messages = Message.objects.filter(conversation=conversation).order_by('timestamp')
 
-    Returns:
-        Rendered template showing the user's threads.
-    """
-    threads = Thread.objects.filter(participants=request.user)
-    return render(request, 'messaging/thread_list.html', {'threads': threads})
-
-@login_required
-def thread_detail(request, thread_id):
-    """
-    Displays the details of a specific conversation thread, including messages.
-
-    Args:
-        request: The HTTP request object.
-        thread_id (int): The ID of the thread to display.
-
-    Returns:
-        Rendered template showing the thread details and messages.
-    """
-    thread = get_object_or_404(Thread, id=thread_id, participants=request.user)
-    messages = thread.messages.all()
-    if request.method == 'POST':
-        form = MessageForm(request.POST)
-        if form.is_valid():
-            message = form.save(commit=False)
-            message.thread = thread
-            message.sender = request.user
-            message.save()
-            return redirect('thread_detail', thread_id=thread.id)
-    else:
-        form = MessageForm()
-    return render(request, 'messaging/thread_detail.html', {'thread': thread, 'messages': messages, 'form': form})
+    context = {
+        'users': users,
+        'conversations': conversations,
+        'conversation': conversation,
+        'messages': messages,
+    }
+    return render(request, 'messaging/client_chat.html', context)
 
 @login_required
-def start_thread(request, user_id):
-    """
-    Starts a new conversation thread with another user.
+def freelancer_chat(request, conversation_id=None):
+    current_user = request.user  # Usuario actual
 
-    Args:
-        request: The HTTP request object.
-        user_id (int): The ID of the user to start a thread with.
+    # Obtener todas las conversaciones activas del usuario actual
+    conversations = Conversation.objects.filter(participants=current_user).annotate(num_messages=Count('messages')).filter(num_messages__gt=0)
 
-    Returns:
-        Redirects to the thread detail view for the new or existing thread.
-    """
+    # Inicializamos active_users como una consulta vacía para evitar el error UnboundLocalError
+    active_users = User.objects.none()
+
+    # Si hay conversaciones activas, obtenemos los usuarios que participan en ellas
+    if conversations.exists():
+        active_users = User.objects.filter(conversations__in=conversations).exclude(id=current_user.id).distinct()
+
+    # Excluimos los usuarios con los que ya hay una conversación activa
+    users = User.objects.exclude(id__in=active_users.values_list('id', flat=True)).exclude(id=current_user.id)
+
+    conversation = None
+    messages = []
+    if conversation_id:
+        conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+        messages = Message.objects.filter(conversation=conversation).order_by('timestamp')
+
+    context = {
+        'users': users,  # Usuarios disponibles
+        'conversations': conversations,  # Conversaciones activas
+        'conversation': conversation,
+        'messages': messages,
+    }
+    return render(request, 'messaging/freelancer_chat.html', context)
+
+@login_required
+def start_conversation(request, user_id):
     other_user = get_object_or_404(User, id=user_id)
-    thread = Thread.objects.filter(participants=request.user).filter(participants=other_user).first()
-    if not thread:
-        thread = Thread.objects.create()
-        thread.participants.add(request.user, other_user)
-    return redirect('thread_detail', thread_id=thread.id)
+    # Busca si ya existe una conversación entre los dos usuarios
+    conversation = Conversation.objects.filter(participants=request.user).filter(participants=other_user).first()
+
+    if not conversation:
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, other_user)
+
+    return redirect('messaging:client_chat', conversation_id=conversation.id)
+
+# API para obtener y enviar mensajes
+@api_view(['GET'])
+def get_conversation_messages(request, conversation_id):
+    try:
+        conversation = Conversation.objects.get(id=conversation_id, participants=request.user)
+    except Conversation.DoesNotExist:
+        return Response({"error": "Conversación no encontrada o no tienes permiso para verla."}, status=404)
+
+    messages = Message.objects.filter(conversation=conversation).order_by('timestamp')
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def send_message(request, conversation_id):
+    try:
+        conversation = Conversation.objects.get(id=conversation_id, participants=request.user)
+    except Conversation.DoesNotExist:
+        return Response({"error": "Conversación no encontrada o no tienes permiso para enviar mensajes."}, status=404)
+
+    content = request.data.get('content')
+    if not content or content.strip() == '':
+        return Response({"error": "El contenido del mensaje no puede estar vacío."}, status=400)
+
+    message_data = {
+        'conversation': conversation.id,
+        'sender': request.user.id,
+        'content': content
+    }
+
+    serializer = MessageSerializer(data=message_data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+# API Views
+class MessageListCreateView(generics.ListCreateAPIView):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        conversation_id = self.kwargs['conversation_id']
+        return Message.objects.filter(conversation_id=conversation_id).order_by('timestamp')
+
+    def perform_create(self, serializer):
+        serializer.save(sender=self.request.user)
+
+class ConversationDetailView(generics.RetrieveAPIView):
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+    
+def get_messages(request, conversation_id):
+    if request.method == 'GET':
+        messages = Message.objects.filter(conversation_id=conversation_id).order_by('timestamp')
+        message_list = [{
+            'sender': message.sender.username,
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        } for message in messages]
+        return JsonResponse({'messages': message_list})
+
+@login_required
+def search_users(request):
+    query = request.GET.get('q', '').strip()
+    if query:
+        # Filtrar los usuarios cuyo nombre de usuario comienza con la cadena ingresada (case insensitive)
+        users = User.objects.filter(Q(username__istartswith=query)).exclude(id=request.user.id)[:10]
+        users_data = [
+            {
+                'id': user.id,
+                'username': user.username,
+                'profile_picture': getattr(user, 'profile_picture', None).url if getattr(user, 'profile_picture', None) else (
+                    f'{settings.STATIC_URL}img/defaultFreelancerProfileImage.jpg' if user.user_type == 'freelancer' else
+                    f'{settings.STATIC_URL}img/defaultClientProfileImage.png'
+                )
+            }
+
+            for user in users
+        ]
+        return JsonResponse({'users': users_data})
+    return JsonResponse({'users': []})
+
+
+def check_conversation(request, user_id):
+    current_user = request.user
+    other_user = get_object_or_404(User, id=user_id)
+
+    # Verificar si ya existe una conversación entre los usuarios
+    conversation = Conversation.objects.filter(participants=current_user).filter(participants=other_user).first()
+
+    if conversation:
+        return JsonResponse({'conversation_exists': True, 'conversation_id': conversation.id})
+    else:
+        return JsonResponse({'conversation_exists': False})
