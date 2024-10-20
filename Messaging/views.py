@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db.models import Q
 from django.db.models import Count
+from .models import User
+from django.conf import settings
 
 User = get_user_model()
 
@@ -144,8 +146,12 @@ def search_users(request):
             {
                 'id': user.id,
                 'username': user.username,
-                'profile_picture': '/static/img/defaultFreelancerProfileImage.jpg'  # Usa la imagen predeterminada o personaliza aquí
+                'profile_picture': getattr(user, 'profile_picture', None).url if getattr(user, 'profile_picture', None) else (
+                    f'{settings.STATIC_URL}img/defaultFreelancerProfileImage.jpg' if user.user_type == 'freelancer' else
+                    f'{settings.STATIC_URL}img/defaultClientProfileImage.png'
+                )
             }
+
             for user in users
         ]
         return JsonResponse({'users': users_data})

@@ -161,36 +161,45 @@
 <div class="chat-layout">
     <!-- Lista de Usuarios Disponibles -->
     <div class="conversation-list">
-        <input type="text" id="search" placeholder="Buscar chats o usuarios.">
+        <input type="text" id="search" placeholder="Search chats or users.">
         <ul id="user-results">
             <!-- Los resultados de la búsqueda de usuarios se mostrarán aquí dinámicamente -->
         </ul>
         <hr>
-        <h5>Conversaciones activas:</h5>
+        <h5>{% trans "Active conversations:" %}</h5>
         <br>
         <ul>
-            {% for conversation in conversations %}
-                {% for participant in conversation.participants.all %}
-                    {% if participant != request.user %}
-                        <li>
-                            <a href="#" class="conversation-link" data-conversation-id="{{ conversation.id }}">
-                                {% if participant.profile_picture %}
-                                    <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}">
-                                {% else %}
-                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Profile Image">
-                                {% endif %}
-                                {{ participant.username }}
-                            </a>
-                        </li>
-                    {% endif %}
+            {% if conversations %}
+                {% for conversation in conversations %}
+                    {% for participant in conversation.participants.all %}
+                        {% if participant != request.user %}
+                            <li>
+                                <a href="#" class="conversation-link" data-conversation-id="{{ conversation.id }}">
+                                    {% if participant.profile_picture %}
+                                        <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}">
+                                    {% else %}
+                                        {% if participant.user_type == 'freelancer' %}
+                                            <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="{% trans 'Default Freelancer Profile Image' %}">
+                                        {% elif participant.user_type == 'client' %}
+                                            <img src="{% static 'img/defaultClientProfileImage.png' %}" alt="{% trans 'Default Client Profile Image' %}">
+                                        {% endif %}
+                                    {% endif %}
+                                    {{ participant.username }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            {% else %}
+                <p>{% trans "No active chats" %}</p>
+            {% endif %}
         </ul>
     </div>
+    
 
     <!-- Ventana del Chat -->
     <div id="chat-window">
-        <p>Selecciona una conversación para comenzar a chatear.</p>
+        <p>{% trans "Select a conversation to start chatting." %}</p>
     </div>
 </div>
 
@@ -232,11 +241,11 @@
                         // Añadir eventos de click para iniciar la conversación con los usuarios buscados
                         addClickEventToSearchResults();  // Esta función se llama después de agregar los usuarios
                     } else {
-                        userResults.innerHTML = '<li>No se encontraron usuarios.</li>';
+                        userResults.innerHTML = '<li>{% trans "No users were found" %}</li>';
                     }
                 })
                 .catch(error => {
-                    console.error('Error buscando usuarios:', error);
+                    console.error('Error searching for users:', error);
                 });
             } else {
                 userResults.innerHTML = '';  // Limpiar si el campo está vacío
@@ -273,10 +282,10 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error verificando la conversación:', error);
+                            console.error('Error verifying conversation:', error);
                         });
                     } else {
-                        console.error('Error: userId no es válido:', userId);
+                        console.error('Error: userId is not valid:', userId);
                     }
                 });
             });
@@ -289,6 +298,8 @@
                 event.preventDefault();
     
                 const conversationId = link.getAttribute('data-conversation-id');
+                const userId = link.getAttribute('data-user-id');
+
                 if (conversationId) {
                     loadExistingConversation(conversationId);  // Cargar los mensajes de la conversación activa
                 }
@@ -310,7 +321,7 @@
                 startAutoRefresh();  // Reiniciar el polling para esta conversación
             })
             .catch(error => {
-                console.error('Error obteniendo los mensajes del chat:', error);
+                console.error('Error getting chat messages:', error);
             });
         }
     
@@ -331,12 +342,16 @@
                     // Cargar la conversación recién creada
                     loadExistingConversation(data.conversation_id);
                 } else {
-                    console.error('Error al iniciar una nueva conversación:', data);
+                    console.error('Error when starting a new conversation:', data);
                 }
             })
             .catch(error => {
-                console.error('Error iniciando una nueva conversación:', error);
+                console.error('Error starting a new conversation:', error);
             });
+        }
+
+        function renderEmptyChatWindow(userId) {
+            chatWindow.innerHTML = '<p>Select a conversation to start chatting or search for a user to start a new conversation.</p>';
         }
     
         // Función para renderizar la ventana de chat
@@ -408,7 +423,7 @@
                     submitButton.disabled = false;
                 })
                 .catch(error => {
-                    console.error('Error enviando el mensaje:', error);
+                    console.error('Error sending message:', error);
                     submitButton.disabled = false;
                 });
             }
@@ -494,7 +509,7 @@
                 }
             })
             .catch(error => {
-                console.error('Error obteniendo los mensajes del chat:', error);
+                console.error('Error getting chat messages:', error);
             });
         }
     
@@ -506,13 +521,5 @@
     
     
 </script>
-
-
-
-    
-    
-    
-    
-
 
 {% endblock %}
