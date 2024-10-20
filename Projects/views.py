@@ -1,5 +1,7 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+
+from Notifications.models import Notification
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
 
@@ -15,6 +17,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
+from django.utils import timezone
 from Comments.forms import CommentForm
 from Comments.models import Comment
 
@@ -831,6 +834,19 @@ def manage_applications_freelancer(request):
             if not Contract.objects.filter(project=application.project, freelancer=application.freelancer).exists():
                 # Create the contract
                 Contract.objects.create(project=application.project, freelancer=application.freelancer)
+
+                # Obtener el nombre y apellido del usuario que acepta la aplicación
+                accepting_user = request.user  # El usuario que acepta la aplicación
+
+                # Crear la notificación para el cliente
+                Notification.objects.create(
+                    recipient=application.project.client.user,  # Suponiendo que 'user' es el campo que representa al cliente
+                    message=f"Tu aplicación para el proyecto '{application.project.title}' ha sido aceptada por {accepting_user.first_name} {accepting_user.last_name}.",
+                    created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
+                )
+                print("Notificación creada con éxito")  # Mensaje de depuración
+                print("-----------------------------")
+
             else:
                 # Notify that the contract already exists (implement as desired)
                 pass
