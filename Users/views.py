@@ -9,12 +9,18 @@ from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
 from django.shortcuts import get_object_or_404
-from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
+from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio, Language
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from Projects.models import *
 from Projects.models import Application
 from django.utils.translation import gettext as _
+from django_countries import countries
+from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from urllib.parse import urlencode  # Importa urlencode para agregar parámetros a la URL
+
 
 
 
@@ -288,17 +294,6 @@ def portfolio_register_view(request):
         'next_url': 'register_languages',
     })
 
-
-@login_required
-def profile_settings(request):
-    """
-    View for rendering the profile settings page for users.
-
-    Returns:
-        Rendered template for changing the user's password.
-    """
-    return render(request, 'Users/changePassword.html')  # Render profile settings template
-
 @login_required
 def register_skills_view(request):
     """
@@ -419,7 +414,7 @@ def change_password(request):
 
 
 @login_required
-def profile_settings(request):
+def profile_settings_freelancer(request):
     """
     View for managing the profile settings of a freelancer.
 
@@ -444,6 +439,16 @@ def profile_settings(request):
         work_experiences = WorkExperience.objects.filter(freelancer=freelancer)  # Get work experiences
         portfolios = Portfolio.objects.filter(freelancer=freelancer)  # Get portfolio entries
         skills = freelancer.skills.all()  # Get all skills associated with the freelancer
+        languages = freelancer.languages.all()  # Get all languages associated with the freelancer
+        print("Total languages loaded:", languages.count())  # Para confirmar cuántos idiomas se están recuperando
+        print(languages)  # Imprimirá los objetos de idioma asociados al freelancer
+        print("Languages from the model: ", languages)  # Esto debería mostrar los objetos del modelo
+        for lang in languages:
+            print("Language name: ", lang.language)  # Asegúrate de que esto imprime los nombres correctamente
+        
+
+
+
     except FreelancerProfile.DoesNotExist:
         # Create a new FreelancerProfile if it does not exist
         freelancer = FreelancerProfile.objects.create(user=user)
@@ -453,8 +458,43 @@ def profile_settings(request):
         work_experiences = []
         portfolios = []
         skills = []
+        languages = []
+        print(languages)  # Imprimirá los objetos de idioma asociados al freelancer
+    
+    all_languages = Language.objects.exclude(id__in=languages.values_list('id', flat=True))
+    print("Idiomas registrados: ", [lang.language for lang in languages])
+    print("Idiomas para añadir: ", [lang.language for lang in all_languages])
+
+    show_add_modal = request.session.pop('show_add_modal', False)
+    show_delete_modal = request.session.pop('show_delete_modal', False)
+    show_update_modal = request.session.pop('show_update_modal', False)
+
 
     if request.method == 'POST':
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and 'add_languages' in request.POST:
+            selected_language_ids = request.POST.getlist('languages')
+            if selected_language_ids:
+                selected_languages = Language.objects.filter(id__in=selected_language_ids)
+                freelancer.languages.add(*selected_languages)
+                freelancer.save()
+                
+                show_add_modal = True
+                
+                # Prepare a list of the new language names to return in the response
+                new_languages = [lang.language for lang in selected_languages]
+                
+                return JsonResponse({
+                    'success': True,
+                    'new_languages': new_languages,
+                    'show_add_modal': show_add_modal
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Please select at least one language.'
+                })
+
+
         # Check which form is being submitted
         if 'update_user_info' in request.POST:
             # Update user info (first name, last name, email, username)
@@ -471,8 +511,8 @@ def profile_settings(request):
             freelancer.address = request.POST.get('address', freelancer.address)
             freelancer.save()  # Save updated freelancer info
 
-            messages.success(request, "User information updated successfully.")  # Success message
-            return redirect('profile_settings')  # Redirect to profile settings
+            show_update_modal = True
+
 
         elif 'add_education' in request.POST:
             # Add new education record
@@ -486,6 +526,9 @@ def profile_settings(request):
                     description=request.POST.get('new_description')
                 )
                 new_education.save()  # Save new education record
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
 
         elif 'delete_education' in request.POST:
             # Delete education record
@@ -493,10 +536,12 @@ def profile_settings(request):
             try:
                 education = Education.objects.get(id=education_id, freelancer=freelancer)
                 education.delete()  # Delete the education record
-                messages.success(request, 'Educational record deleted successfully.')  # Success message
+
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+                
             except Education.DoesNotExist:
                 messages.error(request, 'The education record could not be found.')  # Error message
-            return redirect('profile_settings')
 
         elif 'add_certification' in request.POST:
             # Add new certification
@@ -510,6 +555,10 @@ def profile_settings(request):
                     short_description=request.POST.get('new_certification_description')
                 )
                 new_certification.save()  # Save new certification
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
+
 
         elif 'delete_certification' in request.POST:
             # Delete certification
@@ -517,10 +566,12 @@ def profile_settings(request):
             try:
                 certification = Certification.objects.get(id=certification_id, freelancer=freelancer)
                 certification.delete()  # Delete the certification
-                messages.success(request, 'Certification deleted successfully.')  # Success message
+                
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+
             except Certification.DoesNotExist:
                 messages.error(request, 'The certification could not be found.')  # Error message
-            return redirect('profile_settings')
 
         elif 'add_experience' in request.POST:
             # Add new work experience
@@ -534,6 +585,9 @@ def profile_settings(request):
                     description=request.POST.get('new_experience_description')
                 )
                 new_experience.save()  # Save new work experience
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
 
         elif 'delete_experience' in request.POST:
             # Delete work experience
@@ -541,10 +595,13 @@ def profile_settings(request):
             try:
                 experience = WorkExperience.objects.get(id=experience_id, freelancer=freelancer)
                 experience.delete()  # Delete the work experience
-                messages.success(request, 'Work experience deleted successfully.')  # Success message
+                
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+
+
             except WorkExperience.DoesNotExist:
                 messages.error(request, 'The work experience could not be found.')  # Error message
-            return redirect('profile_settings')
 
         elif 'add_portfolio' in request.POST:
             # Add new portfolio entry
@@ -555,6 +612,10 @@ def profile_settings(request):
                     description=request.POST.get('new_portfolio_description')
                 )
                 new_portfolio.save()  # Save new portfolio entry
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
+
 
         elif 'delete_portfolio' in request.POST:
             # Delete portfolio entry
@@ -562,28 +623,36 @@ def profile_settings(request):
             try:
                 portfolio = Portfolio.objects.get(id=portfolio_id, freelancer=freelancer)
                 portfolio.delete()  # Delete the portfolio entry
-                messages.success(request, 'Portfolio entry deleted successfully.')  # Success message
+
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+
             except Portfolio.DoesNotExist:
                 messages.error(request, 'The portfolio entry could not be found.')  # Error message
-            return redirect('profile_settings')
-
+        
+       
         # Process skills
         selected_skills_ids = request.POST.getlist('skills')  # Assume 'skills' is the name of your field in the form
         selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convert IDs to integers
         
         new_skill_name = request.POST.get('new_skill', '').strip()  # Get new skill
         if new_skill_name:
-            new_skill, created = Skill.objects.get_or_create(name=new_skill_name)  # Create or get the new skill
+            formatted_skill_name = new_skill_name.capitalize()
+
+            new_skill, created = Skill.objects.get_or_create(name=formatted_skill_name)  # Create or get the new skill
             freelancer.skills.add(new_skill)  # Add new skill to the freelancer's profile
+            request.session['show_add_modal'] = True
+            return redirect('profile_settings_freelancer')
+
 
         if selected_skills_ids:
             freelancer.skills.set(selected_skills_ids)  # Update selected skills
 
+        
         freelancer.save()  # Save changes to the freelancer's profile
-        return redirect('profile_settings')  # Redirect to profile settings
 
     # Render profile settings page
-    return render(request, 'Users/profileSettings.html', {
+    return render(request, 'Users/profileSettingsFreelancer.html', {
         'user': user,
         'freelancer': freelancer,
         'educations': educations,
@@ -591,7 +660,54 @@ def profile_settings(request):
         'work_experiences': work_experiences,
         'portfolios': portfolios,
         'skills': skills,
-        'all_skills': Skill.objects.all()  # Pass all available skills to the template
+        'freelancer_languages': languages,
+        'all_languages': all_languages,  # Pass all languages for selection
+        'all_skills': Skill.objects.all(), 
+        'show_update_modal': show_update_modal,
+        'show_add_modal': show_add_modal,
+        'show_delete_modal': show_delete_modal,
+        'countries': countries
+    })
+
+
+@login_required
+def profile_settings_client(request):
+    user = request.user  # Get the currently logged-in user
+    try:
+        client = ClientProfile.objects.get(user=user)
+    except FreelancerProfile.DoesNotExist:
+        # Create a new ClientProfile if it does not exist
+        client = ClientProfile.objects.create(user=user)
+    
+    show_modal = False
+
+    if request.method == 'POST':
+        # Check which form is being submitted
+        if 'update_user_info' in request.POST:
+            # Update user info (first name, last name, email, username)
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+            user.email = request.POST.get('email', user.email)
+            user.username = request.POST.get('username', user.username)
+            user.save()  # Save updated user info
+
+            # Update client profile info 
+            client.company_name = request.POST.get('company_name', client.company_name)
+            client.company_website = request.POST.get('company_website', client.company_website)
+            client.phone = request.POST.get('phone', client.phone)
+            client.city = request.POST.get('city', client.city)
+            client.country = request.POST.get('country', client.country)
+            client.address = request.POST.get('address', client.address)
+            client.save()  # Save updated freelancer info
+
+            show_modal = True
+
+    # Render profile settings page
+    return render(request, 'Users/profileSettingsClient.html', {
+        'user': user,
+        'client': client,
+        'show_modal': show_modal,
+        'countries': countries
     })
     
     

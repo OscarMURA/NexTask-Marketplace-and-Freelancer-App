@@ -17,52 +17,39 @@ class User(AbstractUser):
         ('client', 'Client'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-
     @property
     def is_freelancer(self):
         """
         Returns True if the user is a freelancer, False otherwise.
         """
         return self.user_type == 'freelancer'
-
     @property
     def is_client(self):
         """
         Returns True if the user is a client, False otherwise.
         """
         return self.user_type == 'client'
-
-
 class Language(models.Model):
     """
     Represents a spoken language.
-
     Attributes:
         language (str): Name of the language.
     """
     language = models.CharField(max_length=100, verbose_name=_('Language'))  # Use CharField instead of LanguageField
-
     def __str__(self):
         return self.language
-
-
 class Skill(models.Model):
     """
     Represents a skill associated with freelancers.
-
     Attributes:
         name (str): The name of the skill.
     """
     name = models.CharField(max_length=255, unique=True)
-
     def __str__(self):
         return self.name
-
-
 class FreelancerProfile(models.Model):
     """
     Represents the profile of a freelancer.
-
     Attributes:
         user (User): A one-to-one relationship with the User model.
         country (CountryField): Field to select the freelancer's country.
@@ -84,7 +71,6 @@ class FreelancerProfile(models.Model):
     
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
-
     def __str__(self):
         return self.user.username
     
@@ -97,7 +83,6 @@ class FreelancerProfile(models.Model):
 class ClientProfile(models.Model):
     """
     Represents the profile of a client.
-
     Attributes:
         user (User): A one-to-one relationship with the User model.
         company_name (str): Name of the client's company.
@@ -116,12 +101,10 @@ class ClientProfile(models.Model):
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultClientProfileImage.jpg', blank=True, null=True)
-
     # Método para calcular el presupuesto total de los proyectos del cliente
     def get_total_budget(self):
         """
         Calculates the total budget of all projects associated with the client.
-
         Returns:
             float: Total budget of the client's projects.
         """
@@ -130,7 +113,6 @@ class ClientProfile(models.Model):
     def get_all_projects(self):
         """
         Returns all projects associated with the client.
-
         Returns:
             QuerySet: All projects associated with this client.
         """
@@ -140,12 +122,9 @@ class ClientProfile(models.Model):
         super().clean()
         if not self.country:
             raise ValueError('El campo "country" es obligatorio.')
-
-
 class Education(models.Model):
     """
     Represents the educational background of a freelancer.
-
     Attributes:
         freelancer (FreelancerProfile): ForeignKey to the FreelancerProfile model.
         institution_name (str): Name of the educational institution.
@@ -160,15 +139,11 @@ class Education(models.Model):
     start_date = models.DateField(verbose_name=_('Start Date'))  # Start date of the education
     end_date = models.DateField(null=True, blank=True, verbose_name=_('End Date'))  # End date of the education
     description = models.TextField(null=True, blank=True, verbose_name=_('Description'))  # Additional details about the education
-
     def __str__(self):
         return f"{self.degree_obtained} - {self.institution_name}"
-
-
 class WorkExperience(models.Model):
     """
     Represents the work experience of a freelancer.
-
     Attributes:
         freelancer (FreelancerProfile): ForeignKey to the FreelancerProfile model.
         company_name (str): Name of the company where the freelancer worked.
@@ -183,19 +158,15 @@ class WorkExperience(models.Model):
     start_date = models.DateField(verbose_name=_('Start Date'))  # Start date of the work experience
     end_date = models.DateField(null=True, blank=True, verbose_name=_('End Date'))  # End date of the work experience
     description = models.TextField(null=True, blank=True, verbose_name=_('Description'))  # Additional details about the work experience
-
     def __str__(self):
         return f"{self.position} - {self.company_name}"
     
     def clean(self):
         if self.end_date and self.start_date and self.end_date < self.start_date:
             raise ValidationError("La fecha de finalización debe ser posterior a la fecha de inicio.")
-
-
 class Certification(models.Model):
     """
     Represents certifications obtained by a freelancer.
-
     Attributes:
         freelancer (FreelancerProfile): ForeignKey to the FreelancerProfile model.
         certification_name (str): Name of the certification.
@@ -210,15 +181,11 @@ class Certification(models.Model):
     issue_date = models.DateField(verbose_name=_('Issue Date'))  # Date when the certification was issued
     expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration Date'))  # Expiration date of the certification
     short_description = models.TextField(max_length=500, blank=True, verbose_name=_('Short Description'))  # Short description of the certification
-
     def __str__(self):
         return f'{self.certification_name} - {self.issuing_organization}'
-
-
 class Portfolio(models.Model):
     """
     Represents the portfolio of a freelancer.
-
     Attributes:
         freelancer (FreelancerProfile): ForeignKey to the FreelancerProfile model.
         url (str): URL of the portfolio.
@@ -227,6 +194,5 @@ class Portfolio(models.Model):
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE)
     url = models.URLField(blank=True, verbose_name=_('Portfolio URL'))  # URL of the portfolio
     description = models.TextField(blank=True, verbose_name=_('Description'))  # Description of the portfolio
-
     def __str__(self):
         return f'{self.url} - {self.freelancer.user.username}'

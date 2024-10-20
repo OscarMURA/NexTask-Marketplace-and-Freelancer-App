@@ -2,6 +2,7 @@ from django.db import models
 from Users.models import ClientProfile, FreelancerProfile
 from django_quill.fields import QuillField
 from django.contrib.auth import get_user_model
+from .managers import ActiveManager  # Importa el administrador personalizado
 
 class Project(models.Model):
     """
@@ -40,6 +41,11 @@ class Project(models.Model):
         ('legal_consulting', 'Legal Consulting'),
     ]
 
+    is_deleted = models.BooleanField(default=False)  # Campo para soft delete
+
+    objects = ActiveManager()  # Administrador que filtra objetos activos
+    all_objects = models.Manager()  # Administrador que incluye todos los objetos
+    
     title = models.CharField(max_length=255)
     client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE, related_name="projects")
     start_date = models.DateField()  # Start date of the project
@@ -89,6 +95,10 @@ class Milestone(models.Model):
         ('delivery', 'Delivery'),
         ('documentation', 'Documentation'),  
     ]
+    is_deleted = models.BooleanField(default=False)
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
     
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="milestones")
     title = models.CharField(max_length=255)
@@ -128,6 +138,10 @@ class Task(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ]
+    is_deleted = models.BooleanField(default=False)
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
     
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=255)

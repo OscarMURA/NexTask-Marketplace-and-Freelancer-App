@@ -182,6 +182,7 @@
                 <div class="button-group">
                   <a href="{% url 'create_task' milestone.id %}" class="w-btn-secondary-lg">{% trans "Add Task" %}</a>
                   <a href="{% url 'project_detail' milestone.project.id %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+                  <a href="{% url 'deleted_tasks' milestone.id %}" class="w-btn-secondary-lg">{% trans "Deleted Tasks" %}</a>
                 </div>
                 <p>.</p>
                 <p></p>
@@ -208,7 +209,7 @@
             </thead>
             <tbody>
                 <!-- Itera sobre cada tarea asociada al hito -->
-                {% for task in milestone.tasks.all %}
+                {% for task in tasks %}
                 <tr>
                     <!-- Título de la tarea -->
                     <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">

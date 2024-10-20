@@ -89,6 +89,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NextTask.wsgi.application'
 
+TIME_ZONE = 'UTC'  # O tu zona horaria local, por ejemplo 'America/Bogota'
+USE_TZ = True  # Activa el uso de zonas horarias
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

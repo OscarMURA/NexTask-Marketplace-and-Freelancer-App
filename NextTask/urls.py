@@ -6,6 +6,7 @@ from django.conf.urls.static import static  # Para servir archivos estáticos y 
 from . import views 
 from django.conf.urls.i18n import i18n_patterns  # Importa la función i18n_patterns
 
+
 urlpatterns = i18n_patterns(
     path("i18n/", include("django.conf.urls.i18n")),
     path('admin/', admin.site.urls),
@@ -14,6 +15,7 @@ urlpatterns = i18n_patterns(
     path('auth/', include('social_django.urls', namespace='social')),  # Ruta para autenticación social (Google, etc.)
     path('', views.home, name='home'),  # Ruta para la página principal
     path('projects/', include('Projects.urls')),  # Incluye las rutas de la app Projects
+    path('notifications/', include('Notifications.urls')),  # Incluye las rutas de la app Notifications
 )
 
 # Configuración para servir archivos multimedia durante el desarrollo

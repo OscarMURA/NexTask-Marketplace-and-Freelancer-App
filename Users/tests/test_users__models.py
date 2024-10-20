@@ -1,3 +1,4 @@
+# myapp/tests/test_models.py
 import pytest
 from django_countries.fields import Country
 from Users.models import User, FreelancerProfile, Skill, Education, WorkExperience, Certification, Portfolio, ClientProfile
@@ -114,8 +115,10 @@ def test_client_profile_creation():
 @pytest.mark.django_db
 def test_unique_skill_creation():
     skill = Skill.objects.create(name="Django")
+
     assert skill.name == "Django"
 
+    # Prueba que no se permita duplicar el nombre de la habilidad
     with pytest.raises(Exception):
         Skill.objects.create(name="Django")
 
@@ -147,6 +150,7 @@ def test_freelancer_skill_assignment():
 def test_freelancer_profile_optional_fields():
     user = User.objects.create_user(username='testfreelancer', password='testpassword')
 
+    # Crear perfil sin campos opcionales
     freelancer_profile = FreelancerProfile(
         user=user,
         country="US"
@@ -157,6 +161,7 @@ def test_freelancer_profile_optional_fields():
     except ValidationError:
         pytest.fail("No debería fallar si los campos opcionales están vacíos")
 
+    # Verificar que los campos opcionales estén vacíos
     assert freelancer_profile.city == ""
     assert freelancer_profile.phone == ""
     assert freelancer_profile.address == ""
@@ -166,6 +171,7 @@ def test_freelancer_profile_optional_fields():
 def test_client_profile_optional_fields():
     user = User.objects.create_user(username='testclient', password='testpassword')
 
+    # Crear perfil sin campos opcionales
     client_profile = ClientProfile(
         user=user,
         company_name="Test Company",
@@ -177,6 +183,7 @@ def test_client_profile_optional_fields():
     except ValidationError:
         pytest.fail("No debería fallar si los campos opcionales están vacíos")
 
+    # Verificar que los campos opcionales estén vacíos
     assert client_profile.company_website == ""
     assert client_profile.city == ""
     assert client_profile.phone == ""
@@ -184,12 +191,15 @@ def test_client_profile_optional_fields():
 
 @pytest.mark.django_db
 def test_freelancer_profile_skills():
+    # Crear un usuario de prueba
     user = User.objects.create_user(username='testfreelancer', password='testpassword')
 
+    # Crear varias habilidades
     skill1 = Skill.objects.create(name="Python")
     skill2 = Skill.objects.create(name="Django")
     skill3 = Skill.objects.create(name="JavaScript")
 
+    # Crear perfil de freelancer y asociar habilidades
     freelancer_profile = FreelancerProfile(
         user=user,
         country="US",
@@ -201,6 +211,7 @@ def test_freelancer_profile_skills():
     freelancer_profile.skills.set([skill1, skill2, skill3])
     freelancer_profile.save()
 
+    # Verificar que las habilidades se han asociado correctamente
     assert freelancer_profile.skills.count() == 3
     assert skill1 in freelancer_profile.skills.all()
     assert skill2 in freelancer_profile.skills.all()
@@ -208,6 +219,7 @@ def test_freelancer_profile_skills():
 
 @pytest.mark.django_db
 def test_freelancer_profile_missing_required_fields(user):
+    # Intenta crear un perfil sin el campo obligatorio 'country'
     freelancer_profile = FreelancerProfile(
         user=user,
         city="New York",
@@ -215,10 +227,13 @@ def test_freelancer_profile_missing_required_fields(user):
         address="1234 Freelance Ave"
     )
     
+    # Llama a full_clean() para forzar la validación y verificar que se lanza un ValueError
     with pytest.raises(ValueError) as exc_info:
-        freelancer_profile.full_clean()
+        freelancer_profile.full_clean()  # Esto lanzará el ValueError por 'country' faltante
 
+    # Verifica que el mensaje del error sea el esperado
     assert str(exc_info.value) == 'El campo "country" es obligatorio.'
+
 
 @pytest.mark.django_db
 def test_freelancer_profile_phone_length(freelancer_profile):
@@ -238,6 +253,8 @@ def test_freelancer_profile_cascade_delete(freelancer_profile):
     freelancer_profile.delete()
     assert WorkExperience.objects.filter(id=work_experience.id).count() == 0
 
+
+
 @pytest.mark.django_db
 def test_freelancer_profile_update(freelancer_profile):
     freelancer_profile.city = "Los Angeles"
@@ -245,4 +262,3 @@ def test_freelancer_profile_update(freelancer_profile):
 
     updated_profile = FreelancerProfile.objects.get(id=freelancer_profile.id)
     assert updated_profile.city == "Los Angeles"
-
