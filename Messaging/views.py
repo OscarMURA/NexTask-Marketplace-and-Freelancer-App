@@ -2,6 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Thread, Message
 from .forms import MessageForm
+from django.utils.translation import gettext as _
+from Notifications.models import Notification
+from django.utils import timezone
 
 @login_required
 def thread_list(request):
@@ -38,6 +41,18 @@ def thread_detail(request, thread_id):
             message.thread = thread
             message.sender = request.user
             message.save()
+            
+            recipient = thread.participants.exclude(id=request.user.id).first()  # Obtener el otro participante
+            notification_message = _("You have a new message from %(username)s in the chat.") % {
+                'username': request.user.username  # Asumiendo que 'username' es el campo que contiene el nombre del usuario
+            }
+
+            Notification.objects.create(
+                recipient=recipient,  # El otro usuario que recibe la notificación
+                message=notification_message,
+                created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
+            )
+
             return redirect('thread_detail', thread_id=thread.id)
     else:
         form = MessageForm()
@@ -57,7 +72,20 @@ def start_thread(request, user_id):
     """
     other_user = get_object_or_404(User, id=user_id)
     thread = Thread.objects.filter(participants=request.user).filter(participants=other_user).first()
+
+        # Crear la notificación para el usuario con el que se inicia el chat
+    notification_message = _("%(username)s is starting a new conversation with you") % {
+        'username': request.user.username  # Asumiendo que 'username' es el campo que contiene el nombre del usuario
+    }
+
+    Notification.objects.create(
+        recipient=other_user,  # El otro usuario que recibe la notificación
+        message=notification_message,
+        created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
+    )
+
     if not thread:
         thread = Thread.objects.create()
         thread.participants.add(request.user, other_user)
+    
     return redirect('thread_detail', thread_id=thread.id)
