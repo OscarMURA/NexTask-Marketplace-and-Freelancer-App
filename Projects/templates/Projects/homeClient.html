@@ -206,21 +206,34 @@
       <p class="text-center w-100">{% trans "No projects available." %}</p>
       {% endfor %}
 
-      <!-- Línea de tiempo -->
-      <div id='calendar'></div>
-
-      <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          var calendarEl = document.getElementById('calendar');
-          var calendar = new FullCalendar.Calendar(calendarEl, {
-              plugins: ['dayGrid'],
-              initialView: 'dayGridMonth',
-              events: {{ events_json|safe }},
-          });
-          calendar.render();
-      });
-      </script>
+      
     </div>
+</div>
+
+
+<div class="projects-section container">
+  <div class="row justify-content-center">
+    <div class="gig-info-body bg-white">
+
+
+<!-- Sección de la línea de tiempo de tareas -->
+    <!-- Línea de tiempo -->
+    <div id='calendar'></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid'],
+            initialView: 'dayGridMonth',
+            events: {{ events_json|safe }},
+        });
+        calendar.render();
+    });
+    </script>
+
+    </div>
+  </div>
 </div>
 
 
