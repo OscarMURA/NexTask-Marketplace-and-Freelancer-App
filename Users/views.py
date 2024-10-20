@@ -9,13 +9,15 @@ from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
 from django.shortcuts import get_object_or_404
-from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio
+from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio, Language
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from Projects.models import *
 from Projects.models import Application
 from django.utils.translation import gettext as _
 from django_countries import countries
+from django.http import JsonResponse
+
 
 
 
@@ -435,6 +437,16 @@ def profile_settings_freelancer(request):
         work_experiences = WorkExperience.objects.filter(freelancer=freelancer)  # Get work experiences
         portfolios = Portfolio.objects.filter(freelancer=freelancer)  # Get portfolio entries
         skills = freelancer.skills.all()  # Get all skills associated with the freelancer
+        languages = freelancer.languages.all()  # Get all languages associated with the freelancer
+        print("Total languages loaded:", languages.count())  # Para confirmar cuántos idiomas se están recuperando
+        print(languages)  # Imprimirá los objetos de idioma asociados al freelancer
+        print("Languages from the model: ", languages)  # Esto debería mostrar los objetos del modelo
+        for lang in languages:
+            print("Language name: ", lang.language)  # Asegúrate de que esto imprime los nombres correctamente
+        
+
+
+
     except FreelancerProfile.DoesNotExist:
         # Create a new FreelancerProfile if it does not exist
         freelancer = FreelancerProfile.objects.create(user=user)
@@ -444,12 +456,42 @@ def profile_settings_freelancer(request):
         work_experiences = []
         portfolios = []
         skills = []
+        languages = []
+        print(languages)  # Imprimirá los objetos de idioma asociados al freelancer
+    
+    all_languages = Language.objects.exclude(id__in=languages.values_list('id', flat=True))
+    print("Idiomas registrados: ", [lang.language for lang in languages])
+    print("Idiomas para añadir: ", [lang.language for lang in all_languages])
 
     show_update_modal = False
     show_add_modal = False
     show_delete_modal = False
 
     if request.method == 'POST':
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and 'add_languages' in request.POST:
+            selected_language_ids = request.POST.getlist('languages')
+            if selected_language_ids:
+                selected_languages = Language.objects.filter(id__in=selected_language_ids)
+                freelancer.languages.add(*selected_languages)
+                freelancer.save()
+                
+                show_add_modal = True
+                
+                # Prepare a list of the new language names to return in the response
+                new_languages = [lang.language for lang in selected_languages]
+                
+                return JsonResponse({
+                    'success': True,
+                    'new_languages': new_languages,
+                    'show_add_modal': show_add_modal
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Please select at least one language.'
+                })
+
+
         # Check which form is being submitted
         if 'update_user_info' in request.POST:
             # Update user info (first name, last name, email, username)
@@ -561,10 +603,10 @@ def profile_settings_freelancer(request):
                 portfolio = Portfolio.objects.get(id=portfolio_id, freelancer=freelancer)
                 portfolio.delete()  # Delete the portfolio entry
                 show_delete_modal = True
-
             except Portfolio.DoesNotExist:
                 messages.error(request, 'The portfolio entry could not be found.')  # Error message
-
+        
+       
         # Process skills
         selected_skills_ids = request.POST.getlist('skills')  # Assume 'skills' is the name of your field in the form
         selected_skills_ids = [int(id) for id in selected_skills_ids if id.isdigit()]  # Convert IDs to integers
@@ -579,6 +621,7 @@ def profile_settings_freelancer(request):
         if selected_skills_ids:
             freelancer.skills.set(selected_skills_ids)  # Update selected skills
 
+        
         freelancer.save()  # Save changes to the freelancer's profile
 
     # Render profile settings page
@@ -590,6 +633,8 @@ def profile_settings_freelancer(request):
         'work_experiences': work_experiences,
         'portfolios': portfolios,
         'skills': skills,
+        'freelancer_languages': languages,
+        'all_languages': all_languages,  # Pass all languages for selection
         'all_skills': Skill.objects.all(), 
         'show_update_modal': show_update_modal,
         'show_add_modal': show_add_modal,

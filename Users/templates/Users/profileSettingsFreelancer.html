@@ -599,20 +599,109 @@
                         </div>
                     </div>
                 </form>
-                <br>            
+                <br>
+                <!-- Formulario para idiomas del freelancer -->
+                <form id="language-form" method="post" action="{% url 'profile_settings_freelancer' %}">
+                    {% csrf_token %}
+                    <div class="gig-info-card">
+                        <div class="gig-info-header d-flex justify-content-between align-items-center">
+                            <h4 class="text-18 fw-semibold text-dark-300">Add Languages</h4>
+                            <button type="submit" class="btn btn-primary" id="save-languages">Save Languages</button>
+                        </div>
+                        <div class="gig-info-body bg-white p-3">
+                            <h5>Select Languages to Add:</h5>
+                            <select multiple name="languages" id="languages-select" class="form-control">
+                                {% for language in all_languages %}
+                                    <option value="{{ language.id }}">{{ language.language }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <br>
+                
+                <!-- Mostrar los idiomas ya registrados del freelancer -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header d-flex justify-content-between align-items-center">
+                        <h4 class="text-18 fw-semibold text-dark-300">Current Languages</h4>
+                    </div>
+                    <div class="gig-info-body bg-white p-3">
+                        <ul class="list-group" id="current-languages-list">
+                            {% if freelancer_languages %}
+                                {% for language in freelancer_languages %}
+                                    <li class="list-group-item">{{ language.language }}</li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item">No tienes idiomas registrados</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                <br>  
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+   document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('language-form');
+    const languagesSelect = document.getElementById('languages-select');
+    const currentLanguagesList = document.getElementById('current-languages-list');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevenir la recarga de la página
+
+        const formData = new FormData(form);
+        formData.append('add_languages', 'true');  // Agregar una bandera para identificar el proceso
+
+        fetch("{% url 'profile_settings_freelancer' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'  // Asegurarse de que se trata de una solicitud AJAX
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Agregar los nuevos idiomas a la lista de "Current Languages"
+                data.new_languages.forEach(lang => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item');
+                    li.textContent = lang;
+                    currentLanguagesList.appendChild(li);
+                });
+
+                // Eliminar los idiomas añadidos del select de "Available Languages"
+                Array.from(languagesSelect.options).forEach(option => {
+                    if (data.new_languages.includes(option.textContent)) {
+                        option.remove();
+                    }
+                });
+
+                // Si `show_add_modal` es verdadero, mostrar el modal
+                if (data.show_add_modal) {
+                    const addModal = new bootstrap.Modal(document.getElementById('addModal'));
+                    addModal.show();
+                }
+
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+
+        // Código existente para manejar los modales
         const showUpdateModal = {{ show_update_modal|yesno:"true,false" }};
         const showAddModal = {{ show_add_modal|yesno:"true,false" }};
         const showDeleteModal = {{ show_delete_modal|yesno:"true,false" }};
         
         if (showUpdateModal) {
-            var updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+            const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
             updateModal.show();
         }
 
@@ -622,12 +711,11 @@
         }
 
         if (showDeleteModal) {
-            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }
     });
 </script>
-
 
 <style> 
     .form-container {
