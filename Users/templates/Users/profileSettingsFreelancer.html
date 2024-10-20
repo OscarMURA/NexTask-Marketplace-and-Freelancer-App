@@ -628,11 +628,11 @@
                     {% csrf_token %}
                     <div class="gig-info-card">
                         <div class="gig-info-header d-flex justify-content-between align-items-center">
-                            <h4 class="text-18 fw-semibold text-dark-300">Add Languages</h4>
-                            <button type="submit" class="btn btn-primary" id="save-languages">Save Languages</button>
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Add Languages" %}</h4>
+                            <button type="submit" class="btn btn-primary" id="save-languages">{% trans "Save Languages" %}</button>
                         </div>
                         <div class="gig-info-body bg-white p-3">
-                            <h5>Select Languages to Add:</h5>
+                            <h5>{% trans "Select Languages to Add:" %}</h5>
                             <select multiple name="languages" id="languages-select" class="form-control">
                                 {% for language in all_languages %}
                                     <option value="{{ language.id }}">{{ language.language }}</option>
@@ -646,7 +646,7 @@
                 <!-- Mostrar los idiomas ya registrados del freelancer -->
                 <div class="gig-info-card">
                     <div class="gig-info-header d-flex justify-content-between align-items-center">
-                        <h4 class="text-18 fw-semibold text-dark-300">Current Languages</h4>
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Current Languages" %}</h4>
                     </div>
                     <div class="gig-info-body bg-white p-3">
                         <ul class="list-group" id="current-languages-list">
@@ -655,7 +655,7 @@
                                     <li class="list-group-item">{{ language.language }}</li>
                                 {% endfor %}
                             {% else %}
-                                <li class="list-group-item">You have no languages registered</li>
+                                <li class="list-group-item">{% trans "You have no languages registered" %}</li>
                             {% endif %}
                         </ul>
                     </div>
