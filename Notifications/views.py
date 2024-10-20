@@ -9,30 +9,48 @@ def notification_list(request):
     """
     Displays a list of notifications for the logged-in user based on their user type.
     """
-    notifications = Notification.objects.filter(recipient=request.user)
+    notifications = Notification.objects.filter(recipient=request.user, is_read=True)
+    unread_notifications = Notification.objects.filter(recipient=request.user, is_read=False)
 
     if request.method == 'POST':
-        notification_id = request.POST.get('notification_id')
-        print(f"Intentando eliminar la notificación con ID: {notification_id}")
-        try:
-            notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
-            notification.delete()  # Eliminar la notificación
-            messages.success(request, "Notificación eliminada exitosamente.")
-        except Exception as e:
-            print(f"Error al eliminar la notificación: {e}")
-            messages.error(request, "No se pudo eliminar la notificación.")
+        action = request.POST.get('action')  # Obtener la acción del botón
 
-        return redirect('notification_list')  # Redirigir a la misma vista de notificaciones
+        if action == 'mark_all_as_read':
+            # Marcar todas las notificaciones como leídas
+            unread_notifications.update(is_read=True)  # Actualiza todas las notificaciones no leídas
+            messages.success(request, "Todas las notificaciones han sido marcadas como leídas.")
+        
+        elif action == 'delete_read':
+            # Eliminar todas las notificaciones leídas
+            notifications.delete()  # Elimina todas las notificaciones leídas
+            messages.success(request, "Todas las notificaciones leídas han sido eliminadas.")
+
+        else:
+            notification_id = request.POST.get('notification_id')
+            print(f"Intentando {action} la notificación con ID: {notification_id}")
+            
+            try:
+                notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+                
+                if action == 'mark_as_read':
+                    notification.is_read = True  # Marcar como leída
+                    notification.save()
+                    messages.success(request, "Notificación marcada como leída.")
+                elif action == 'delete':
+                    notification.delete()  # Eliminar la notificación
+                    messages.success(request, "Notificación eliminada exitosamente.")
+                    
+            except Exception as e:
+                print(f"Error al procesar la notificación: {e}")
+                messages.error(request, "No se pudo procesar la notificación.")
+
+        return redirect('notification_list')
 
     # Utiliza el tipo de usuario para redirigir a la plantilla correcta
-    if request.user.is_freelancer:
-        return render(request, 'notifications_list_freelancer.html', {'notifications': notifications})
-    elif request.user.is_client:
-        return render(request, 'notifications_list_client.html', {'notifications': notifications})
-    else:
-        print("hola no debería pasar esto")
-        messages.error(request, "No se pudo determinar el tipo de usuario.")
-        return redirect('home')
+    template_name = 'notifications_list_freelancer.html' if request.user.is_freelancer else 'notifications_list_client.html'
+    return render(request, template_name, {'notifications': notifications, 'unread_notifications': unread_notifications})
+
+
     
 @login_required
 def create_notification(request):
@@ -89,4 +107,4 @@ def mark_as_read(request, notification_id):
     """
     notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
     notification.delete()  # Eliminar la notificación en lugar de solo marcarla
-    return redirect('notification_list')
+    return redirect('notification_list') 

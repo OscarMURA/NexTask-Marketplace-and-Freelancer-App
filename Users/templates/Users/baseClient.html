@@ -552,15 +552,14 @@
                 </button>
               </div>
 
-            <!---- nuevo-->
-
-            <!---- viejo-->
+            <!---- Notificaciones-->
               <div class="dropdown">
                 <button
                   type="button"
+                  class="dashboard-header-btn dropdown-toggle"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
-                  class="dashboard-header-btn dropdown-toggle"
+                  onclick="location.href='{% url 'notification_list' %}'"
                 >
                   <svg
                     width="24"
@@ -575,43 +574,9 @@
                       fill="#06131C"
                     />
                   </svg>
-                  <span class="header-btn-badge">8</span>
                 </button>
-                <div class="dropdown-menu">
-                  <ul class="dashboard-notification">
-                    <li class="notification-item dropdown-item d-flex gap-2">
-                      <div class="notification-bell flex-shrink-0">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M19.5 16.7076L21.4217 18.6292C22.1928 19.4004 22.1928 20.6506 21.4217 21.4217C20.6506 22.1928 19.4004 22.1928 18.6293 21.4217L16.7076 19.5M2 10.5C2 5.80558 5.80558 2 10.5 2C15.1944 2 19 5.80558 19 10.5C19 15.1944 15.1944 19 10.5 19C5.80558 19 2 15.1944 2 10.5Z"
-                            stroke="#06131C"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <p class="text-dark-300">
-                            {% trans "New job proposal Jan 23, 2024" %}
-                        </p>
-                        <span class="text-dark-200 text-14"
-                            >{% trans "10 minutes ago" %}</span
-                        >
-                      </div>
-                    </li>
-                    <!-- Más notificaciones aquí -->
-                  </ul>
-                  <div class="text-center mx-2 mt-2">
-                    <a href="{% url 'notifications_list_client' %}" class="see-notification-btn btn btn-primary">{% trans "See All" %}</a>
-                  </div>
-                </div>
-              </div>
+              </div>                 
+            
 
               <div class="dropdown">
                 <button
