@@ -411,6 +411,13 @@
                 event.preventDefault();
                 sendMessage(conversationId, messageInput, messageForm, messageContainer);
             });
+
+            messageInput.addEventListener('keydown', function(event) {
+                if (event.key === ' ') {
+                    event.preventDefault();  // Prevenir el comportamiento predeterminado del espacio (scroll)
+                    messageInput.value += ' ';  // Añadir el espacio al campo de texto
+                    }
+                });
         }
     
         // Función para enviar el mensaje sin recargar la página
@@ -433,11 +440,12 @@
                 .then(response => response.json())
                 .then(data => {
                     appendMessageToChat(data, conversationId);
-                    messageInput.value = '';
-                    submitButton.disabled = false;
                 })
                 .catch(error => {
                     console.error('Error sending message:', error);
+                })
+                .finally(() => {
+                    messageInput.value = '';
                     submitButton.disabled = false;
                 });
             }
@@ -446,6 +454,7 @@
         // Función para añadir el mensaje al chat actual
         function appendMessageToChat(data, conversationId) {
             const messageContainer = document.getElementById('message-container');
+            const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.scrollTop === messageContainer.clientHeight;
             const currentDate = new Date(data.timestamp);
             const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
             const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
@@ -460,7 +469,10 @@
             }
     
             messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
-            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            if (isScrolledToBottom) {
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
         }
     
         // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
@@ -499,6 +511,9 @@
             .then(data => {
                 const messageContainer = document.getElementById('message-container');
                 if (messageContainer) {
+
+                    const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.scrollTop === messageContainer.clientHeight;
+
                     let lastDate = null;
                     let messagesHtml = '';
     
@@ -519,7 +534,10 @@
                     });
     
                     messageContainer.innerHTML = messagesHtml;
-                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                    // Solo hacer scroll automático si el usuario estaba al final antes de cargar los nuevos mensajes
+                    if (isScrolledToBottom) {
+                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                    }
                 }
             })
             .catch(error => {
