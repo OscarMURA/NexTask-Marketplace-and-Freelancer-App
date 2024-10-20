@@ -351,7 +351,7 @@
         }
 
         function renderEmptyChatWindow(userId) {
-            chatWindow.innerHTML = '<p>Select a conversation to start chatting or search for a user to start a new conversation.</p>';
+            chatWindow.innerHTML = '<p>{% trans "Select a conversation to start chatting or search for a user to start a new conversation." %}</p>';
         }
     
         // Función para renderizar la ventana de chat
@@ -456,9 +456,9 @@
             yesterday.setDate(today.getDate() - 1);
     
             if (date.toDateString() === today.toDateString()) {
-                return 'Today';
+                return '{% trans "Today" %}';
             } else if (date.toDateString() === yesterday.toDateString()) {
-                return 'Yesterday';
+                return '{% trans "Yesterday" %}';
             } else {
                 return date.toLocaleDateString();
             }
