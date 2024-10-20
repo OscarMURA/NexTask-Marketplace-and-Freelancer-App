@@ -103,6 +103,7 @@ class Milestone(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="milestones")
     title = models.CharField(max_length=255)
     description = QuillField()  # Description of the milestone
+    start_date = models.DateField()  # Start date of the milestone
     due_date = models.DateField()  # Due date of the milestone
     file = models.FileField(upload_to='milestone_files/', null=True, blank=True)  # Optional file associated with the milestone
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='development')
@@ -145,6 +146,7 @@ class Task(models.Model):
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=255)
     description = QuillField()  # Description of the task
+    start_date = models.DateField()  # Start date of the task
     due_date = models.DateField()  # Due date of the task
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')  # Priority of the task
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pending')  # Status of the task

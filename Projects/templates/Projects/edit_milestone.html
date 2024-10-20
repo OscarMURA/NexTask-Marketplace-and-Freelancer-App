@@ -45,6 +45,16 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            <!-- Fecha de inicio -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_start_date" class="form-label">{% trans "Start Date" %} <span class="text-lime-300">*</span></label>
+                                    {{ form.start_date }}  <!-- Campo de la fecha de inicio -->
+                                    {% if form.start_date.errors %}
+                                        <div class="error text-danger">{{ form.start_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
                             <!-- Fecha de vencimiento -->
                             <div class="col-md-6">
                                 <div class="form-container">
@@ -125,6 +135,7 @@
 
 <script>
     document.querySelector('form').addEventListener('submit', function(event) {
+        const startDate = new Date(document.getElementById('id_start_date').value);
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
         const title = document.getElementById('id_title').value.trim();
@@ -145,6 +156,18 @@
         // Validación del título del hito (máximo 75 caracteres)
         if (title.length > maxTitleLength) {
             titleError.textContent = `The milestone title cannot exceed ${maxTitleLength} characters.`;
+            isValid = false;
+        }
+
+        // Validación de la fecha de inicio (no debe ser en el pasado)
+        if (startDate < today) {
+            alert('The start date cannot be in the past.');
+            isValid = false;
+        }
+
+        // Validación de la fecha de vencimiento (no debe ser anterior o igual a la fecha de inicio)
+        if (dueDate <= startDate) {
+            alert('The due date must be after the start date.');
             isValid = false;
         }
 

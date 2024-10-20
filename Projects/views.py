@@ -20,6 +20,8 @@ from django.contrib import messages
 from django.utils import timezone
 from Comments.forms import CommentForm
 from Comments.models import Comment
+from django.http import HttpRequest, HttpResponse
+import random
 
 def create_project(request):
     """
@@ -52,7 +54,7 @@ def create_project(request):
 
     return render(request, 'Projects/createProject.html', {'form': form})
 
-def home_client(request):
+def home_client(request: HttpRequest) -> HttpResponse:
     """
     Display the home page for the client.
 
@@ -65,31 +67,64 @@ def home_client(request):
     Returns:
         HttpResponse: Renders the 'homeClient.html' template with projects and budget context.
     """
-    client_profile = request.user.clientprofile  # Assuming the user has a client profile
-    projects = client_profile.projects.all()  # Get all projects associated with the client
-    total_projects = projects.count()  # Total number of projects
-    total_balance = client_profile.get_total_budget()  # Total budget
+    client_profile = request.user.clientprofile
+    projects = client_profile.projects.all()
+    total_projects = projects.count()
+    total_balance = client_profile.get_total_budget()
+
+    # Lista de colores para asignar a los proyectos
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
+
+    # Creación de eventos con colores asignados
+    events = [
+        {
+            'title': project.title,
+            'start': project.start_date.isoformat(),
+            'end': project.due_date.isoformat(),
+            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+        }
+        for project in projects
+    ]
 
     return render(request, 'Projects/homeClient.html', {
         'projects': projects,
         'total_projects': total_projects,
         'total_balance': total_balance,
+        'events_json': events,
     })
 
+@login_required
 def project_detail(request, project_id):
     """
-    Retrieve and display the details of a specific project.
-
-    Uses the project ID to get the project from the database and renders it 
-    in the 'project_detail.html' template.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        project_id (int): The ID of the project to be retrieved.
-
-    Returns:
-        HttpResponse: Renders the 'project_detail.html' template with the project context.
+    Retrieve and display the details of a specific project along with its milestones and tasks.
     """
+    project = get_object_or_404(Project, pk=project_id)
+    milestones = project.milestones.all()
+    # Puedes agregar aquí la lógica de tareas si quieres mostrar también las tareas dentro de los hitos
+    tasks = Task.objects.filter(milestone__project=project)
+
+    # Lista de colores para los hitos
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
+
+    # Lógica para renderizar los hitos en FullCalendar
+    timeline_data = [
+        {
+            'title': milestone.title,
+            'start': milestone.start_date.isoformat(),  # Use ISO format for the date
+            'end': milestone.due_date.isoformat(),  # Also convert due date to ISO format
+            'milestone': milestone.title,
+            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+        }
+        for milestone in milestones
+    ]
+    
+    context = {
+        'project': project,
+        'timeline_data': timeline_data,
+        'milestones': milestones,
+        'tasks': tasks,  # Si es necesario mostrar las tareas asociadas
+    }
+    return render(request, 'Projects/project_detail.html', context)
     project = get_object_or_404(Project, id=project_id)
     milestones = project.milestones.all().filter(is_deleted=False)
 
@@ -224,6 +259,32 @@ def milestone_detail_view(request, pk):
         HttpResponse: Renders the 'milestone_detail.html' template with the milestone context.
     """
     milestone = get_object_or_404(Milestone, pk=pk)
+    tasks = milestone.tasks.all()
+    # Asignar colores basados en el estado de la tarea
+    color_map = {
+        'pending': '#FFC107',  # Amarillo para tareas pendientes
+        'in_progress': '#007BFF',  # Azul para tareas en progreso
+        'completed': '#28A745',  # Verde para tareas completadas
+    }
+
+    # Datos para FullCalendar
+    timeline_data = [
+        {
+            'title': task.title,
+            'start': task.start_date.isoformat(),
+            'end': task.due_date.isoformat() if task.due_date else task.start_date.isoformat(),
+            'description': task.title,
+            'color': color_map.get(task.status, '#378006'),  # Asignar color según el estado o usar uno por defecto
+        }
+        for task in tasks
+    ]
+    
+    context = {
+        'milestone': milestone,
+        'tasks': tasks,
+        'timeline_data': timeline_data,
+    }
+    return render(request, 'Projects/milestone_detail.html', context)
     tasks = milestone.tasks.all().filter(is_deleted=False)
     return render(request, 'Projects/milestone_detail.html', {'milestone': milestone, 'tasks': tasks})
 

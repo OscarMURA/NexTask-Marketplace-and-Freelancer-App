@@ -341,9 +341,6 @@
                 </div>
               </div>                                      
             </div>
-
-
-
           </div>
         </div>
       </div>
@@ -352,8 +349,32 @@
       {% endfor %}
     </div>
   </div>
+
+  <!-- Sección de la línea de tiempo de tareas -->
+  <div id="task-timeline"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" />
   
-
-
-
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          var calendarEl = document.getElementById('task-timeline');
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+              initialView: 'dayGridMonth',
+              events: [
+                  {% for task in timeline_data %}
+                  {
+                      title: '{{ task.title }}',
+                      start: '{{ task.start }}',  // Use start_date
+                      end: '{{ task.end }}',  // Use due_date
+                      description: '{{ task.milestone }}',
+                      color: '{{ task.color }}',
+                  },
+                  {% endfor %}
+              ],
+              eventDisplay: 'block',
+          });
+          calendar.render();
+      });
+  </script>
 {% endblock %}

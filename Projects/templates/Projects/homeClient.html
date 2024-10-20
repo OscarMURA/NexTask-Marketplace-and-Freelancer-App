@@ -2,6 +2,12 @@
 
 {% block content %}
 {% block trans %}<title>{% trans "Client Dashboard" %}</title>{% endblock %}
+
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css' rel='stylesheet' />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css' rel='stylesheet' />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js'></script>
+
 <!-- Page Header -->
 <div
   class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
@@ -193,20 +199,27 @@
                 </div>
               </div>                                      
             </div>
-            
-
-
-
-
-
           </div>
         </div>
       </div>
-
-
       {% empty %}
       <p class="text-center w-100">{% trans "No projects available." %}</p>
       {% endfor %}
+
+      <!-- Línea de tiempo -->
+      <div id='calendar'></div>
+
+      <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var calendarEl = document.getElementById('calendar');
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+              plugins: ['dayGrid'],
+              initialView: 'dayGridMonth',
+              events: {{ events_json|safe }},
+          });
+          calendar.render();
+      });
+      </script>
     </div>
 </div>
 
