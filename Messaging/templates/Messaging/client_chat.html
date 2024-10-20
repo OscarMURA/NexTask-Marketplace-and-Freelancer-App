@@ -1,5 +1,7 @@
 {% extends 'Users/baseClient.html' %}
 {% load static %}
+{% load i18n %}
+
 
 {% block content %}
 <style>
@@ -156,12 +158,25 @@
     #message-form button:hover {
         background-color: #0056b3;
     }
+
+    .custom-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .custom-button:hover {
+        background-color: #0056b3;
+    }
 </style>
 
 <div class="chat-layout">
     <!-- Lista de Usuarios Disponibles -->
     <div class="conversation-list">
-        <input type="text" id="search" placeholder="Search chats or users.">
+        <input type="text" id="search" placeholder="{% trans 'Search chats or users.' %}">
         <ul id="user-results">
             <!-- Los resultados de la búsqueda de usuarios se mostrarán aquí dinámicamente -->
         </ul>
@@ -381,8 +396,8 @@
             messagesHtml += `
                 <form id="message-form" method="post">
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                    <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
-                    <button type="submit">Enviar</button>
+                    <input type="text" id="message-input" placeholder="{% trans 'Type a message...' %}" autocomplete="off">
+                    <button type="submit" class="custom-button">{% trans 'Send' %}</button>
                 </form>
             `;
     
