@@ -17,7 +17,9 @@ from Projects.models import Application
 from django.utils.translation import gettext as _
 from django_countries import countries
 from django.http import JsonResponse
-
+from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from urllib.parse import urlencode  # Importa urlencode para agregar parámetros a la URL
 
 
 
@@ -463,9 +465,10 @@ def profile_settings_freelancer(request):
     print("Idiomas registrados: ", [lang.language for lang in languages])
     print("Idiomas para añadir: ", [lang.language for lang in all_languages])
 
-    show_update_modal = False
-    show_add_modal = False
-    show_delete_modal = False
+    show_add_modal = request.session.pop('show_add_modal', False)
+    show_delete_modal = request.session.pop('show_delete_modal', False)
+    show_update_modal = request.session.pop('show_update_modal', False)
+
 
     if request.method == 'POST':
         if request.headers.get('x-requested-with') == 'XMLHttpRequest' and 'add_languages' in request.POST:
@@ -523,7 +526,9 @@ def profile_settings_freelancer(request):
                     description=request.POST.get('new_description')
                 )
                 new_education.save()  # Save new education record
-                show_add_modal = True
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
 
         elif 'delete_education' in request.POST:
             # Delete education record
@@ -531,7 +536,10 @@ def profile_settings_freelancer(request):
             try:
                 education = Education.objects.get(id=education_id, freelancer=freelancer)
                 education.delete()  # Delete the education record
-                show_delete_modal = True
+
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+                
             except Education.DoesNotExist:
                 messages.error(request, 'The education record could not be found.')  # Error message
 
@@ -547,7 +555,9 @@ def profile_settings_freelancer(request):
                     short_description=request.POST.get('new_certification_description')
                 )
                 new_certification.save()  # Save new certification
-                show_add_modal = True
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
 
 
         elif 'delete_certification' in request.POST:
@@ -556,7 +566,10 @@ def profile_settings_freelancer(request):
             try:
                 certification = Certification.objects.get(id=certification_id, freelancer=freelancer)
                 certification.delete()  # Delete the certification
-                show_delete_modal = True
+                
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+
             except Certification.DoesNotExist:
                 messages.error(request, 'The certification could not be found.')  # Error message
 
@@ -572,7 +585,9 @@ def profile_settings_freelancer(request):
                     description=request.POST.get('new_experience_description')
                 )
                 new_experience.save()  # Save new work experience
-                show_add_modal = True
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
 
         elif 'delete_experience' in request.POST:
             # Delete work experience
@@ -580,7 +595,10 @@ def profile_settings_freelancer(request):
             try:
                 experience = WorkExperience.objects.get(id=experience_id, freelancer=freelancer)
                 experience.delete()  # Delete the work experience
-                show_delete_modal = True
+                
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+
 
             except WorkExperience.DoesNotExist:
                 messages.error(request, 'The work experience could not be found.')  # Error message
@@ -594,7 +612,10 @@ def profile_settings_freelancer(request):
                     description=request.POST.get('new_portfolio_description')
                 )
                 new_portfolio.save()  # Save new portfolio entry
-                show_add_modal = True
+                
+                request.session['show_add_modal'] = True
+                return redirect('profile_settings_freelancer')
+
 
         elif 'delete_portfolio' in request.POST:
             # Delete portfolio entry
@@ -602,7 +623,10 @@ def profile_settings_freelancer(request):
             try:
                 portfolio = Portfolio.objects.get(id=portfolio_id, freelancer=freelancer)
                 portfolio.delete()  # Delete the portfolio entry
-                show_delete_modal = True
+
+                request.session['show_delete_modal'] = True
+                return redirect('profile_settings_freelancer')
+
             except Portfolio.DoesNotExist:
                 messages.error(request, 'The portfolio entry could not be found.')  # Error message
         

@@ -282,6 +282,8 @@
                                             <textarea class="form-control shadow-none" rows="3" readonly>{{ education.description }}</textarea>
                                         </div>
                                     </div>
+
+
                                     <!-- Botón de eliminar educación -->
                                     <div class="col-md-12">
                                         <form method="post">
@@ -289,6 +291,11 @@
                                             <input type="hidden" name="delete_education" value="{{ education.id }}">
                                             <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
+                                    </div>
+
+                                    <!-- Separador entre registros -->
+                                    <div class="col-md-12 record-separator">
+                                        <hr> <!-- Línea separadora para cada registro -->
                                     </div>
                                 {% endfor %}
                             {% else %}
@@ -391,6 +398,11 @@
                                             <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
                                     </div>
+
+                                    <!-- Separador entre registros -->
+                                    <div class="col-md-12 record-separator">
+                                        <hr> <!-- Línea separadora para cada registro -->
+                                    </div>
                                 {% endfor %}
                             {% else %}
                                 <p>{% trans "No certifications found." %}</p>
@@ -492,6 +504,12 @@
                                             <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
                                     </div>
+
+                                    <!-- Separador entre registros -->
+                                    <div class="col-md-12 record-separator">
+                                        <hr> <!-- Línea separadora para cada registro -->
+                                    </div>
+
                                 {% endfor %}
                             {% else %}
                                 <p>{% trans "No work experience found." %}</p>
@@ -556,6 +574,11 @@
                                             <input type="hidden" name="delete_portfolio" value="{{ portfolio.id }}">
                                             <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
                                         </form>
+                                    </div>
+
+                                    <!-- Separador entre registros -->
+                                    <div class="col-md-12 record-separator">
+                                        <hr> <!-- Línea separadora para cada registro -->
                                     </div>
                                 {% endfor %}
                             {% else %}
@@ -807,6 +830,10 @@
 
 .btn-primary:hover {
     background-color: #45a049; /* Color al pasar el ratón */
+}
+
+.record-separator {
+    margin-bottom: 20px; /* Espaciado entre registros */
 }
 </style>
 
