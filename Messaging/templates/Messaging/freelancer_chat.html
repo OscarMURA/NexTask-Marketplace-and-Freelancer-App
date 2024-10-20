@@ -289,6 +289,8 @@
                 event.preventDefault();
     
                 const conversationId = link.getAttribute('data-conversation-id');
+                const userId = link.getAttribute('data-user-id');
+
                 if (conversationId) {
                     loadExistingConversation(conversationId);  // Cargar los mensajes de la conversación activa
                 }
@@ -337,6 +339,10 @@
             .catch(error => {
                 console.error('Error iniciando una nueva conversación:', error);
             });
+        }
+
+        function renderEmptyChatWindow(userId) {
+            chatWindow.innerHTML = '<p>Selecciona una conversación para comenzar a chatear o busca un usuario para iniciar una nueva conversación.</p>';
         }
     
         // Función para renderizar la ventana de chat
