@@ -9,8 +9,12 @@
             <div class="container bg-white rounded-3 p-3">
                 <h2 class="section-title mb-2">{% trans "Portfolio Register" %}</h2>
 
-                <div id="error-message" class="error-message" style="display: none;">
-                    Por favor, rellena todos los campos obligatorios antes de continuar.
+                <!-- Modal for error messages -->
+                <div id="error-popup" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close-btn">&times;</span>
+                        <p id="error-popup-message">Error message will appear here.</p>
+                    </div>
                 </div>
                 
                 <form method="POST" id="portfolioForm">
@@ -50,157 +54,180 @@
     </div>
 
     <script>
-        // Función para verificar si todos los formularios visibles están completos
-// Función para mostrar el mensaje de error en el formulario
-function showErrorMessage(message) {
-    let errorMessageDiv = document.getElementById('error-message');
-    console.log("Error message div found:", errorMessageDiv);
-    errorMessageDiv.textContent = message;
-    errorMessageDiv.style.display = 'block';  // Ensure the message is shown
-    errorMessageDiv.classList.add('show');
-    
-    // Automatically hide the message after 3 seconds (3000 milliseconds)
-    setTimeout(function() {
-        hideErrorMessage();
-    }, 3000);
-}
 
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('skip-all-btn').onclick = function() {
+                window.location.href = "{% url 'home_freelancer' %}";
+            };
+        });
+    // Function to show the popup message
+    function showPopupMessage(message) {
+        let popup = document.getElementById('error-popup');
+        let popupMessage = document.getElementById('error-popup-message');
+        
+        popupMessage.textContent = message;
+        popup.style.display = 'block';  // Show the modal pop-up
+        
+        // Automatically hide the popup after 3 seconds
+        setTimeout(function() {
+            hidePopupMessage();
+        }, 3000);
+    }
 
-// Función para ocultar el mensaje de error
-function hideErrorMessage() {
-    let errorMessageDiv = document.getElementById('error-message');
-    errorMessageDiv.classList.remove('show');
-}
+    // Function to hide the popup message
+    function hidePopupMessage() {
+        let popup = document.getElementById('error-popup');
+        popup.style.display = 'none';  // Hide the modal
+    }
 
-// Función para verificar si todos los formularios visibles están completos
-function areFormsComplete() {
-    let forms = document.querySelectorAll('.dynamic-form');
-    let allFormsComplete = true;
+    // Event listener for the close button
+    document.querySelector('.close-btn').onclick = function() {
+        hidePopupMessage();
+    };
 
-    forms.forEach(function(form, formIndex) {
-        let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
-        let isFormComplete = true;
+    // Function to verify if all forms are complete
+    function areFormsComplete() {
+        let forms = document.querySelectorAll('.dynamic-form');
+        let allFormsComplete = true;
 
-        inputs.forEach(function(input, inputIndex) {
-            console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`);
+        forms.forEach(function(form, formIndex) {
+            let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
+            let isFormComplete = true;
 
-            if (input.value.trim() === "") {
-                isFormComplete = false;
+            inputs.forEach(function(input, inputIndex) {
+                console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`);
+
+                if (input.value.trim() === "") {
+                    isFormComplete = false;
+                }
+            });
+
+            if (!isFormComplete) {
+                allFormsComplete = false;
             }
         });
 
-        if (!isFormComplete) {
-            allFormsComplete = false;
+        console.log("Forms complete status:", allFormsComplete);
+        return allFormsComplete;
+    }
+
+    // Handle adding more forms
+    document.getElementById('add-more-portfolio').onclick = function(e) {
+        e.preventDefault();
+
+        if (!areFormsComplete()) {
+            showPopupMessage("Por favor, rellena todos los formularios antes de añadir más.");
+            return;
+        }
+
+        hidePopupMessage();  // Hide the popup if everything is correct
+
+        let formContainer = document.getElementById('portfolio-form-container');
+        let totalFormsInput = document.querySelector('#id_portfolio_set-TOTAL_FORMS');
+        let totalForms = parseInt(totalFormsInput.value);
+
+        let newForm = formContainer.children[0].cloneNode(true);
+        newForm.innerHTML = newForm.innerHTML.replace(/portfolio_set-(\d+)-/g, `portfolio_set-${totalForms}-`);
+        let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
+        inputs.forEach(input => input.value = ''); // Clear input values
+
+        formContainer.appendChild(newForm);
+        totalFormsInput.value = totalForms + 1;
+    };
+
+    // Validate the form when "Next" or "Submit" is pressed
+    document.getElementById('portfolioForm').onsubmit = function(e) {
+        if (!e.submitter || e.submitter.name !== "skip") {
+            if (!areFormsComplete()) {
+                e.preventDefault();
+                showPopupMessage("Por favor, completa todos los formularios antes de continuar.");
+            } else {
+                hidePopupMessage();
+            }
+        }
+    };
+
+    // Handle form deletion
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('delete-form-btn')) {
+            let formToDelete = e.target.closest('.dynamic-form');
+            formToDelete.remove();
+
+            let totalFormsInput = document.querySelector('#id_portfolio_set-TOTAL_FORMS');
+            totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
         }
     });
-
-    console.log("Forms complete status:", allFormsComplete);
-    return allFormsComplete;
-}
-
-// Manejar la adición de más formularios
-document.getElementById('add-more-portfolio').onclick = function(e) {
-    e.preventDefault();
-
-    if (!areFormsComplete()) {
-        showErrorMessage("Por favor, rellena todos los formularios antes de añadir más.");
-        return;
-    }
-
-    hideErrorMessage();
-
-    let formContainer = document.getElementById('portfolio-form-container');
-    let totalFormsInput = document.querySelector('#id_portfolio_set-TOTAL_FORMS');
-    let totalForms = parseInt(totalFormsInput.value);
-
-    let newForm = formContainer.children[0].cloneNode(true);
-    newForm.innerHTML = newForm.innerHTML.replace(/portfolio_set-(\d+)-/g, `portfolio_set-${totalForms}-`);
-    let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
-    inputs.forEach(input => input.value = '');
-
-    formContainer.appendChild(newForm);
-    totalFormsInput.value = totalForms + 1;
-};
-
-// Validar el formulario al presionar "Next" o "Submit"
-document.getElementById('portfolioForm').onsubmit = function(e) {
-    if (!e.submitter || e.submitter.name !== "skip") {
-        if (!areFormsComplete()) {
-            e.preventDefault();
-            showErrorMessage("Por favor, completa todos los formularios antes de continuar.");
-        } else {
-            hideErrorMessage();
-        }
-    }
-};
-
-// Manejar la eliminación de formularios
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('delete-form-btn')) {
-        let formToDelete = e.target.closest('.dynamic-form');
-        formToDelete.remove();
-
-        let totalFormsInput = document.querySelector('#id_portfolio_set-TOTAL_FORMS');
-        totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
-    }
-});
-
     </script>
-    
 
     <style>
-        /* Botón Añadir más portafolio (verde oscuro) */
+        /* Button Add More (dark green) */
         .w-btn-plus-lg-dark-green {
-            background-color: #006400; /* Verde oscuro */
+            background-color: #006400;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
-            cursor: pointer;
         }
 
-        /* Botones Omitir y Atrás (contorno gris) */
+        /* Outline Buttons (grey) */
         .w-btn-outline-grey {
             border: 2px solid grey;
             color: grey;
             background-color: transparent;
             padding: 10px 20px;
             border-radius: 5px;
-            text-decoration: none;
             text-align: center;
-            cursor: pointer;
         }
 
         .w-btn-outline-grey:hover {
             background-color: #f0f0f0;
         }
 
-        /* Botón Siguiente (morado) */
+        /* Button Next (purple) */
         .w-btn-secondary-lg {
-            background-color: #6a0dad; /* Morado */
+            background-color: #6a0dad;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
-            cursor: pointer;
         }
 
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #f5c6cb;
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
             border-radius: 5px;
             text-align: center;
-            font-size: 16px;
-        }
-    
-        .error-message.show {
-            display: block;
         }
 
+        /* Close Button */
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
 
-
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 {% endblock %}
