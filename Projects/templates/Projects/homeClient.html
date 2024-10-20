@@ -2,6 +2,12 @@
 
 {% block content %}
 {% block trans %}<title>{% trans "Client Dashboard" %}</title>{% endblock %}
+
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css' rel='stylesheet' />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css' rel='stylesheet' />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js'></script>
+
 <!-- Page Header -->
 <div
   class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
@@ -12,10 +18,13 @@
       <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
     </ul>
   </div>
-  <div>
+  <div> 
+    <div class="button-group">
     <a href="{% url 'createProject' %}" class="w-btn-secondary-lg">
       {% trans "Create Project" %}</a>
-    
+      <a href="{% url 'deleted_projects' %}" class="w-btn-secondary-lg">
+        {% trans "See deleted projects" %}</a>
+    </div>
   </div>
 </div>
 <div class="row">
@@ -170,7 +179,7 @@
                           </svg>
                         </span>
                         <h4 class="text-18 fw-normal text-center mb-2">
-                            {% trans "Are you sure you want to delete the project “{{ project.title }}”?" %}
+                            {% trans "Are you sure you want to delete the project"  %} “{{ project.title }}”  ?
                         </h4>
                         <div class="d-flex gap-3 mt-30">
                           <!-- Formulario para eliminar el proyecto -->
@@ -190,21 +199,41 @@
                 </div>
               </div>                                      
             </div>
-            
-
-
-
-
-
           </div>
         </div>
       </div>
-
-
       {% empty %}
       <p class="text-center w-100">{% trans "No projects available." %}</p>
       {% endfor %}
+
+      
     </div>
+</div>
+
+
+<div class="projects-section container">
+  <div class="row justify-content-center">
+    <div class="gig-info-body bg-white">
+
+
+<!-- Sección de la línea de tiempo de tareas -->
+    <!-- Línea de tiempo -->
+    <div id='calendar'></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid'],
+            initialView: 'dayGridMonth',
+            events: {{ events_json|safe }},
+        });
+        calendar.render();
+    });
+    </script>
+
+    </div>
+  </div>
 </div>
 
 

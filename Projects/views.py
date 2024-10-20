@@ -1,5 +1,7 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+
+from Notifications.models import Notification
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
 
@@ -13,10 +15,14 @@ from Users.models import FreelancerProfile, Skill, Language
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
+from django.utils import timezone
 from Comments.forms import CommentForm
 from Comments.models import Comment
+from django.http import HttpRequest, HttpResponse
+import random
+
 def create_project(request):
     """
     Create a new project.
@@ -48,7 +54,7 @@ def create_project(request):
 
     return render(request, 'Projects/createProject.html', {'form': form})
 
-def home_client(request):
+def home_client(request: HttpRequest) -> HttpResponse:
     """
     Display the home page for the client.
 
@@ -61,33 +67,71 @@ def home_client(request):
     Returns:
         HttpResponse: Renders the 'homeClient.html' template with projects and budget context.
     """
-    client_profile = request.user.clientprofile  # Assuming the user has a client profile
-    projects = client_profile.projects.all()  # Get all projects associated with the client
-    total_projects = projects.count()  # Total number of projects
-    total_balance = client_profile.get_total_budget()  # Total budget
+    client_profile = request.user.clientprofile
+    projects = client_profile.projects.all()
+    total_projects = projects.count()
+    total_balance = client_profile.get_total_budget()
+
+    # Lista de colores para asignar a los proyectos
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
+
+    # Creación de eventos con colores asignados
+    events = [
+        {
+            'title': project.title,
+            'start': project.start_date.isoformat(),
+            'end': project.due_date.isoformat(),
+            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+        }
+        for project in projects
+    ]
 
     return render(request, 'Projects/homeClient.html', {
         'projects': projects,
         'total_projects': total_projects,
         'total_balance': total_balance,
+        'events_json': events,
     })
 
+@login_required
 def project_detail(request, project_id):
     """
-    Retrieve and display the details of a specific project.
-
-    Uses the project ID to get the project from the database and renders it 
-    in the 'project_detail.html' template.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        project_id (int): The ID of the project to be retrieved.
-
-    Returns:
-        HttpResponse: Renders the 'project_detail.html' template with the project context.
+    Retrieve and display the details of a specific project along with its milestones and tasks.
     """
+    project = get_object_or_404(Project, pk=project_id)
+    milestones = project.milestones.all()
+    # Puedes agregar aquí la lógica de tareas si quieres mostrar también las tareas dentro de los hitos
+    tasks = Task.objects.filter(milestone__project=project)
+
+    # Lista de colores para los hitos
+    colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
+
+    # Lógica para renderizar los hitos en FullCalendar
+    timeline_data = [
+        {
+            'title': milestone.title,
+            'start': milestone.start_date.isoformat(),  # Use ISO format for the date
+            'end': milestone.due_date.isoformat(),  # Also convert due date to ISO format
+            'milestone': milestone.title,
+            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+        }
+        for milestone in milestones
+    ]
+    
+    context = {
+        'project': project,
+        'timeline_data': timeline_data,
+        'milestones': milestones,
+        'tasks': tasks,  # Si es necesario mostrar las tareas asociadas
+    }
+    return render(request, 'Projects/project_detail.html', context)
     project = get_object_or_404(Project, id=project_id)
-    return render(request, 'Projects/project_detail.html', {'project': project})
+    milestones = project.milestones.all().filter(is_deleted=False)
+
+    return render(request, 'Projects/project_detail.html', {
+        'project': project,
+        'milestones': milestones,
+    })
 
 def edit_project(request, project_id):
     """
@@ -135,7 +179,8 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     if request.method == "POST":
-        project.delete()
+        project.is_deleted = True
+        project.save()
         messages.success(request, "Proyecto eliminado exitosamente")
         return redirect('home_client') 
 
@@ -214,7 +259,34 @@ def milestone_detail_view(request, pk):
         HttpResponse: Renders the 'milestone_detail.html' template with the milestone context.
     """
     milestone = get_object_or_404(Milestone, pk=pk)
-    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})
+    tasks = milestone.tasks.all()
+    # Asignar colores basados en el estado de la tarea
+    color_map = {
+        'pending': '#FFC107',  # Amarillo para tareas pendientes
+        'in_progress': '#007BFF',  # Azul para tareas en progreso
+        'completed': '#28A745',  # Verde para tareas completadas
+    }
+
+    # Datos para FullCalendar
+    timeline_data = [
+        {
+            'title': task.title,
+            'start': task.start_date.isoformat(),
+            'end': task.due_date.isoformat() if task.due_date else task.start_date.isoformat(),
+            'description': task.title,
+            'color': color_map.get(task.status, '#378006'),  # Asignar color según el estado o usar uno por defecto
+        }
+        for task in tasks
+    ]
+    
+    context = {
+        'milestone': milestone,
+        'tasks': tasks,
+        'timeline_data': timeline_data,
+    }
+    return render(request, 'Projects/milestone_detail.html', context)
+    tasks = milestone.tasks.all().filter(is_deleted=False)
+    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone, 'tasks': tasks})
 
 def delete_milestone(request, milestone_id):
     """
@@ -232,12 +304,12 @@ def delete_milestone(request, milestone_id):
         HttpResponse: Redirects to the project detail page after deletion.
     """
     milestone = get_object_or_404(Milestone, id=milestone_id)
-    project_id = milestone.project.id
 
     if request.method == "POST":
-        milestone.delete()
+        milestone.is_deleted = True
+        milestone.save()
         messages.success(request, "Milestone eliminado exitosamente")
-        return redirect('project_detail', project_id=project_id)
+        return redirect('project_detail', project_id=milestone.project.id)
 
     return redirect(reverse('home_client'))
 
@@ -335,14 +407,14 @@ def delete_task(request, task_id):
         HttpResponse: Redirects to the milestone detail page after deletion.
     """
     task = get_object_or_404(Task, id=task_id)
-    milestone_id = task.milestone.id
 
     if request.method == 'POST':
-        task.delete()
-        messages.success(request, "Task deleted successfully.")
-        return redirect('milestone_detail', pk=milestone_id)
+        task.is_deleted = True
+        task.save()
+        messages.success(request, "Tarea eliminada exitosamente.")
+        return redirect('milestone_detail', pk=task.milestone.id)
 
-    return redirect('milestone_detail', pk=milestone_id)
+    return redirect('milestone_detail', pk=task.milestone.id)
 
 def task_detail(request, task_id):
     """
@@ -823,6 +895,19 @@ def manage_applications_freelancer(request):
             if not Contract.objects.filter(project=application.project, freelancer=application.freelancer).exists():
                 # Create the contract
                 Contract.objects.create(project=application.project, freelancer=application.freelancer)
+
+                # Obtener el nombre y apellido del usuario que acepta la aplicación
+                accepting_user = request.user  # El usuario que acepta la aplicación
+
+                # Crear la notificación para el cliente
+                Notification.objects.create(
+                    recipient=application.project.client.user,  # Suponiendo que 'user' es el campo que representa al cliente
+                    message=f"Tu aplicación para el proyecto '{application.project.title}' ha sido aceptada por {accepting_user.first_name} {accepting_user.last_name}.",
+                    created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
+                )
+                print("Notificación creada con éxito")  # Mensaje de depuración
+                print("-----------------------------")
+
             else:
                 # Notify that the contract already exists (implement as desired)
                 pass
@@ -915,3 +1000,136 @@ def handle_comments(request, task, user):
         'page_obj': comments_paginated,
         'is_paginated': comments_paginated.has_other_pages(),
     }
+    
+def restore_project(request, project_id):
+    """
+    Restaura un proyecto eliminado.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id, is_deleted=True)
+
+    if request.method == "POST":
+        project.is_deleted = False
+        project.save()
+        messages.success(request, "Proyecto restaurado exitosamente")
+        return redirect('home_client') 
+
+    return redirect(reverse('deleted_projects'))
+
+def permanently_delete_project(request, project_id):
+    """
+    Elimina permanentemente un proyecto.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id, is_deleted=True)
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, "Proyecto eliminado permanentemente")
+        return redirect('deleted_projects') 
+
+    return redirect(reverse('deleted_projects'))
+
+def deleted_projects(request):
+    """
+    Muestra una lista de proyectos eliminados.
+    """
+    client_profile = request.user.clientprofile
+    deleted_projects = Project.all_objects.filter(client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_projects.html', {
+        'deleted_projects': deleted_projects,
+    })
+
+#@user_passes_test(is_client)
+@login_required
+def deleted_milestones(request, project_id):
+    """
+    Displays a list of deleted milestones.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id)
+    client_profile = request.user.clientprofile
+    deleted_milestones = Milestone.all_objects.filter(project__client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_milestones.html', {
+        'deleted_milestones': deleted_milestones,
+        'project': project,	
+    })
+
+@login_required
+def restore_milestone(request, milestone_id):
+    """
+    Restores a deleted milestone.
+    """
+    milestone = get_object_or_404(Milestone.all_objects, id=milestone_id, is_deleted=True)
+    project = get_object_or_404(Project.all_objects, id=milestone.project.id)
+
+    if request.method == "POST":
+        milestone.is_deleted = False
+        milestone.save()
+        messages.success(request, ("Milestone restored successfully"))
+        return redirect('deleted_milestones', project_id=project.id)
+
+    return redirect('deleted_milestones', project_id=project.id)
+  # O 'projects:deleted_milestones' si usas namespace
+
+@login_required
+def permanently_delete_milestone(request, milestone_id):
+    """
+    Permanently deletes a milestone.
+    """
+    milestone = get_object_or_404(Milestone.all_objects, id=milestone_id, is_deleted=True)
+    project = get_object_or_404(Project.all_objects, id=milestone.project.id)
+    if request.method == "POST":
+        milestone.delete()
+        messages.warning(request, ("Milestone permanently deleted"))
+        return redirect('deleted_milestones', project_id=project.id) # O 'projects:deleted_milestones' si usas namespace
+
+    return redirect('deleted_milestones', project_id=project.id)  # O 'projects:deleted_milestones' si usas namespace
+
+# ----------------------------
+# Vistas para Tareas
+# ----------------------------
+
+@login_required
+def deleted_tasks(request, milestone_id):
+    """
+    Displays a list of deleted tasks.
+    """
+    milestone = get_object_or_404(Milestone.all_objects,id= milestone_id)
+    client_profile = request.user.clientprofile
+    deleted_tasks = Task.all_objects.filter(milestone__project__client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_tasks.html', {
+        'deleted_tasks': deleted_tasks,
+        'milestone': milestone,
+    })
+
+@login_required
+def restore_task(request, task_id):
+    """
+    Restores a deleted task.
+    """
+    task = get_object_or_404(Task.all_objects, id=task_id, is_deleted=True)
+    milestone = get_object_or_404(Milestone.all_objects,id= task.milestone.id)
+
+    if request.method == "POST":
+        task.is_deleted = False
+        task.save()
+        messages.success(request, ("Task restored successfully"))
+        return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
+
+    return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
+
+@login_required
+def permanently_delete_task(request, task_id):
+    """
+    Permanently deletes a task.
+    """
+    task = get_object_or_404(Task.all_objects, id=task_id, is_deleted=True)
+    milestone = get_object_or_404(Milestone.all_objects,id= task.milestone.id)
+
+    if request.method == "POST":
+        task.delete()
+        messages.warning(request, ("Task permanently deleted"))
+        return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
+
+    return redirect('deleted_tasks',milestone_id=milestone.id)

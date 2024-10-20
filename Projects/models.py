@@ -2,6 +2,7 @@ from django.db import models
 from Users.models import ClientProfile, FreelancerProfile
 from django_quill.fields import QuillField
 from django.contrib.auth import get_user_model
+from .managers import ActiveManager  # Importa el administrador personalizado
 
 class Project(models.Model):
     """
@@ -40,6 +41,11 @@ class Project(models.Model):
         ('legal_consulting', 'Legal Consulting'),
     ]
 
+    is_deleted = models.BooleanField(default=False)  # Campo para soft delete
+
+    objects = ActiveManager()  # Administrador que filtra objetos activos
+    all_objects = models.Manager()  # Administrador que incluye todos los objetos
+    
     title = models.CharField(max_length=255)
     client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE, related_name="projects")
     start_date = models.DateField()  # Start date of the project
@@ -89,10 +95,15 @@ class Milestone(models.Model):
         ('delivery', 'Delivery'),
         ('documentation', 'Documentation'),  
     ]
+    is_deleted = models.BooleanField(default=False)
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
     
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="milestones")
     title = models.CharField(max_length=255)
     description = QuillField()  # Description of the milestone
+    start_date = models.DateField()  # Start date of the milestone
     due_date = models.DateField()  # Due date of the milestone
     file = models.FileField(upload_to='milestone_files/', null=True, blank=True)  # Optional file associated with the milestone
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='development')
@@ -127,10 +138,15 @@ class Task(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ]
+    is_deleted = models.BooleanField(default=False)
+
+    objects = ActiveManager()
+    all_objects = models.Manager()
     
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=255)
     description = QuillField()  # Description of the task
+    start_date = models.DateField()  # Start date of the task
     due_date = models.DateField()  # Due date of the task
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')  # Priority of the task
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pending')  # Status of the task

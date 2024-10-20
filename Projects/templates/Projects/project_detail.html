@@ -214,16 +214,17 @@
     <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Project Milestones" %}</h2>
     <!-- Botón para añadir un nuevo hito -->
     <div class="text mt-4">
-      <div class="button-group">
+      <div class="button-group"> 
         <a href="{% url 'add_milestone' project.id %}" class="w-btn-secondary-lg">{% trans "Add milestones" %}</a>
         <a href="{% url 'home_client' %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+        <a href="{% url 'deleted_milestones' project.id %}" class="w-btn-secondary-lg">{% trans "Deleted milestones" %}</a>
       </div>
       <p>.</p>
       <p></p>
     </div>
   
     <div class="row justify-content-center" style="gap: 20px;">
-      {% for milestone in project.milestones.all %}
+      {% for milestone in milestones %}
       <div 
         class="col-md-4" 
         style="max-width: 300px; flex-grow: 1;" 
@@ -320,7 +321,7 @@
                           </svg>
                         </span>
                         <h4 class="text-18 fw-normal text-center mb-2">
-                            {% trans "Are you sure you want to delete the milestone “{{ milestone.title }}”?" %}
+                            {% trans "Are you sure you want to delete the milestone " %} “{{ milestone.title }}”?
                         </h4>
                         <div class="d-flex gap-3 mt-30">
                           <!-- Formulario para eliminar el proyecto -->
@@ -340,9 +341,6 @@
                 </div>
               </div>                                      
             </div>
-
-
-
           </div>
         </div>
       </div>
@@ -351,8 +349,42 @@
       {% endfor %}
     </div>
   </div>
+
+<div class="projects-section container">
+  <div class="row justify-content-center">
+    <div class="gig-info-body bg-white">
+
+
+<!-- Sección de la línea de tiempo de tareas -->
+    <div id="task-timeline"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" />
+
+      <script>
+          document.addEventListener('DOMContentLoaded', function () {
+              var calendarEl = document.getElementById('task-timeline');
+              var calendar = new FullCalendar.Calendar(calendarEl, {
+                  initialView: 'dayGridMonth',
+                  events: [
+                      {% for task in timeline_data %}
+                      {
+                          title: '{{ task.title }}',
+                          start: '{{ task.start }}',  // Use start_date
+                          end: '{{ task.end }}',  // Use due_date
+                          description: '{{ task.milestone }}',
+                          color: '{{ task.color }}',
+                      },
+                      {% endfor %}
+                  ],
+                  eventDisplay: 'block',
+              });
+              calendar.render();
+          });
+      </script>
+
+    </div>
+  </div>
+</div>
   
-
-
-
 {% endblock %}
