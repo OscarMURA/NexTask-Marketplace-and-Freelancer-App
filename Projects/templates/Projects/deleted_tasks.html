@@ -1,0 +1,79 @@
+<!-- Projects/templates/Projects/deleted_tasks.html -->
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4">{% trans "Deleted Tasks" %}</h1>
+
+    {% if deleted_tasks %}
+        <div class="table-responsive">
+            <table class="w-100 dashboard-table">
+                <thead class="pb-3 table-dark">
+                    <tr>
+                        <th scope="col" class="ps-4">{% trans "Task Title" %}</th>
+                        <th scope="col">{% trans "Milestone" %}</th>
+                        <th scope="col">{% trans "Project" %}</th>
+                        <th scope="col">{% trans "Deletion Date" %}</th>
+                        <th scope="col" class="text-end pe-5">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in deleted_tasks %}
+                        <tr>
+                            <!-- Título de la Tarea con enlace a detalle (opcional) -->
+                            <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">
+                                <div class="d-flex gap-3 align-items-center task-name">
+                                    <div>
+                                        <p class="mb-0 text-primary">{{ task.title }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <!-- Nombre del Hito -->
+                            <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">
+                                <p class="mb-0 text-dark-200">{{ task.milestone.title }}</p>
+                            </td>
+                            
+                            <!-- Nombre del Proyecto -->
+                            <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">
+                                <p class="mb-0 text-dark-200">{{ task.milestone.project.title }}</p>
+                            </td>
+                            
+                            <!-- Fecha de Eliminación -->
+                            <td onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">
+                                <p class="mb-0 text-dark-200">{{ task.updated_at|date:"F j, Y, g:i a" }}</p>
+                            </td>
+                            
+                            <!-- Acciones: Restaurar y Eliminar Permanentemente -->
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <!-- Restaurar Tarea -->
+                                    <form action="{% url 'restore_task' task.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">{% trans "Restore" %}</button>
+                                    </form>
+                                    
+                                    <!-- Eliminar Permanentemente -->
+                                    <form action="{% url 'permanent_delete_task' task.id %}" method="post" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to permanently delete this task?" %}');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">{% trans "Delete Permanently" %}</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            {% trans "There are no deleted tasks." %}
+        </div>
+    {% endif %}
+
+    <p> . </p> 
+    <a href="{% url 'milestone_detail' milestone.id %}" class="w-btn-danger-lg">{% trans "Back" %}</a> </div>
+
+{% endblock %}

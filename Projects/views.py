@@ -15,11 +15,12 @@ from Users.models import FreelancerProfile, Skill, Language
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from Comments.forms import CommentForm
 from Comments.models import Comment
+
 def create_project(request):
     """
     Create a new project.
@@ -90,7 +91,12 @@ def project_detail(request, project_id):
         HttpResponse: Renders the 'project_detail.html' template with the project context.
     """
     project = get_object_or_404(Project, id=project_id)
-    return render(request, 'Projects/project_detail.html', {'project': project})
+    milestones = project.milestones.all().filter(is_deleted=False)
+
+    return render(request, 'Projects/project_detail.html', {
+        'project': project,
+        'milestones': milestones,
+    })
 
 def edit_project(request, project_id):
     """
@@ -138,7 +144,8 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     if request.method == "POST":
-        project.delete()
+        project.is_deleted = True
+        project.save()
         messages.success(request, "Proyecto eliminado exitosamente")
         return redirect('home_client') 
 
@@ -217,7 +224,8 @@ def milestone_detail_view(request, pk):
         HttpResponse: Renders the 'milestone_detail.html' template with the milestone context.
     """
     milestone = get_object_or_404(Milestone, pk=pk)
-    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone})
+    tasks = milestone.tasks.all().filter(is_deleted=False)
+    return render(request, 'Projects/milestone_detail.html', {'milestone': milestone, 'tasks': tasks})
 
 def delete_milestone(request, milestone_id):
     """
@@ -235,12 +243,12 @@ def delete_milestone(request, milestone_id):
         HttpResponse: Redirects to the project detail page after deletion.
     """
     milestone = get_object_or_404(Milestone, id=milestone_id)
-    project_id = milestone.project.id
 
     if request.method == "POST":
-        milestone.delete()
+        milestone.is_deleted = True
+        milestone.save()
         messages.success(request, "Milestone eliminado exitosamente")
-        return redirect('project_detail', project_id=project_id)
+        return redirect('project_detail', project_id=milestone.project.id)
 
     return redirect(reverse('home_client'))
 
@@ -338,14 +346,14 @@ def delete_task(request, task_id):
         HttpResponse: Redirects to the milestone detail page after deletion.
     """
     task = get_object_or_404(Task, id=task_id)
-    milestone_id = task.milestone.id
 
     if request.method == 'POST':
-        task.delete()
-        messages.success(request, "Task deleted successfully.")
-        return redirect('milestone_detail', pk=milestone_id)
+        task.is_deleted = True
+        task.save()
+        messages.success(request, "Tarea eliminada exitosamente.")
+        return redirect('milestone_detail', pk=task.milestone.id)
 
-    return redirect('milestone_detail', pk=milestone_id)
+    return redirect('milestone_detail', pk=task.milestone.id)
 
 def task_detail(request, task_id):
     """
@@ -931,3 +939,136 @@ def handle_comments(request, task, user):
         'page_obj': comments_paginated,
         'is_paginated': comments_paginated.has_other_pages(),
     }
+    
+def restore_project(request, project_id):
+    """
+    Restaura un proyecto eliminado.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id, is_deleted=True)
+
+    if request.method == "POST":
+        project.is_deleted = False
+        project.save()
+        messages.success(request, "Proyecto restaurado exitosamente")
+        return redirect('home_client') 
+
+    return redirect(reverse('deleted_projects'))
+
+def permanently_delete_project(request, project_id):
+    """
+    Elimina permanentemente un proyecto.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id, is_deleted=True)
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, "Proyecto eliminado permanentemente")
+        return redirect('deleted_projects') 
+
+    return redirect(reverse('deleted_projects'))
+
+def deleted_projects(request):
+    """
+    Muestra una lista de proyectos eliminados.
+    """
+    client_profile = request.user.clientprofile
+    deleted_projects = Project.all_objects.filter(client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_projects.html', {
+        'deleted_projects': deleted_projects,
+    })
+
+#@user_passes_test(is_client)
+@login_required
+def deleted_milestones(request, project_id):
+    """
+    Displays a list of deleted milestones.
+    """
+    project = get_object_or_404(Project.all_objects, id=project_id)
+    client_profile = request.user.clientprofile
+    deleted_milestones = Milestone.all_objects.filter(project__client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_milestones.html', {
+        'deleted_milestones': deleted_milestones,
+        'project': project,	
+    })
+
+@login_required
+def restore_milestone(request, milestone_id):
+    """
+    Restores a deleted milestone.
+    """
+    milestone = get_object_or_404(Milestone.all_objects, id=milestone_id, is_deleted=True)
+    project = get_object_or_404(Project.all_objects, id=milestone.project.id)
+
+    if request.method == "POST":
+        milestone.is_deleted = False
+        milestone.save()
+        messages.success(request, ("Milestone restored successfully"))
+        return redirect('deleted_milestones', project_id=project.id)
+
+    return redirect('deleted_milestones', project_id=project.id)
+  # O 'projects:deleted_milestones' si usas namespace
+
+@login_required
+def permanently_delete_milestone(request, milestone_id):
+    """
+    Permanently deletes a milestone.
+    """
+    milestone = get_object_or_404(Milestone.all_objects, id=milestone_id, is_deleted=True)
+    project = get_object_or_404(Project.all_objects, id=milestone.project.id)
+    if request.method == "POST":
+        milestone.delete()
+        messages.warning(request, ("Milestone permanently deleted"))
+        return redirect('deleted_milestones', project_id=project.id) # O 'projects:deleted_milestones' si usas namespace
+
+    return redirect('deleted_milestones', project_id=project.id)  # O 'projects:deleted_milestones' si usas namespace
+
+# ----------------------------
+# Vistas para Tareas
+# ----------------------------
+
+@login_required
+def deleted_tasks(request, milestone_id):
+    """
+    Displays a list of deleted tasks.
+    """
+    milestone = get_object_or_404(Milestone.all_objects,id= milestone_id)
+    client_profile = request.user.clientprofile
+    deleted_tasks = Task.all_objects.filter(milestone__project__client=client_profile, is_deleted=True)
+
+    return render(request, 'Projects/deleted_tasks.html', {
+        'deleted_tasks': deleted_tasks,
+        'milestone': milestone,
+    })
+
+@login_required
+def restore_task(request, task_id):
+    """
+    Restores a deleted task.
+    """
+    task = get_object_or_404(Task.all_objects, id=task_id, is_deleted=True)
+    milestone = get_object_or_404(Milestone.all_objects,id= task.milestone.id)
+
+    if request.method == "POST":
+        task.is_deleted = False
+        task.save()
+        messages.success(request, ("Task restored successfully"))
+        return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
+
+    return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
+
+@login_required
+def permanently_delete_task(request, task_id):
+    """
+    Permanently deletes a task.
+    """
+    task = get_object_or_404(Task.all_objects, id=task_id, is_deleted=True)
+    milestone = get_object_or_404(Milestone.all_objects,id= task.milestone.id)
+
+    if request.method == "POST":
+        task.delete()
+        messages.warning(request, ("Task permanently deleted"))
+        return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
+
+    return redirect('deleted_tasks',milestone_id=milestone.id)

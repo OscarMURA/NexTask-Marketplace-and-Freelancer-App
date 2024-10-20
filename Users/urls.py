@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
+
+
 urlpatterns = [
     # URL for freelancer signup
     path('signup/freelancer/', views.freelancer_signup, name='register_freelancer'),
@@ -39,8 +41,11 @@ urlpatterns = [
     # URL for changing password
     path("ChangePassword/", views.change_password, name="change_password"),
 
-    # URL for profile settings
-    path("profileSettings/", views.profile_settings, name="profile_settings"),
+    # URL for profile settings freelancer
+    path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
+
+    # URL for profile settings client
+    path("profileSettingsClient/", views.profile_settings_client, name="profile_settings_client"),
 
     # URL for searching freelancers
     path('search/', views.search_freelancers, name='search_freelancers'),
