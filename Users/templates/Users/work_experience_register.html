@@ -3,75 +3,238 @@
 {% load static %}
 {% load i18n %}
 {% block content %}
-    <div class="container">
-        <section class="py-110 bg-offWhite">
-            <div class="container bg-white rounded-3 p-3">
-                <h2 class="section-title mb-2">{% trans "Work Experience Register" %}</h2>
-                <form method="POST" id="workExperienceForm">
-                    {% csrf_token %}
-                    
-                    <!-- Management form to track formset -->
-                    {{ work_experience_formset.management_form }}
-                    
-                    <!-- Container for dynamic formset entries -->
-                    <div id="workexperience-form-container">
-                        {% for form in work_experience_formset %}
-                            <div class="dynamic-form mb-3">
-                                {{ form|crispy }}
-                            </div>
-                        {% endfor %}
-                    </div>
+<div class="container">
+    <section class="py-110 bg-offWhite">
+        <div class="container bg-white rounded-3 p-3">
+            <h2 class="section-title mb-2">{% trans "Work Experience Register" %}</h2>
 
-                    <!-- Add more forms button and submit buttons -->
-                    <div class="d-grid mt-4">
-                        <div class="d-flex justify-content-between">
-                            <button type="button" id="add-more-work-experience" class="w-btn-plus-lg">{% trans "Add More Work Experience" %}</button>
-                            <button type="submit" class="w-btn-secondary-lg" id="nextBtn">{% trans "Next" %}</button>
-                        </div>
-                    </div>
+            <form method="POST" id="workExperienceForm">
+                {% csrf_token %}
+                <!-- Management form to track formset -->
+                {{ work_experience_formset.management_form }}
 
-                    <div class="d-grid mt-4">
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url back_url %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
-                            <button type="submit" name="skip" value="skip" class="w-btn-danger-lg">{% trans "Skip" %}</button>
+                <!-- Container for dynamic formset entries -->
+                <div id="workexperience-form-container">
+                    {% for form in work_experience_formset %}
+                        <div class="dynamic-form mb-3">
+                            {{ form|crispy }}
                         </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Add more forms button and submit buttons -->
+                <div class="d-grid mt-4">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" id="add-more-work-experience" class="w-btn-plus-lg w-btn-plus-lg-dark-green">
+                            {% trans "Add More" %}
+                        </button>
+                        <button type="submit" class="w-btn-secondary-lg">{% trans "Next" %}</button>
                     </div>
-                </form>
-            </div>
-        </section>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url back_url %}" class="w-btn-outline-grey">{% trans "Back" %}</a>
+                        <button type="submit" name="skip" value="skip" class="w-btn-outline-grey">{% trans "Skip" %}</button>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="skip-all-btn" name="skip_all" value="skip_all" class="w-btn-outline-grey">
+                            {% trans "Skip All" %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Modal for error messages -->
+    <div id="error-popup" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <p id="error-popup-message">Error message will appear here.</p>
+        </div>
     </div>
+</div>
 
-    <!-- JavaScript for adding dynamic form entries -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById('add-more-work-experience').onclick = function(e) {
-                e.preventDefault();
+<script>
 
-                let formContainer = document.getElementById('workexperience-form-container');
-                // Correctly targeting the TOTAL_FORMS input
-                let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('skip-all-btn').onclick = function() {
+            window.location.href = "{% url 'home_freelancer' %}";
+        };
+    });
+    // Function to show the popup message
+    function showPopupMessage(message) {
+        let popup = document.getElementById('error-popup');
+        let popupMessage = document.getElementById('error-popup-message');
+        
+        popupMessage.textContent = message;
+        popup.style.display = 'block';  // Show the modal pop-up
+        
+        // Automatically hide the popup after 3 seconds
+        setTimeout(function() {
+            hidePopupMessage();
+        }, 3000);
+    }
 
-                if (!totalFormsInput) {
-                    console.error("TOTAL_FORMS input not found. Ensure the formset is rendered correctly.");
-                    return;  // Stop execution if TOTAL_FORMS is missing
+    // Function to hide the popup message
+    function hidePopupMessage() {
+        let popup = document.getElementById('error-popup');
+        popup.style.display = 'none';  // Hide the modal
+    }
+
+    // Event listener for the close button
+    document.querySelector('.close-btn').onclick = function() {
+        hidePopupMessage();
+    };
+
+    // Function to verify if all visible forms are complete
+    function areFormsComplete() {
+        let forms = document.querySelectorAll('.dynamic-form');
+        let allFormsComplete = true;
+
+        forms.forEach(function(form, formIndex) {
+            let inputs = form.querySelectorAll('input:not([type="hidden"]):not([disabled]):not([name$="DELETE"]), textarea:not([disabled])');
+            let isFormComplete = true;
+
+            inputs.forEach(function(input, inputIndex) {
+                console.log(`Form ${formIndex} - Input ${inputIndex}: ${input.name} = "${input.value.trim()}"`);
+
+                if (input.value.trim() === "") {
+                    isFormComplete = false;
                 }
+            });
 
-                let totalForms = parseInt(totalFormsInput.value);
-                let newForm = formContainer.children[0].cloneNode(true);
-
-                // Update the form index to the next number
-                newForm.innerHTML = newForm.innerHTML.replace(/work_experiences-(\d+)-/g, `work_experiences-${totalForms}-`);
-
-                // Clear input values in the cloned form
-                let inputs = newForm.querySelectorAll('input, textarea');
-                inputs.forEach(input => input.value = '');
-
-                // Append the new form to the container
-                formContainer.appendChild(newForm);
-
-                // Increment TOTAL_FORMS value to reflect the new form
-                totalFormsInput.value = totalForms + 1;
-            };
+            if (!isFormComplete) {
+                allFormsComplete = false;
+            }
         });
-    </script>
+
+        console.log("Forms complete status:", allFormsComplete);
+        return allFormsComplete;
+    }
+
+    // Handle the addition of more forms
+    document.getElementById('add-more-work-experience').onclick = function(e) {
+        e.preventDefault();
+
+        if (!areFormsComplete()) {
+            showPopupMessage("Por favor, rellena todos los formularios antes de añadir más.");  // Updated this call
+            return;
+        }
+
+        hidePopupMessage();  // Hide the popup if the forms are complete
+
+        let formContainer = document.getElementById('workexperience-form-container');
+        let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+        let totalForms = parseInt(totalFormsInput.value);
+
+        let newForm = formContainer.children[0].cloneNode(true);
+        newForm.innerHTML = newForm.innerHTML.replace(/work_experiences-(\d+)-/g, `work_experiences-${totalForms}-`);
+        let inputs = newForm.querySelectorAll('input:not([type="hidden"]), textarea');
+        inputs.forEach(input => input.value = '');
+
+        formContainer.appendChild(newForm);
+        totalFormsInput.value = totalForms + 1;
+    };
+
+    // Validate the form on "Next" or "Submit" press
+    document.getElementById('workExperienceForm').onsubmit = function(e) {
+        if (!e.submitter || e.submitter.name !== "skip") {
+            if (!areFormsComplete()) {
+                e.preventDefault();
+                showPopupMessage("Por favor, completa todos los formularios antes de continuar.");
+            } else {
+                hidePopupMessage();
+            }
+        }
+    };
+
+    // Handle form deletion
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('delete-form-btn')) {
+            let formToDelete = e.target.closest('.dynamic-form');
+            formToDelete.remove();
+
+            let totalFormsInput = document.querySelector('#id_work_experiences-TOTAL_FORMS');
+            totalFormsInput.value = parseInt(totalFormsInput.value) - 1;
+        }
+    });
+</script>
+
+<style>
+    /* Button Add More (dark green) */
+    .w-btn-plus-lg-dark-green {
+        background-color: #006400;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    /* Outline Buttons (grey) */
+    .w-btn-outline-grey {
+        border: 2px solid grey;
+        color: grey;
+        background-color: transparent;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .w-btn-outline-grey:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* Button Next (purple) */
+    .w-btn-secondary-lg {
+        background-color: #6a0dad;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    /* Close Button */
+    .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
 {% endblock %}
