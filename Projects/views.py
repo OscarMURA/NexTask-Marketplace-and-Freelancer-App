@@ -5,6 +5,7 @@ from Notifications.models import Notification
 from .forms import ProjectForm
 from Users.models import ClientProfile  # Asegúrate de importar ClientProfile
 
+from django.utils.translation import gettext as _
 from .models import *
 from django.urls import reverse
 from django.contrib import messages
@@ -577,6 +578,15 @@ def manage_applications(request, project_id):
                 project=application.project,
                 freelancer=application.freelancer
             )
+
+            Notification.objects.create(
+                recipient=application.freelancer.user,  # El usuario que hizo la aplicación
+                message=_("Your application for the project '%(project_title)s' has been accepted.") % {
+                    'project_title': application.project.title
+                },
+                created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
+            )
+
             # Delete the application after accepting
             application.delete()
             messages.success(request, f"Freelancer {application.freelancer.user.username} accepted and contract created.")
@@ -899,10 +909,14 @@ def manage_applications_freelancer(request):
                 # Obtener el nombre y apellido del usuario que acepta la aplicación
                 accepting_user = request.user  # El usuario que acepta la aplicación
 
-                # Crear la notificación para el cliente
+                message = _("Your application for the project '%(project_title)s' has been accepted by %(freelancer_name)s.") % {
+                    'project_title': application.project.title,
+                    'freelancer_name': f"{accepting_user.first_name} {accepting_user.last_name}"
+                }
+
                 Notification.objects.create(
                     recipient=application.project.client.user,  # Suponiendo que 'user' es el campo que representa al cliente
-                    message=f"Tu aplicación para el proyecto '{application.project.title}' ha sido aceptada por {accepting_user.first_name} {accepting_user.last_name}.",
+                    message=message,
                     created_at=timezone.now()  # No es necesario si ya tienes el valor predeterminado en el modelo
                 )
                 print("Notificación creada con éxito")  # Mensaje de depuración

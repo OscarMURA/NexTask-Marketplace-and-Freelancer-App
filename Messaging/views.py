@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+
+from Notifications.models import Notification
 from .models import Conversation, Message
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
@@ -11,6 +13,8 @@ from django.db.models import Q
 from django.db.models import Count
 from .models import User
 from django.conf import settings
+from django.utils.translation import gettext as _
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -74,6 +78,15 @@ def start_conversation(request, user_id):
         conversation = Conversation.objects.create()
         conversation.participants.add(request.user, other_user)
 
+        message = _("A new conversation has been started with %(username)s.") % {
+            'username': other_user.username,
+        }
+        Notification.objects.create(
+            recipient=other_user,
+            message=message,
+            created_at=timezone.now()
+        )
+
     return redirect('messaging:client_chat', conversation_id=conversation.id)
 
 # API para obtener y enviar mensajes
@@ -108,6 +121,18 @@ def send_message(request, conversation_id):
     serializer = MessageSerializer(data=message_data)
     if serializer.is_valid():
         serializer.save()
+
+        other_participant = conversation.participants.exclude(id=request.user.id).first()
+        if other_participant:
+            notification_message = _("You have received a new message from %(sender)s.") % {
+                'sender': request.user.username
+            }
+            Notification.objects.create(
+                recipient=other_participant,
+                message=notification_message,
+                created_at=timezone.now()
+            )
+
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
