@@ -40,6 +40,7 @@ def test_create_comment():
                 "ops": [{"insert": "A milestone for testing.\n"}]
             }
         }),
+        start_date=timezone.now(),  # Asigna una fecha de inicio válida
         due_date='2024-12-31',
         category='development'
     )
@@ -53,6 +54,7 @@ def test_create_comment():
                 "ops": [{"insert": "A test task.\n"}]
             }
         }),  # Asegúrate de que esto sea un JSON válido para QuillField
+        start_date=timezone.now(),  # Asigna una fecha de inicio válida
         due_date='2024-12-31',  # Asigna una fecha válida
         priority='medium',  # Asigna una prioridad válida
         status='pending'  # Asigna un estado válido
