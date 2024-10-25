@@ -411,23 +411,26 @@ def change_password_client(request):
     Returns:
         Rendered template for changing the user's password.
     """
-    form = CustomPasswordChangeForm(user=request.user, data=request.POST or None)
     if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
-            update_session_auth_hash(request, request.user)  # Importante para no desloguear al usuario
+            update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
             messages.success(request, 'Your password has been updated successfully!')
-            return redirect('change_password_client')  # Redirigir a la configuración del perfil
-        else:
-            messages.error(request, 'Please correct the errors below.')
-            return render(request, 'Users/changePasswordClient.html', {
+            return render(request, 'path_to_template.html', {
                 'form': form,
-                'is_submitted': True  # Agregar este flag
+                'show_modal': True,  # Mostrar modal en la plantilla
+            })
+        else:
+            return render(request, 'path_to_template.html', {
+                'form': form,
+                'show_modal': False,  # No mostrar modal si hubo errores
             })
     else:
-        return render(request, 'Users/changePasswordClient.html', {
+        form = CustomPasswordChangeForm(user=request.user)
+        return render(request, 'path_to_template.html', {
             'form': form,
-            'is_submitted': False  # Agregar este flag
+            'show_modal': False,  # No mostrar modal en la primera carga
         })
 
 
@@ -439,23 +442,30 @@ def change_password_freelancer(request):
     Returns:
         Rendered template for changing the user's password.
     """
-    form = CustomPasswordChangeForm(user=request.user, data=request.POST or None)
     if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
-            update_session_auth_hash(request, request.user)  # Importante para no desloguear al usuario
+            update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
             messages.success(request, 'Your password has been updated successfully!')
-            return redirect('change_password_freelancer')  # Redirigir a la configuración del perfil
+            return render(request, 'Users/changePasswordFreelancer.html', {
+                'form': form,
+                'show_modal': True,  # Mostrar modal si la contraseña se actualizó correctamente
+                'is_submitted': True,
+            })
         else:
             messages.error(request, 'Please correct the errors below.')
             return render(request, 'Users/changePasswordFreelancer.html', {
                 'form': form,
-                'is_submitted': True  # Agregar este flag
+                'show_modal': False,  # No mostrar modal si hubo errores
+                'is_submitted': True,
             })
     else:
+        form = CustomPasswordChangeForm(user=request.user)
         return render(request, 'Users/changePasswordFreelancer.html', {
             'form': form,
-            'is_submitted': False  # Agregar este flag
+            'show_modal': False,  # No mostrar modal en la primera carga
+            'is_submitted': False,
         })
 
 
