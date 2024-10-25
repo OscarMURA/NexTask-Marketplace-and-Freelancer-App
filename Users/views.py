@@ -20,7 +20,8 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from urllib.parse import urlencode  # Importa urlencode para agregar parámetros a la URL
-
+from .forms import CustomPasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 
 
@@ -410,7 +411,24 @@ def change_password_client(request):
     Returns:
         Rendered template for changing the user's password.
     """
-    return render(request, 'Users/changePasswordClient.html')  # Render change password template
+    form = CustomPasswordChangeForm(user=request.user, data=request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Importante para no desloguear al usuario
+            messages.success(request, 'Your password has been updated successfully!')
+            return redirect('change_password_client')  # Redirigir a la configuración del perfil
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordClient.html', {
+                'form': form,
+                'is_submitted': True  # Agregar este flag
+            })
+    else:
+        return render(request, 'Users/changePasswordClient.html', {
+            'form': form,
+            'is_submitted': False  # Agregar este flag
+        })
 
 
 @login_required
@@ -421,7 +439,24 @@ def change_password_freelancer(request):
     Returns:
         Rendered template for changing the user's password.
     """
-    return render(request, 'Users/changePasswordFreelancer.html')  # Render change password template
+    form = CustomPasswordChangeForm(user=request.user, data=request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Importante para no desloguear al usuario
+            messages.success(request, 'Your password has been updated successfully!')
+            return redirect('change_password_freelancer')  # Redirigir a la configuración del perfil
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordFreelancer.html', {
+                'form': form,
+                'is_submitted': True  # Agregar este flag
+            })
+    else:
+        return render(request, 'Users/changePasswordFreelancer.html', {
+            'form': form,
+            'is_submitted': False  # Agregar este flag
+        })
 
 
 @login_required
