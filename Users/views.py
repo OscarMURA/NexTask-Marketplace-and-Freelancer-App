@@ -417,20 +417,24 @@ def change_password_client(request):
             form.save()
             update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
             messages.success(request, 'Your password has been updated successfully!')
-            return render(request, 'path_to_template.html', {
+            return render(request, 'Users/changePasswordClient.html', {
                 'form': form,
-                'show_modal': True,  # Mostrar modal en la plantilla
+                'show_modal': True,  # Mostrar modal si la contraseña se actualizó correctamente
+                'is_submitted': True,
             })
         else:
-            return render(request, 'path_to_template.html', {
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordClient.html', {
                 'form': form,
                 'show_modal': False,  # No mostrar modal si hubo errores
+                'is_submitted': True,
             })
     else:
         form = CustomPasswordChangeForm(user=request.user)
-        return render(request, 'path_to_template.html', {
+        return render(request, 'Users/changePasswordClient.html', {
             'form': form,
             'show_modal': False,  # No mostrar modal en la primera carga
+            'is_submitted': False,
         })
 
 
