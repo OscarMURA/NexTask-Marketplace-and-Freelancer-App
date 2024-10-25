@@ -473,6 +473,16 @@ def change_password_freelancer(request):
         })
 
 
+def password_recovery(request):
+    """
+    View for rendering the password recovery page.
+
+    Returns:
+        Rendered template for password recovery.
+    """
+    return render(request, 'Users/passwordRecovery.html')  # Render password recovery template
+
+
 @login_required
 def profile_settings_freelancer(request):
     """

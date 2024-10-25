@@ -44,6 +44,9 @@ urlpatterns = [
     # URL for changing password freelancer
     path("changePasswordFreelancer/", views.change_password_freelancer, name="change_password_freelancer"),
 
+    # URL for password recovery
+    path("passwordRecovery/", views.password_recovery, name="password_recovery"),
+
     # URL for profile settings freelancer
     path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
 
