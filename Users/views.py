@@ -402,15 +402,26 @@ def createProject(request):
     """
     return render(request, 'Users/createProject.html')  # Render project creation template
 
-
-def change_password(request):
+@login_required
+def change_password_client(request):
     """
-    View for rendering the change password page for users.
+    View for rendering the change password page for users (clients).
 
     Returns:
         Rendered template for changing the user's password.
     """
-    return render(request, 'Users/changePassword.html')  # Render change password template
+    return render(request, 'Users/changePasswordClient.html')  # Render change password template
+
+
+@login_required
+def change_password_freelancer(request):
+    """
+    View for rendering the change password page for users (freelancers).
+
+    Returns:
+        Rendered template for changing the user's password.
+    """
+    return render(request, 'Users/changePasswordFreelancer.html')  # Render change password template
 
 
 @login_required
