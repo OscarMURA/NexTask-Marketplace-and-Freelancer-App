@@ -26,7 +26,6 @@ class TestClientSignUp:
         signup_page = ClientSignUpPage(self.driver)
         signup_page.go_to_signup_page()
 
-        # Probar con un email inválido
         signup_page.fill_signup_form(
             username="testclient",
             email="invalid-email",
@@ -46,7 +45,6 @@ class TestClientSignUp:
         signup_page = ClientSignUpPage(self.driver)
         signup_page.go_to_signup_page()
 
-        # Dejar algunos campos obligatorios vacíos
         signup_page.fill_signup_form(
             username="",
             email="",

@@ -25,7 +25,6 @@ class TestFreelancerSignUp:
         signup_page = FreelancerSignUpPage(self.driver)
         signup_page.go_to_signup_page()
 
-        # Dejar algunos campos obligatorios vacíos
         signup_page.fill_signup_form(
             username="",
             email="freelancer@example.com",
