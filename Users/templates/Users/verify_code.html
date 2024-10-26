@@ -25,7 +25,7 @@
 
                 <br>
                 <!-- Submit Button -->
-                <button type="submit" id="submit-btn" class="w-btn-secondary-lg w-100 py-2" style="background-color: #4CAF50; color: white; border: none;">
+                <button type="submit" id="submit-btn" class="custom-btn w-100 py-3" style="border-radius: 50px; background-color: #4CAF50; color: white; border: none;">
                   {% trans "Verify Code" %}
                 </button>
               </form>
@@ -35,4 +35,30 @@
     </main>
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Custom CSS for styling -->
+    <style>
+      /* Estilo para los campos de entrada con bordes redondeados */
+      input {
+        border-radius: 50px; /* Bordes redondeados */
+        border: 1px solid #ccc;
+        padding: 16px 24px; /* Espacio interno más grande */
+        width: 100%; /* Que ocupe el 100% del contenedor */
+        box-sizing: border-box; /* Incluir padding y borde en el tamaño total del campo */
+      }
+
+      /* Estilo para el botón */
+      .custom-btn {
+        background-color: #4CAF50; /* Color personalizado */
+        border: none;
+        color: white;
+        transition: background-color 0.3s ease;
+        padding: 12px 0; /* Más padding para agrandar el botón */
+        border-radius: 50px; /* Hacer el botón redondeado */
+      }
+      
+      .custom-btn:hover {
+        background-color: #45a049; /* Color cuando el mouse pasa por encima */
+      }
+    </style>
 {% endblock %}

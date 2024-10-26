@@ -513,23 +513,28 @@ def password_recovery(request):
 
 
 def verify_code(request, user_id):
-    """
-    View to verify the code sent to the user's email for password recovery.
-    """
-    user = User.objects.get(pk=user_id)
+    user = User.objects.get(id=user_id)
 
-    if request.method == 'POST':
-        entered_code = request.POST.get('verification_code')
+    if request.method == "POST":
+        verification_code = request.POST.get('verification_code')
 
-        # Verificamos si el código ingresado coincide con el que está guardado en el perfil
-        if user.freelancer_profile.verification_code == entered_code:
-            # Si el código es correcto, redirigimos al formulario de cambio de contraseña
+        # Verificar si el usuario es freelancer o cliente para acceder al perfil correcto
+        if hasattr(user, 'freelancer_profile'):
+            profile = user.freelancer_profile
+        elif hasattr(user, 'client_profile'):
+            profile = user.client_profile
+        else:
+            messages.error(request, 'No profile associated with this user.')
+            return render(request, 'Users/verifyCode.html')
+
+        # Verificar si el código coincide con el guardado en el perfil
+        if profile.verification_code == verification_code:
+            # El código es correcto, redirigir a la página de cambio de contraseña
             return redirect('reset_password', user_id=user.id)
         else:
-            # Si el código es incorrecto, mostramos un mensaje de error
-            messages.error(request, 'The verification code is incorrect. Please try again.')
-
-    return render(request, 'Users/verify_code.html', {'user_id': user.id})
+            messages.error(request, 'Invalid verification code.')
+    
+    return render(request, 'Users/verifyCode.html', {'user_id': user_id})
 
 
 def reset_password(request, user_id):
