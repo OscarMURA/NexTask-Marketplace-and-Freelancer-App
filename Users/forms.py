@@ -12,6 +12,7 @@ from django_select2.forms import *
 import re
 from django.db.models import Count
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ValidationError
 
 
 # Base class for User Signup
@@ -44,6 +45,15 @@ class UserSignUpForm(UserCreationForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up'))
+
+    def clean_email(self):
+        """
+        Validates that the email is unique across all users.
+        """
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("A user with that email already exists.")
+        return email
 
 
 # Form for Freelancer Signup
