@@ -22,7 +22,11 @@ from django.http import HttpResponseRedirect
 from urllib.parse import urlencode  # Importa urlencode para agregar parámetros a la URL
 from .forms import CustomPasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from .models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
 
 
 @never_cache
@@ -474,13 +478,38 @@ def change_password_freelancer(request):
 
 
 def password_recovery(request):
-    """
-    View for rendering the password recovery page.
+    if request.method == "POST":
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
 
-    Returns:
-        Rendered template for password recovery.
-    """
-    return render(request, 'Users/passwordRecovery.html')  # Render password recovery template
+        if user:
+            # Verificar si el usuario es freelancer o cliente para obtener el perfil
+            if hasattr(user, 'freelancer_profile'):
+                profile = user.freelancer_profile
+            elif hasattr(user, 'client_profile'):
+                profile = user.client_profile
+            else:
+                messages.error(request, 'No profile associated with this email.')
+                return render(request, 'Users/passwordRecovery.html')
+
+            # Generar un código de verificación aleatorio
+            verification_code = get_random_string(length=6, allowed_chars='0123456789')
+            
+            # Almacenar el código de verificación en el perfil del usuario
+            profile.verification_code = verification_code  # Asegúrate de tener este campo en tu modelo
+            profile.save()
+
+            # Enviar correo con el código de verificación
+            subject = "Password Recovery Code"
+            message = f"Your password recovery code is: {verification_code}"
+            send_mail(subject, message, 'no-reply@yourapp.com', [email])
+
+            # Redirigir al formulario de verificación del código
+            return redirect('verify_code', user_id=user.id)
+        else:
+            messages.error(request, 'Email not found.')
+
+    return render(request, 'Users/passwordRecovery.html')
 
 
 @login_required

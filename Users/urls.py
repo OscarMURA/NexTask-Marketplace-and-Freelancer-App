@@ -47,6 +47,13 @@ urlpatterns = [
     # URL for password recovery
     path("passwordRecovery/", views.password_recovery, name="password_recovery"),
 
+    # URL for verfy code validation email
+    path('verify_code/<int:user_id>/', views.verify_code, name='verify_code'),
+
+    # URL for password reset
+    path('reset_password/<int:user_id>/', views.reset_password, name='reset_password'),
+
+
     # URL for profile settings freelancer
     path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
 

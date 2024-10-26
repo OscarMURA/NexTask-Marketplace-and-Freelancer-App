@@ -1,0 +1,36 @@
+{% extends 'NextTask/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+    <title>Verify Code - NextTask</title>   
+    <main>
+        <section class="py-110 bg-offWhite">
+          <div class="container">
+            <div class="bg-white rounded-3 p-5 shadow-sm" style="max-width: 650px; margin: 0 auto;">
+              <!-- Header -->
+              <div class="text-center mb-40">
+                <h2 class="section-title mb-2">{% trans "Verify your Code" %}</h2>
+                <p class="section-desc">{% trans "Please enter the verification code we sent to your email." %}</p>
+              </div>
+
+              <!-- Verification Code Form -->
+              <form method="post">
+                {% csrf_token %}
+                
+                <!-- Verification Code Input -->
+                <div class="mb-3">
+                  <input type="text" id="verification_code" name="verification_code" class="form-control" required placeholder="{% trans 'Enter the verification code' %}">
+                </div>
+
+                <br>
+                <!-- Submit Button -->
+                <button type="submit" id="submit-btn" class="custom-btn w-100 py-3">{% trans "Verify Code" %}</button>
+              </form>
+            </div>
+          </div>
+        </section>
+    </main>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+{% endblock %}
