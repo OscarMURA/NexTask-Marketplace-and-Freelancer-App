@@ -53,7 +53,6 @@ urlpatterns = [
     # URL for password reset
     path('reset_password/<int:user_id>/', views.reset_password, name='reset_password'),
 
-
     # URL for profile settings freelancer
     path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
 

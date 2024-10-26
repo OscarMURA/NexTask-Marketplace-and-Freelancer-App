@@ -480,7 +480,7 @@ def change_password_freelancer(request):
 def password_recovery(request):
     if request.method == "POST":
         email = request.POST.get('email')
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email__iexact=email).first()
 
         if user:
             # Verificar si el usuario es freelancer o cliente para obtener el perfil

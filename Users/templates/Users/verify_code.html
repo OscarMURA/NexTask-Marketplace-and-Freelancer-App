@@ -20,12 +20,14 @@
                 
                 <!-- Verification Code Input -->
                 <div class="mb-3">
-                  <input type="text" id="verification_code" name="verification_code" class="form-control" required placeholder="{% trans 'Enter the verification code' %}">
+                  <input type="text" id="verification_code" name="verification_code" class="form-control shadow-none" required placeholder="{% trans 'Enter the verification code' %}">
                 </div>
 
                 <br>
                 <!-- Submit Button -->
-                <button type="submit" id="submit-btn" class="custom-btn w-100 py-3">{% trans "Verify Code" %}</button>
+                <button type="submit" id="submit-btn" class="w-btn-secondary-lg w-100 py-2" style="background-color: #4CAF50; color: white; border: none;">
+                  {% trans "Verify Code" %}
+                </button>
               </form>
             </div>
           </div>
