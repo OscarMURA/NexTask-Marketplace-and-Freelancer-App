@@ -17,5 +17,5 @@ class LoginPage:
     def is_redirected_to_home(self):
         return "/Home-Freelancer/" in self.driver.current_url or "/home-Client/" in self.driver.current_url
 
-    def is_error_message_displayed(self):
-        return self.driver.find_element(By.CSS_SELECTOR, ".alert-danger").is_displayed()
+    def is_error_message_displayed(self, error_message):
+        return error_message in self.driver.page_source

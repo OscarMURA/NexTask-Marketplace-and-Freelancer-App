@@ -3,6 +3,7 @@ from pages.client_signup_page import ClientSignUpPage
 
 @pytest.mark.usefixtures("setup")
 class TestClientSignUp:
+    
     def test_client_sign_up_success(self):
         signup_page = ClientSignUpPage(self.driver)
         signup_page.go_to_signup_page()
@@ -25,6 +26,7 @@ class TestClientSignUp:
         signup_page = ClientSignUpPage(self.driver)
         signup_page.go_to_signup_page()
 
+        # Probar con un email inválido
         signup_page.fill_signup_form(
             username="testclient",
             email="invalid-email",
@@ -38,4 +40,24 @@ class TestClientSignUp:
             company_website="http://testcompany.com"
         )
         signup_page.submit_form()
-        assert signup_page.is_error_message_displayed()
+        assert signup_page.is_error_message_displayed("Enter a valid email address.")
+
+    def test_client_sign_up_empty_fields(self):
+        signup_page = ClientSignUpPage(self.driver)
+        signup_page.go_to_signup_page()
+
+        # Dejar algunos campos obligatorios vacíos
+        signup_page.fill_signup_form(
+            username="",
+            email="",
+            first_name="Test",
+            last_name="Client",
+            password="SecurePassword123",
+            country="USA",
+            city="Los Angeles",
+            phone="",
+            company_name="",
+            company_website=""
+        )
+        signup_page.submit_form()
+        assert signup_page.is_error_message_displayed("This field is required")

@@ -3,6 +3,7 @@ from pages.login_page import LoginPage
 
 @pytest.mark.usefixtures("setup")
 class TestLogin:
+    
     def test_freelancer_login_success(self):
         login_page = LoginPage(self.driver)
         login_page.go_to_login_page()
@@ -22,4 +23,12 @@ class TestLogin:
         login_page.go_to_login_page()
         login_page.fill_login_form("wronguser", "WrongPassword123")
         login_page.submit_form()
-        assert login_page.is_error_message_displayed()
+        assert login_page.is_error_message_displayed("Invalid username or password")
+
+    def test_login_unregistered_account(self):
+        login_page = LoginPage(self.driver)
+        login_page.go_to_login_page()
+
+        login_page.fill_login_form("nonexistentuser", "NonexistentPassword123")
+        login_page.submit_form()
+        assert login_page.is_error_message_displayed("Invalid username or password")
