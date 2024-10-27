@@ -1287,7 +1287,7 @@ msgstr "Actualiza tu contraseña para mantenere tu cuenta segura"
 
 #: .\Users\templates\Users\changePassword.html:77
 msgid "Current Password"
-msgstr "Cambiar Contraseña"
+msgstr "Contraseña Actual"
 
 #: .\Users\templates\Users\changePassword.html:111
 #: .\Users\templates\Users\client_signup.html:106
@@ -1377,7 +1377,7 @@ msgstr "Dirección"
 #: .\Users\templates\Users\client_signup.html:102
 #: .\Users\templates\Users\freelancer_signup.html:95
 msgid "Password"
-msgstr "Cambiar Contraseña"
+msgstr "Contraseña"
 
 #: .\Users\templates\Users\client_signup.html:129
 #: .\Users\templates\Users\freelancer_signup.html:123
