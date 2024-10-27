@@ -21,6 +21,14 @@
                 <!-- Verification Code Input -->
                 <div class="mb-3">
                   <input type="text" id="verification_code" name="verification_code" class="form-control shadow-none" required placeholder="{% trans 'Enter the verification code' %}">
+
+                  {% if messages %}
+                    <div class="text-danger mt-2">
+                      {% for message in messages %}
+                        <small>{{ message }}</small>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
                 </div>
 
                 <br>

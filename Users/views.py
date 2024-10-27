@@ -486,8 +486,8 @@ def password_recovery(request):
             # Verificar si el usuario es freelancer o cliente para obtener el perfil
             if hasattr(user, 'freelancer_profile'):
                 profile = user.freelancer_profile
-            elif hasattr(user, 'client_profile'):
-                profile = user.client_profile
+            elif hasattr(user, 'clientprofile'):
+                profile = user.clientprofile
             else:
                 messages.error(request, 'No profile associated with this email.')
                 return render(request, 'Users/passwordRecovery.html')
@@ -521,11 +521,11 @@ def verify_code(request, user_id):
         # Verificar si el usuario es freelancer o cliente para acceder al perfil correcto
         if hasattr(user, 'freelancer_profile'):
             profile = user.freelancer_profile
-        elif hasattr(user, 'client_profile'):
-            profile = user.client_profile
+        elif hasattr(user, 'clientprofile'):
+            profile = user.clientprofile
         else:
             messages.error(request, 'No profile associated with this user.')
-            return render(request, 'Users/verifyCode.html')
+            return render(request, 'Users/verify_code.html')
 
         # Verificar si el código coincide con el guardado en el perfil
         if profile.verification_code == verification_code:
@@ -534,7 +534,7 @@ def verify_code(request, user_id):
         else:
             messages.error(request, 'Invalid verification code.')
     
-    return render(request, 'Users/verifyCode.html', {'user_id': user_id})
+    return render(request, 'Users/verify_code.html', {'user_id': user_id})
 
 
 def reset_password(request, user_id):
@@ -547,7 +547,6 @@ def reset_password(request, user_id):
         form = SetPasswordForm(user, request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your password has been updated successfully!')
             return redirect('login')
     else:
         form = SetPasswordForm(user)

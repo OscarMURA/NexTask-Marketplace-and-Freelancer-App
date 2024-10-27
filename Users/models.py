@@ -95,7 +95,7 @@ class ClientProfile(models.Model):
         address (str): Address of the client.
         avatar (ImageField): Profile picture of the client.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='client_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='clientprofile')
     company_name = models.CharField(max_length=255)
     company_website = models.URLField(blank=True)
     country = CountryField(blank=False, null=False)  # Campo para seleccionar país
