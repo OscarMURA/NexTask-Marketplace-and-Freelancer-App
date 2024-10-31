@@ -27,6 +27,7 @@ from django.utils.crypto import get_random_string
 from .models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import SetPasswordForm
+from django.contrib import messages
 
 
 @never_cache
@@ -478,6 +479,10 @@ def change_password_freelancer(request):
 
 
 def password_recovery(request):
+    storage = messages.get_messages(request)
+    for _ in storage:  # Esto fuerza la evaluación y marca los mensajes como usados
+        pass
+
     if request.method == "POST":
         email = request.POST.get('email')
         user = User.objects.filter(email__iexact=email).first()
@@ -507,7 +512,8 @@ def password_recovery(request):
             # Redirigir al formulario de verificación del código
             return redirect('verify_code', user_id=user.id)
         else:
-            messages.error(request, 'Email not found.')
+            messages.error(request, 'Email not found.', extra_tags='password_recovery')
+
 
     return render(request, 'Users/passwordRecovery.html')
 
