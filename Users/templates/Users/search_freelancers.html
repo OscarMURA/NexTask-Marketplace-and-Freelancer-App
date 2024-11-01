@@ -138,15 +138,28 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('form').addEventListener('submit', function(event) {
-            var skillsField = document.querySelector('select[name="skills"]');
-            console.log("Campo skills encontrado:", skillsField);  // Depurar si el campo skills es encontrado
-            if (skillsField && !skillsField.value) {
-                console.log("Skills está vacío, deshabilitando campo.");  // Depurar si skills está vacío
-                skillsField.disabled = true;  // Deshabilitar el campo skills si está vacío para que no se envíe en la URL
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        // Evita el envío predeterminado del formulario
+        event.preventDefault();
+
+        // Construye manualmente la URL con solo los parámetros con valor
+        var formData = new FormData(form);
+        var urlParams = new URLSearchParams();
+
+        formData.forEach(function(value, key) {
+            if (value.trim() !== '') {
+                urlParams.append(key, value);
             }
         });
+
+        // Redirige a la nueva URL con los parámetros filtrados
+        var newUrl = form.action.split('?')[0] + '?' + urlParams.toString();
+        window.location.href = newUrl;
     });
+});
+
+
 </script>
 
 <div class="banner">
