@@ -2,7 +2,7 @@ from django.db import models
 from Users.models import ClientProfile, FreelancerProfile
 from django_quill.fields import QuillField
 from django.contrib.auth import get_user_model
-from .managers import ActiveManager  # Importa el administrador personalizado
+from .managers import ActiveManager
 
 class Project(models.Model):
     """

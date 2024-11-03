@@ -1,0 +1,43 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<h2>Freelancers</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Freelancer</th>
+            <th>Proyecto</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for freelancer in freelancers %}
+            {% for project_freelancer in freelancer.project_associations.all %}
+                <tr>
+                    <td>{{ freelancer.user.username }}</td>
+                    <td>{{ project_freelancer.project.title }}</td>
+                    <td>
+                        <form action="{% url 'make_payment' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="freelancer_id" value="{{ freelancer.id }}">
+                            <input type="hidden" name="project_id" value="{{ project_freelancer.project.id }}">
+                            <input type="text" name="amount" placeholder="Monto" required>
+                            <select name="payment_type" required>
+                                <option value="one_time">Pago Único</option>
+                                <option value="periodic">Pago Periódico</option>
+                            </select>
+                            <button type="submit">Pagar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% empty %}
+            <tr>
+                <td colspan="3">No hay freelancers disponibles.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
