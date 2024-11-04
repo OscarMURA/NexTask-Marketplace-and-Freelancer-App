@@ -1,9 +1,14 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Payment
+from .models import Payment, PeriodicPayment
 from Users.models import FreelancerProfile, ClientProfile
 from django.contrib import messages
-from Projects.models import ProjectFreelancer, Project
+from Projects.models import ProjectFreelancer, Project, Contract
+from Notifications.models import Notification
+from django.utils.translation import gettext_lazy as _
 
 @login_required
 def client_payment_history(request):
@@ -41,14 +46,118 @@ def freelancers_project_pay(request, project_id):
     Displays a table of freelancers associated with a specific project.
     Allows the client to make payments to each freelancer in that project.
     """
+
     # Obtener el perfil del cliente
     client_profile = get_object_or_404(ClientProfile, user=request.user)
-    
+
     # Obtener el proyecto actual por ID y verificar que sea del cliente
     project = get_object_or_404(Project, id=project_id, client=client_profile)
 
-    # Obtener freelancers asociados al proyecto actual
-    project_freelancers = ProjectFreelancer.objects.filter(project=project).select_related('freelancer')
-    freelancers = [pf.freelancer for pf in project_freelancers]
+    # Obtener contratos asociados al proyecto actual
+    freelancers = Contract.objects.filter(project=project)
 
-    return render(request, 'payments/freelancers_project_pay.html', {'freelancers': freelancers, 'project': project})
+    return render(request, 'payments/freelancers_project_pay.html', {
+        'freelancers': freelancers,
+        'project': project,
+    })
+
+@login_required
+def freelancers_project_punctual_pay(request, project_id, freelancer_id):
+    project = get_object_or_404(Project, id=project_id)
+    freelancer = get_object_or_404(FreelancerProfile, id=freelancer_id)
+    client = get_object_or_404(ClientProfile, user=request.user)
+
+    if request.method == "POST":
+        amount = request.POST.get("amount")
+        try:
+            amount = float(amount)
+            if amount <= 0:
+                raise ValueError(_("Amount must be positive."))
+            
+            # Crear el pago puntual
+            Payment.objects.create(
+                freelancer=freelancer,
+                project=project,
+                amount=amount,
+                status=Payment.PaymentStatus.PENDING,
+                client=client,
+            )
+            
+            messages.success(request, _("Payment was successfully processed."))
+            return HttpResponseRedirect(reverse("client_payment_history"))
+        
+        except (ValueError, TypeError):
+            messages.error(request, _("Invalid amount. Please enter a valid number."))
+            return render(request, "Payments/punctual_payment.html", {"project": project, "freelancer": freelancer})
+    
+    return render(request, "Payments/punctual_payment.html", {"project": project, "freelancer": freelancer})
+
+@login_required
+def freelancers_project_periodic_pay(request, project_id, freelancer_id):
+    project = get_object_or_404(Project, id=project_id)
+    freelancer = get_object_or_404(FreelancerProfile, id=freelancer_id)
+    client = get_object_or_404(ClientProfile, user=request.user)
+
+    if request.method == "POST":
+        amount = request.POST.get("amount")
+        try:
+            amount = float(amount)
+            if amount <= 0:
+                raise ValueError(_("Amount must be positive."))
+            
+            # Crear el pago periódico. Podrías almacenar una referencia o manejar la periodicidad en otra lógica.
+            Payment.objects.create(
+                freelancer=freelancer,
+                project=project,
+                amount=amount,
+                status=Payment.PaymentStatus.PENDING,
+                client=client,
+            )
+            
+            messages.success(request, _("Periodic payment was successfully scheduled."))
+            return HttpResponseRedirect(reverse("client_payment_history"))
+        
+        except (ValueError, TypeError):
+            messages.error(request, _("Invalid amount. Please enter a valid number."))
+            return render(request, "Payments/periodic_payment.html", {"project": project, "freelancer": freelancer})
+    
+    return render(request, "Payments/periodic_pay.html", {"project": project, "freelancer": freelancer})
+
+
+from django.utils import timezone
+
+def freelancers_project_periodic_pay(request, project_id, freelancer_id):
+    project = get_object_or_404(Project, id=project_id)
+    freelancer = get_object_or_404(FreelancerProfile, id=freelancer_id)
+    client = get_object_or_404(ClientProfile, user=request.user)
+
+    if request.method == "POST":
+        amount = request.POST.get("amount")
+        frequency = request.POST.get("frequency")
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date") or None
+
+        try:
+            amount = float(amount)
+            start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date() if end_date else None
+
+            # Crear la configuración de pago periódico
+            PeriodicPayment.objects.create(
+                freelancer=freelancer,
+                project=project,
+                client=client,
+                amount=amount,
+                frequency=frequency,
+                start_date=start_date,
+                end_date=end_date,
+                next_payment_date=start_date
+            )
+            
+            messages.success(request, _("Periodic payment setup was successful."))
+            return redirect('client_payment_history')
+
+        except ValueError:
+            messages.error(request, _("Invalid input. Please check your entries."))
+    
+    return render(request, "Payments/periodic_payment.html", {"project": project, "freelancer": freelancer})

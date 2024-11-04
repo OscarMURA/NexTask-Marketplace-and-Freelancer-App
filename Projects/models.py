@@ -70,8 +70,8 @@ class Project(models.Model):
             return f"{delta} days to {self.due_date}"
         return "No due date"
 
-    def __str__(self):
-        return f"{self.title} by {self.client.user.username}"
+        def __str__(self):
+            return f"{self.title} by {self.client.user.username}"
 
 
 class Milestone(models.Model):
