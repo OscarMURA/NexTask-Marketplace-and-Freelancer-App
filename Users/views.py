@@ -954,7 +954,6 @@ def search_clients(request):
         if keyword:  # Filter by keyword
             clients = clients.filter(
                 Q(company_name__icontains=keyword) |
-                Q(city__icontains=keyword) |
                 Q(country__icontains=keyword)
             ).distinct()  # Remove duplicates
 
@@ -981,4 +980,4 @@ def client_profile(request, id):
         Rendered template displaying the client's profile.
     """
     client = get_object_or_404(ClientProfile, user__id=id)  # Get the client profile or 404
-    return render(request, 'Users/clientProfile.html', {'client': client})  # Render the profile template
+    return render(request, 'Users/client_profile.html', {'client': client})  # Render the profile template

@@ -1,5 +1,6 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% load i18n %}
 {% block content %}
 <!-- Estilos CSS incluidos directamente en el archivo HTML -->
@@ -110,22 +111,16 @@
 <!-- Barra de búsqueda -->
 <div class="container">
     <form method="GET" class="search-bar">
-        <!-- Barra de búsqueda por nombre de la empresa -->
         <div class="form-group">
-            <input type="text" name="q" class="form-control" placeholder="Search by company name, city..." value="{{ request.GET.q }}">
+            {{ form.keyword }}
         </div>
-        <!-- Filtro por país -->
         <div class="form-group">
-            <select name="country" class="form-control">
-                <option value="">{% trans "Country" %}</option>
-                {% for country in countries %}
-                    <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
-                {% endfor %}
-            </select>
+            {{ form.country }}
         </div>
         <button type="submit" class="btn btn-primary">{% trans "Find Client" %}</button>
     </form>
 </div>
+
 
 <!-- Resultados de Clientes -->
 <div class="container">
@@ -154,4 +149,20 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Script para establecer "Country" como opción predeterminada en el selector -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const countrySelect = document.querySelector('select[name="country"]');
+        if (countrySelect) {
+            // Si la selección de país está vacía, muestra "Country" como el texto de la opción vacía
+            const firstOption = countrySelect.querySelector('option[value=""]');
+            if (firstOption) {
+                firstOption.textContent = "Select Country";
+            }
+        }
+    });
+</script>
+
+
 {% endblock %}
