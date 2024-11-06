@@ -3,11 +3,18 @@
 {% block content %}
 
 <div class="text mt-4">
-    <a href="{% url 'freelancers_in_project' project.id %}" class="w-btn-danger-lg" style="margin-right: 12px;">{% trans "Back" %}</a>
+    <a href="{% url 'freelancers_project_pay' project.id %}" class="w-btn-danger-lg" style="margin-right: 12px;">{% trans "Back" %}</a>
 </div>
 
 <div class="mt-5">
-    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Set Up Periodic Payment for Freelancer:" %} {{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">
+        {% if periodic_payment %}
+            {% trans "Update Periodic Payment for Freelancer:" %}
+        {% else %}
+            {% trans "Set Up Periodic Payment for Freelancer:" %}
+        {% endif %}
+        {{ freelancer.user.first_name }} {{ freelancer.user.last_name }}
+    </h3>
     <p class="text-muted">{% trans "Project:" %} {{ project.title }}</p>
 
     <form method="post" action="{% url 'freelancers_project_periodic_pay' project.id freelancer.id %}">
@@ -15,29 +22,39 @@
         
         <div class="form-group mb-3">
             <label for="amount" class="form-label">{% trans "Payment Amount per Period" %}</label>
-            <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount" required placeholder="{% trans 'Amount' %}">
+            <input type="number" step="0.01" min="0" max="999999999" class="form-control" id="amount" name="amount" required
+                   placeholder="{% trans 'Amount' %}"
+                   {% if periodic_payment %} value="{{ periodic_payment.amount }}" {% endif %}>
         </div>
 
         <div class="form-group mb-3">
             <label for="frequency" class="form-label">{% trans "Frequency" %}</label>
             <select class="form-control" id="frequency" name="frequency" required>
-                <option value="daily">{% trans "Daily" %}</option>
-                <option value="weekly">{% trans "Weekly" %}</option>
-                <option value="monthly">{% trans "Monthly" %}</option>
+                <option value="daily" {% if periodic_payment and periodic_payment.frequency == 'daily' %}selected{% endif %}>{% trans "Daily" %}</option>
+                <option value="weekly" {% if periodic_payment and periodic_payment.frequency == 'weekly' %}selected{% endif %}>{% trans "Weekly" %}</option>
+                <option value="monthly" {% if periodic_payment and periodic_payment.frequency == 'monthly' %}selected{% endif %}>{% trans "Monthly" %}</option>
             </select>
         </div>
 
         <div class="form-group mb-3">
             <label for="start_date" class="form-label">{% trans "Start Date" %}</label>
-            <input type="date" class="form-control" id="start_date" name="start_date" required>
+            <input type="date" class="form-control" id="start_date" name="start_date" required
+                   {% if periodic_payment %} value="{{ periodic_payment.start_date|date:'Y-m-d' }}" {% endif %}>
         </div>
-
+        
         <div class="form-group mb-3">
             <label for="end_date" class="form-label">{% trans "End Date" %} ({% trans "Optional" %})</label>
-            <input type="date" class="form-control" id="end_date" name="end_date">
+            <input type="date" class="form-control" id="end_date" name="end_date"
+                   {% if periodic_payment and periodic_payment.end_date %} value="{{ periodic_payment.end_date|date:'Y-m-d' }}" {% endif %}>
         </div>
-
-        <button type="submit" class="w-btn-primary-lg">{% trans "Set Up Periodic Payment" %}</button>
+        
+        <button type="submit" class="w-btn-secondary-sm">
+            {% if periodic_payment %}
+                {% trans "Update Payment" %}
+            {% else %}
+                {% trans "Set Up Payment" %}
+            {% endif %}
+        </button>
     </form>
 </div>
 

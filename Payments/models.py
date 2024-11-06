@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from Users.models import FreelancerProfile
+from Users.models import FreelancerProfile, ClientProfile
 from Projects.models import Project
 from datetime import timedelta
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class Payment(models.Model):
     """
@@ -44,7 +45,7 @@ class PeriodicPayment(models.Model):
 
     freelancer = models.ForeignKey(FreelancerProfile, on_delete=models.CASCADE, related_name='periodic_payments')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='periodic_payments')
-    client = models.ForeignKey('Users.ClientProfile', on_delete=models.CASCADE, related_name='periodic_payments')
+    client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE, related_name='periodic_payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)  # Monto por cada periodo
     frequency = models.CharField(max_length=10, choices=Frequency.choices, default=Frequency.WEEKLY)
     start_date = models.DateField()  # Fecha de inicio del pago periódico
@@ -67,7 +68,7 @@ class PeriodicPayment(models.Model):
 
     def create_pending_payment(self):
         """
-        Crea un registro de pago pendiente cuando llega la fecha de pago.
+        Crea un registro de pago puntual pendiente cuando llega la fecha de pago.
         """
         from Payments.models import Payment  # Importar modelo de Payment para evitar importaciones circulares
         
@@ -81,3 +82,15 @@ class PeriodicPayment(models.Model):
             )
             self.next_payment_date = self.generate_next_payment_date()  # Actualiza la próxima fecha de pago
             self.save()
+
+    def clean(self):
+        """
+        Valida que solo exista un pago periódico para cada freelancer y proyecto.
+        """
+        if PeriodicPayment.objects.filter(freelancer=self.freelancer, project=self.project).exists():
+            raise ValidationError(_('Ya existe un pago periódico para este freelancer en este proyecto.'))
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['freelancer', 'project'], name='unique_periodic_payment_per_project')
+        ]
