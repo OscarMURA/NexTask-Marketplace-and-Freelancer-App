@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-20 21:48-0500\n"
+"POT-Creation-Date: 2024-11-08 17:18-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,11 +23,14 @@ msgid "Comments"
 msgstr "Comentarios"
 
 #: .\Comments\templates\Comments\comments_section.html:121
+#: .\Comments\templates\Comments\freelancer_comments_section.html:106
 msgid "No comments yet."
 msgstr "No se encontraron comentarios"
 
 #: .\Comments\templates\Comments\comments_section.html:132
 #: .\Comments\templates\Comments\comments_section.html:138
+#: .\Comments\templates\Comments\freelancer_comments_section.html:117
+#: .\Comments\templates\Comments\freelancer_comments_section.html:123
 #: .\Users\templates\Users\register_languages.html:61
 #: .\Users\templates\Users\register_skills.html:40
 msgid "Previous"
@@ -35,6 +38,8 @@ msgstr "Anterior"
 
 #: .\Comments\templates\Comments\comments_section.html:156
 #: .\Comments\templates\Comments\comments_section.html:162
+#: .\Comments\templates\Comments\freelancer_comments_section.html:141
+#: .\Comments\templates\Comments\freelancer_comments_section.html:147
 #: .\Users\templates\Users\certification_register.html:35
 #: .\Users\templates\Users\education_register.html:36
 #: .\Users\templates\Users\portfolio_register.html:35
@@ -44,12 +49,29 @@ msgid "Next"
 msgstr "Siguiente"
 
 #: .\Comments\templates\Comments\comments_section.html:172
+#: .\Comments\templates\Comments\freelancer_comments_section.html:157
 msgid "Add a Comment"
 msgstr "Agregar un comentario"
 
 #: .\Comments\templates\Comments\comments_section.html:197
 msgid "Add Comment"
 msgstr "Agregar comentario"
+
+#: .\Comments\templates\Comments\freelancer_comments_section.html:8
+msgid "Comments and Ratings"
+msgstr ""
+
+#: .\Comments\templates\Comments\freelancer_comments_section.html:12
+msgid "Average Rating"
+msgstr ""
+
+#: .\Comments\templates\Comments\freelancer_comments_section.html:161
+msgid "Write a Comment"
+msgstr "Escribir un comentario"
+
+#: .\Comments\templates\Comments\freelancer_comments_section.html:215
+msgid "Sumit"
+msgstr ""
 
 #: .\Messaging\templates\Messaging\client_chat.html:179
 #: .\Messaging\templates\Messaging\freelancer_chat.html:179
@@ -88,8 +110,12 @@ msgstr "No se encontraron usuarios"
 
 #: .\Messaging\templates\Messaging\client_chat.html:369
 #: .\Messaging\templates\Messaging\freelancer_chat.html:368
-msgid "Select a conversation to start chatting or search for a user to start a new conversation."
-msgstr "Selecciona una conversación para comenzar a chatear o busca un usuario para iniciar una nueva conversación."
+msgid ""
+"Select a conversation to start chatting or search for a user to start a new "
+"conversation."
+msgstr ""
+"Selecciona una conversación para comenzar a chatear o busca un usuario para "
+"iniciar una nueva conversación."
 
 #: .\Messaging\templates\Messaging\client_chat.html:399
 #: .\Messaging\templates\Messaging\freelancer_chat.html:398
@@ -111,16 +137,15 @@ msgstr "Hoy"
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: .\Messaging\views.py:81
+#: .\Messaging\views.py:82
 #, python-format
 msgid "A new conversation has been started with %(username)s."
 msgstr "Se ha iniciado una nueva conversación con %(username)s."
 
-#: .\Messaging\views.py:127
+#: .\Messaging\views.py:128
 #, python-format
 msgid "You have received a new message from %(sender)s."
 msgstr "Has recibido un nuevo mensaje de %(sender)s."
-
 
 #: .\NextTask\templates\NextTask\base.html:51
 #: .\env\Lib\site-packages\languages\languages.py:3935
@@ -223,23 +248,15 @@ msgstr "Buscar Freelancers"
 msgid "Search Clients"
 msgstr "Buscar Clientes"
 
-#: .\NextTask\templates\NextTask\home.html:77
-#: .\Projects\templates\Projects\search_projects.html:7
-#: .\Projects\templates\Projects\search_projects.html:11
-#: .\Users\templates\Users\baseFreelancer.html:92
-#: .\Users\templates\Users\homeFreelancer.html:83
-msgid "Search Projects"
-msgstr "Buscar Proyectos"
-
-#: .\NextTask\templates\NextTask\home.html:81
+#: .\NextTask\templates\NextTask\home.html:78
 msgid "Freelancer Working"
 msgstr "Freelancer Trabajando"
 
-#: .\NextTask\templates\NextTask\home.html:87
+#: .\NextTask\templates\NextTask\home.html:84
 msgid "Why Choose Us?"
 msgstr "¿Por qué escogernos?"
 
-#: .\NextTask\templates\NextTask\home.html:88
+#: .\NextTask\templates\NextTask\home.html:85
 msgid ""
 "Discover why NextTask is the best platform for freelancers and clients to "
 "connect and succeed."
@@ -247,31 +264,31 @@ msgstr ""
 "Descubre porque NextTask es la mejor plataforma para que los freelancers y "
 "los clientes se conecten"
 
-#: .\NextTask\templates\NextTask\home.html:91
+#: .\NextTask\templates\NextTask\home.html:88
 msgid "Reliable Service"
 msgstr "Servicio Confiable"
 
-#: .\NextTask\templates\NextTask\home.html:92
+#: .\NextTask\templates\NextTask\home.html:89
 msgid ""
 "We offer 24/7 customer support to ensure you always have the help you need."
 msgstr ""
 "Les ofrecemos servicio al cliente 24/7 para garantizar que siempre tengas lo "
 "que necesitas"
 
-#: .\NextTask\templates\NextTask\home.html:95
+#: .\NextTask\templates\NextTask\home.html:92
 msgid "Wide Range of Categories"
 msgstr "Rango amplio de categorias"
 
-#: .\NextTask\templates\NextTask\home.html:96
+#: .\NextTask\templates\NextTask\home.html:93
 msgid "From design to development, we have projects to suit every skill set."
 msgstr ""
 "Desde el diseño al desarrollo, tenemos proyectos que se acoplan a cada perfil"
 
-#: .\NextTask\templates\NextTask\home.html:99
+#: .\NextTask\templates\NextTask\home.html:96
 msgid "Secure Payments"
 msgstr "Pagos seguros"
 
-#: .\NextTask\templates\NextTask\home.html:100
+#: .\NextTask\templates\NextTask\home.html:97
 msgid ""
 "Our payment system ensures that you get paid safely and promptly for every "
 "task."
@@ -279,11 +296,11 @@ msgstr ""
 "Nuestro sistema de pagos se asegura de que se te pague de manera segura y "
 "oportuna por cada trabajo."
 
-#: .\NextTask\templates\NextTask\home.html:109
+#: .\NextTask\templates\NextTask\home.html:106
 msgid "Our Mission"
 msgstr "Nuestra misión"
 
-#: .\NextTask\templates\NextTask\home.html:110
+#: .\NextTask\templates\NextTask\home.html:107
 msgid ""
 "Our mission is to empower freelancers worldwide by providing opportunities "
 "for economic growth through meaningful work."
@@ -292,7 +309,7 @@ msgstr ""
 "proveyendo oportunidades para su crecimiento económico a través del trabajo "
 "significativo"
 
-#: .\NextTask\templates\NextTask\home.html:116
+#: .\NextTask\templates\NextTask\home.html:113
 msgid "All rights reserved."
 msgstr "Todos los derechos reservados"
 
@@ -494,12 +511,13 @@ msgstr "Categoría"
 #: .\Projects\templates\Projects\edit_project.html:115
 #: .\Projects\templates\Projects\milestone_detail.html:85
 #: .\Projects\templates\Projects\milestone_detail_freelancer.html:76
-#: .\Projects\templates\Projects\project_detail.html:186
+#: .\Projects\templates\Projects\project_detail.html:187
 #: .\Projects\templates\Projects\project_detail_freelancer.html:102
 #: .\Projects\templates\Projects\task_info_edit.html:76
-#: .\Projects\templates\Projects\task_info_view.html:66 .\Users\models.py:141
-#: .\Users\models.py:160 .\Users\models.py:196
-#: .\Users\templates\Users\client_profile.html:130
+#: .\Projects\templates\Projects\task_info_view.html:66
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:109
+#: .\Users\models.py:141 .\Users\models.py:160 .\Users\models.py:196
+#: .\Users\templates\Users\client_profile.html:147
 #: .\Users\templates\Users\freelancer_details.html:8
 #: .\Users\templates\Users\profileSettingsFreelancer.html:236
 #: .\Users\templates\Users\profileSettingsFreelancer.html:281
@@ -524,10 +542,10 @@ msgstr "Guardar Proyecto"
 #: .\Projects\templates\Projects\homeClient.html:193
 #: .\Projects\templates\Projects\milestone_detail.html:164
 #: .\Projects\templates\Projects\project_detail.html:134
-#: .\Projects\templates\Projects\project_detail.html:335
+#: .\Projects\templates\Projects\project_detail.html:336
 #: .\Projects\templates\Projects\task_detail.html:91
-#: .\Users\templates\Users\baseClient.html:661
-#: .\Users\templates\Users\baseFreelancer.html:664
+#: .\Users\templates\Users\baseClient.html:617
+#: .\Users\templates\Users\baseFreelancer.html:624
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -626,7 +644,7 @@ msgstr "¿Estás seguro de que deseas eliminar el hito"
 #: .\Projects\templates\Projects\deleted_projects.html:72
 #: .\Projects\templates\Projects\deleted_tasks.html:61
 msgid "Delete Permanently"
-msgstr ""
+msgstr "Eliminado permemanentemente"
 
 #: .\Projects\templates\Projects\deleted_milestones.html:66
 msgid "There are no deleted milestones."
@@ -641,7 +659,7 @@ msgstr "No hay hitos definidos para este proyecto."
 #: .\Projects\templates\Projects\milestone_detail.html:184
 #: .\Projects\templates\Projects\milestone_detail_freelancer.html:97
 #: .\Projects\templates\Projects\project_detail.html:50
-#: .\Projects\templates\Projects\project_detail.html:219
+#: .\Projects\templates\Projects\project_detail.html:220
 #: .\Projects\templates\Projects\project_detail_freelancer.html:41
 #: .\Projects\templates\Projects\search_freelancer.html:12
 #: .\Projects\templates\Projects\task_detail.html:56
@@ -770,7 +788,7 @@ msgstr "Crear Proyecto"
 
 #: .\Projects\templates\Projects\homeClient.html:26
 msgid "See deleted projects"
-msgstr ""
+msgstr "Ver proyectos eliminados"
 
 #: .\Projects\templates\Projects\homeClient.html:37
 #: .\Users\templates\Users\homeFreelancer.html:27
@@ -798,7 +816,7 @@ msgstr "Últimos Proyectos"
 
 #: .\Projects\templates\Projects\homeClient.html:104
 #: .\Projects\templates\Projects\view_project_search.html:11
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:49
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:104
 msgid "Budget:"
 msgstr "Presupuesto:"
 
@@ -813,13 +831,13 @@ msgstr "¿Estás seguro de que deseas eliminar el projecto"
 #: .\Projects\templates\Projects\homeClient.html:189
 #: .\Projects\templates\Projects\milestone_detail.html:160
 #: .\Projects\templates\Projects\project_detail.html:130
-#: .\Projects\templates\Projects\project_detail.html:331
+#: .\Projects\templates\Projects\project_detail.html:332
 #: .\Projects\templates\Projects\task_detail.html:87
 msgid "Remove"
 msgstr "Eliminar"
 
 #: .\Projects\templates\Projects\homeClient.html:206
-#: .\Users\templates\Users\client_profile.html:153
+#: .\Users\templates\Users\client_profile.html:172
 #: .\Users\templates\Users\homeFreelancer.html:123
 msgid "No projects available."
 msgstr "No hay proyectos disponibles."
@@ -870,7 +888,7 @@ msgstr "Archivo"
 
 #: .\Projects\templates\Projects\milestone_detail.html:96
 #: .\Projects\templates\Projects\milestone_detail_freelancer.html:85
-#: .\Projects\templates\Projects\project_detail.html:248
+#: .\Projects\templates\Projects\project_detail.html:249
 #: .\Projects\templates\Projects\project_detail_freelancer.html:139
 #: .\Projects\templates\Projects\task_info_view.html:56
 msgid "Download File"
@@ -919,40 +937,40 @@ msgid "Are you sure you want to delete the project “{{ project.title }}”?"
 msgstr ""
 "¿Estás seguro de que deseas eliminar el proyecto “{{ project.title }}”?"
 
-#: .\Projects\templates\Projects\project_detail.html:196
+#: .\Projects\templates\Projects\project_detail.html:197
 msgid "Search Freelancer"
 msgstr "Buscar Freelancers"
 
-#: .\Projects\templates\Projects\project_detail.html:197
+#: .\Projects\templates\Projects\project_detail.html:198
 msgid "Manage Applications Freelancer"
 msgstr "Gestionar Aplicaciones"
 
-#: .\Projects\templates\Projects\project_detail.html:198
+#: .\Projects\templates\Projects\project_detail.html:199
 msgid "Freelancer List in the project"
 msgstr "Freelancers trabajando en el proyecto:"
 
-#: .\Projects\templates\Projects\project_detail.html:214
+#: .\Projects\templates\Projects\project_detail.html:215
 #: .\Projects\templates\Projects\project_detail_freelancer.html:115
 msgid "Project Milestones"
 msgstr "Hitos del Proyecto"
 
-#: .\Projects\templates\Projects\project_detail.html:218
+#: .\Projects\templates\Projects\project_detail.html:219
 msgid "Add milestones"
 msgstr "Añadir Hitos"
 
-#: .\Projects\templates\Projects\project_detail.html:220
+#: .\Projects\templates\Projects\project_detail.html:221
 msgid "Deleted milestones"
 msgstr "Hitos Eliminados"
 
-#: .\Projects\templates\Projects\project_detail.html:241
+#: .\Projects\templates\Projects\project_detail.html:242
 msgid "Due:"
 msgstr "Vencimiento"
 
-#: .\Projects\templates\Projects\project_detail.html:324
+#: .\Projects\templates\Projects\project_detail.html:325
 msgid "Are you sure you want to delete the milestone "
 msgstr "¿Estás seguro de que deseas eliminar el hito "
 
-#: .\Projects\templates\Projects\project_detail.html:348
+#: .\Projects\templates\Projects\project_detail.html:349
 #: .\Projects\templates\Projects\project_detail_freelancer.html:146
 msgid "There are no defined milestones for this project."
 msgstr "No hay hitos definidos para este proyecto."
@@ -991,14 +1009,21 @@ msgstr "Freelancer encontrados"
 msgid "Country:"
 msgstr "País:"
 
-#: .\Projects\templates\Projects\search_freelancer.html:72
+#: .\Projects\templates\Projects\search_freelancer.html:73
 msgid "View freelancer profile"
 msgstr "Ver perfil de Freelancer"
 
-#: .\Projects\templates\Projects\search_freelancer.html:77
+#: .\Projects\templates\Projects\search_freelancer.html:78
 #: .\Users\templates\Users\search_freelancers.html:198
 msgid "No freelancers found."
 msgstr "Freelancer no encontrados"
+
+#: .\Projects\templates\Projects\search_projects.html:7
+#: .\Projects\templates\Projects\search_projects.html:11
+#: .\Users\templates\Users\baseFreelancer.html:92
+#: .\Users\templates\Users\homeFreelancer.html:83
+msgid "Search Projects"
+msgstr "Buscar Proyectos"
 
 #: .\Projects\templates\Projects\search_projects.html:12
 msgid "Search"
@@ -1020,7 +1045,23 @@ msgstr "Todas las Categorías"
 msgid "Find Projects"
 msgstr "Encuentra tu proyecto perfecto"
 
-#: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:45
+#: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:39
+#: .\Projects\templates\Projects\view_project_search.html:10
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:96
+msgid "Client:"
+msgstr "Cliente:"
+
+#: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:41
+#: .\Projects\templates\Projects\view_project_search.html:9
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:101
+msgid "Category:"
+msgstr "Categoría:"
+
+#: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:44
+msgid "View project"
+msgstr "Ver Proyecto"
+
+#: .\Projects\templates\Projects\search_projects_freelancer_dashboard.html:49
 msgid "No projects found."
 msgstr "No se encontrarón proyectos"
 
@@ -1054,16 +1095,6 @@ msgstr "Asignado a"
 msgid "Not assigned"
 msgstr "No asignado"
 
-#: .\Projects\templates\Projects\view_project_search.html:9
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:46
-msgid "Category:"
-msgstr "Categoría:"
-
-#: .\Projects\templates\Projects\view_project_search.html:10
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:41
-msgid "Client:"
-msgstr "Cliente:"
-
 #: .\Projects\templates\Projects\view_project_search.html:17
 msgid "Apply to this Project"
 msgstr "Aplicar a este Proyecto"
@@ -1072,42 +1103,38 @@ msgstr "Aplicar a este Proyecto"
 msgid "Login to Apply"
 msgstr "Iniciar Sesión para Aplicar"
 
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:47
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:102
 msgid "Start Date:"
 msgstr "Fecha de Inicio:"
 
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:48
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:103
 msgid "Due Date:"
 msgstr "Fecha de Vencimiento:"
 
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:53
-msgid "Description:"
-msgstr "Descripción:"
-
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:64
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:71
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:119
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:126
 msgid "Apply to Project"
 msgstr "Aplicar al Proyecto"
 
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:67
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:122
 msgid "Only freelancers can apply to projects."
 msgstr "Solo los freelancers pueden aplicar a proyectos."
 
-#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:72
+#: .\Projects\templates\Projects\view_project_search_freelancer_dashboard.html:127
 msgid "Register as Freelancer"
 msgstr "Registrarse como Freelancer"
 
 #: .\Projects\views.py:584
 #, python-format
 msgid "Your application for the project '%(project_title)s' has been accepted."
-msgstr ""
+msgstr "Tu aplicacion al proyecto fue acceptado"
 
 #: .\Projects\views.py:912
 #, python-format
 msgid ""
 "Your application for the project '%(project_title)s' has been accepted by "
 "%(freelancer_name)s."
-msgstr ""
+msgstr "tu aplicacion al proyecto fue correctamente aceptado:"
 
 #: .\Users\models.py:38
 msgid "Language"
@@ -1233,13 +1260,13 @@ msgstr "Mi Trabajo"
 msgid "Welcome, "
 msgstr "Bienvenido, "
 
-#: .\Users\templates\Users\baseClient.html:644
-#: .\Users\templates\Users\baseFreelancer.html:647
+#: .\Users\templates\Users\baseClient.html:600
+#: .\Users\templates\Users\baseFreelancer.html:607
 msgid "Are you sure you want to Logout"
 msgstr "¿Estás seguro de que deseas cerrar sesión?"
 
-#: .\Users\templates\Users\baseClient.html:654
-#: .\Users\templates\Users\baseFreelancer.html:657
+#: .\Users\templates\Users\baseClient.html:610
+#: .\Users\templates\Users\baseFreelancer.html:617
 msgid "Yes Logout"
 msgstr "Cerrar Sesión"
 
@@ -1299,15 +1326,15 @@ msgstr "Confirmar Contraseña"
 msgid "Update Password"
 msgstr "Cambiar Contraseña"
 
-#: .\Users\templates\Users\client_profile.html:108
+#: .\Users\templates\Users\client_profile.html:125
 msgid "Back to Client Search"
 msgstr "Volver a la busqueda"
 
-#: .\Users\templates\Users\client_profile.html:136
+#: .\Users\templates\Users\client_profile.html:153
 msgid "No description available."
 msgstr "No hay descripción disponible."
 
-#: .\Users\templates\Users\client_profile.html:152
+#: .\Users\templates\Users\client_profile.html:171
 msgid "Projects"
 msgstr "Proyectos"
 
@@ -1379,9 +1406,9 @@ msgstr "Dirección"
 msgid "Password"
 msgstr "Contraseña"
 
-#: .\Users\templates\Users\client_signup.html:129
-#: .\Users\templates\Users\freelancer_signup.html:123
-#: .\Users\templates\Users\login.html:64
+#: .\Users\templates\Users\client_signup.html:116
+#: .\Users\templates\Users\freelancer_signup.html:110
+#: .\Users\templates\Users\login.html:50
 msgid "Create Account"
 msgstr "Crear Cuenta"
 
@@ -1447,7 +1474,7 @@ msgid "No languages available."
 msgstr "No hay aplicaciones disponibles."
 
 #: .\Users\templates\Users\freelancer_profile.html:7
-#: .\Users\templates\Users\freelancer_profile.html:22
+#: .\Users\templates\Users\freelancer_profile.html:25
 msgid "Back to Freelancer Search"
 msgstr "Buscar Freelancers"
 
@@ -1455,7 +1482,7 @@ msgstr "Buscar Freelancers"
 msgid "Profile Picture (optional)"
 msgstr "Foto de perfil"
 
-#: .\Users\templates\Users\freelancer_signup.html:133
+#: .\Users\templates\Users\freelancer_signup.html:120
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
 
@@ -1479,11 +1506,11 @@ msgstr "Log in"
 msgid "Welcome to NextTask"
 msgstr "Bienvenido Nextask"
 
-#: .\Users\templates\Users\login.html:59
+#: .\Users\templates\Users\login.html:45
 msgid "Log In"
 msgstr "Log in"
 
-#: .\Users\templates\Users\login.html:64
+#: .\Users\templates\Users\login.html:50
 msgid "Don’t have an account?"
 msgstr "¿No tienes una cuenta?"
 
@@ -1503,14 +1530,14 @@ msgstr "Actualizar perfil"
 #: .\Users\templates\Users\profileSettingsClient.html:38
 #: .\Users\templates\Users\profileSettingsFreelancer.html:37
 msgid "Your profile information has been updated successfully."
-msgstr ""
+msgstr "Tu informacion de perfil ha sido actualizado correctamente"
 
 #: .\Users\templates\Users\profileSettingsClient.html:41
 #: .\Users\templates\Users\profileSettingsFreelancer.html:40
 #: .\Users\templates\Users\profileSettingsFreelancer.html:59
 #: .\Users\templates\Users\profileSettingsFreelancer.html:77
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: .\Users\templates\Users\profileSettingsClient.html:57
 #: .\Users\templates\Users\profileSettingsFreelancer.html:93
@@ -1524,11 +1551,11 @@ msgstr "Actualizar información de usuario"
 
 #: .\Users\templates\Users\profileSettingsFreelancer.html:52
 msgid "Item Added"
-msgstr ""
+msgstr "Añadir item"
 
 #: .\Users\templates\Users\profileSettingsFreelancer.html:56
 msgid "A new item has been added successfully."
-msgstr ""
+msgstr "El nuevo item fue aceptado exitosamente"
 
 #: .\Users\templates\Users\profileSettingsFreelancer.html:70
 msgid "Item Deleted"
@@ -1536,7 +1563,7 @@ msgstr "Item eliminado"
 
 #: .\Users\templates\Users\profileSettingsFreelancer.html:74
 msgid "The item has been deleted successfully."
-msgstr ""
+msgstr "El item fue eliminado correctamente"
 
 #: .\Users\templates\Users\profileSettingsFreelancer.html:205
 msgid "Add New Education"
@@ -1669,4 +1696,24 @@ msgstr "¡Acabas de completar tu registro!"
 #: .\Users\templates\Users\work_experience_register.html:9
 msgid "Work Experience Register"
 msgstr "Registro de experiencia laboral"
+
+#: .\Users\views.py:794
+msgid "El email no coincide con el username proporcionado."
+msgstr ""
+
+#: .\Users\views.py:799
+msgid "Ya has comentado a este freelancer."
+msgstr ""
+
+#: .\Users\views.py:808
+msgid "¡Gracias por tu comentario!"
+msgstr ""
+
+#: .\Users\views.py:811
+msgid "El username proporcionado no existe."
+msgstr ""
+
+#: .\Users\views.py:813
+msgid "Por favor, corrige los errores en el formulario."
+msgstr ""
 

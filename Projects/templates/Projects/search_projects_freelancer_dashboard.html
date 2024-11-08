@@ -21,7 +21,7 @@
             {% endfor %}
         </select>
 
-        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #635FD9; border: none;">{% trans "Find Projects" %}</button>
+        <button type="submit" class="comment-form-btn" style="padding: 20px 20px; background-color: #635FD9; border: none;">{% trans "Find Projects" %}</button>
     </form>
 </div>
 
@@ -35,9 +35,13 @@
                     <h5 class="card-title" style="color: #1A1773; font-weight: bold;">{{ project.title }}</h5>
                     <!-- Se usa el filtro |safe para renderizar correctamente el contenido del campo Quill -->
                     <p class="card-text" style="font-size: 0.9rem; color: #555;">{{ project.description|safe|slice:100 }}...</p>
-                    <p class="card-text" style="font-size: 0.9rem;"><strong>Client:</strong> {{ project.client.user.username }}</p>
-                    <p class="card-text" style="font-size: 0.9rem;"><strong>Category:</strong> {{ project.get_category_display }}</p>
-                    <a href="{% url 'view_project_search' project.id %}" class="btn btn-primary" style="background-color: #635FD9; border: none; padding: 10px 20px; text-decoration: none;">View Project</a>
+                    <p> ‎  </p>
+                    <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Client:" %}</strong> {{ project.client.user.username }}</p>
+
+                    <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Category:" %}</strong> {{ project.get_category_display }}</p>
+                    <p> ‎  </p>
+                    <p> ‎  </p>
+                    <a href="{% url 'view_project_search' project.id %}" class="btn btn-primary comment-form-btn" > {% trans "View project" %}</a>
                 </div>
             </div>
         </div>
