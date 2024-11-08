@@ -23,8 +23,14 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from Comments.forms import FreelancerCommentForm
 from Comments.models import FreelancerComment
 from django.db.models import Avg
-
-
+from .forms import CustomPasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from .models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib import messages
 
 
 @never_cache
@@ -405,16 +411,157 @@ def createProject(request):
     """
     return render(request, 'Users/createProject.html')  # Render project creation template
 
-
-def change_password(request):
+@login_required
+def change_password_client(request):
     """
-    View for rendering the change password page for users.
+    View for rendering the change password page for users (clients).
 
     Returns:
         Rendered template for changing the user's password.
     """
-    return render(request, 'Users/changePassword.html')  # Render change password template
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
+            messages.success(request, 'Your password has been updated successfully!')
+            return render(request, 'Users/changePasswordClient.html', {
+                'form': form,
+                'show_modal': True,  # Mostrar modal si la contraseña se actualizó correctamente
+                'is_submitted': True,
+            })
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordClient.html', {
+                'form': form,
+                'show_modal': False,  # No mostrar modal si hubo errores
+                'is_submitted': True,
+            })
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+        return render(request, 'Users/changePasswordClient.html', {
+            'form': form,
+            'show_modal': False,  # No mostrar modal en la primera carga
+            'is_submitted': False,
+        })
 
+
+@login_required
+def change_password_freelancer(request):
+    """
+    View for rendering the change password page for users (freelancers).
+
+    Returns:
+        Rendered template for changing the user's password.
+    """
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
+            messages.success(request, 'Your password has been updated successfully!')
+            return render(request, 'Users/changePasswordFreelancer.html', {
+                'form': form,
+                'show_modal': True,  # Mostrar modal si la contraseña se actualizó correctamente
+                'is_submitted': True,
+            })
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordFreelancer.html', {
+                'form': form,
+                'show_modal': False,  # No mostrar modal si hubo errores
+                'is_submitted': True,
+            })
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+        return render(request, 'Users/changePasswordFreelancer.html', {
+            'form': form,
+            'show_modal': False,  # No mostrar modal en la primera carga
+            'is_submitted': False,
+        })
+
+
+def password_recovery(request):
+    storage = messages.get_messages(request)
+    for _ in storage:  # Esto fuerza la evaluación y marca los mensajes como usados
+        pass
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        user = User.objects.filter(email__iexact=email).first()
+
+        if user:
+            # Verificar si el usuario es freelancer o cliente para obtener el perfil
+            if hasattr(user, 'freelancer_profile'):
+                profile = user.freelancer_profile
+            elif hasattr(user, 'clientprofile'):
+                profile = user.clientprofile
+            else:
+                messages.error(request, 'No profile associated with this email.')
+                return render(request, 'Users/passwordRecovery.html')
+
+            # Generar un código de verificación aleatorio
+            verification_code = get_random_string(length=6, allowed_chars='0123456789')
+            
+            # Almacenar el código de verificación en el perfil del usuario
+            profile.verification_code = verification_code  # Asegúrate de tener este campo en tu modelo
+            profile.save()
+
+            # Enviar correo con el código de verificación
+            subject = "Password Recovery Code"
+            message = f"Your password recovery code is: {verification_code}"
+            send_mail(subject, message, 'no-reply@yourapp.com', [email])
+
+            # Redirigir al formulario de verificación del código
+            return redirect('verify_code', user_id=user.id)
+        else:
+            messages.error(request, 'Email not found.', extra_tags='password_recovery')
+
+
+    return render(request, 'Users/passwordRecovery.html')
+
+
+def verify_code(request, user_id):
+    user = User.objects.get(id=user_id)
+
+    if request.method == "POST":
+        verification_code = request.POST.get('verification_code')
+
+        # Verificar si el usuario es freelancer o cliente para acceder al perfil correcto
+        if hasattr(user, 'freelancer_profile'):
+            profile = user.freelancer_profile
+        elif hasattr(user, 'clientprofile'):
+            profile = user.clientprofile
+        else:
+            messages.error(request, 'No profile associated with this user.')
+            return render(request, 'Users/verify_code.html')
+
+        # Verificar si el código coincide con el guardado en el perfil
+        if profile.verification_code == verification_code:
+            # El código es correcto, redirigir a la página de cambio de contraseña
+            return redirect('reset_password', user_id=user.id)
+        else:
+            messages.error(request, 'Invalid verification code.')
+    
+    return render(request, 'Users/verify_code.html', {'user_id': user_id})
+
+
+def reset_password(request, user_id):
+    """
+    View for resetting the password after verifying the code.
+    """
+    user = User.objects.get(pk=user_id)
+
+    if request.method == 'POST':
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = SetPasswordForm(user)
+
+    return render(request, 'Users/reset_password.html', {'form': form})
+    
 
 @login_required
 def profile_settings_freelancer(request):

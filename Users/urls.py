@@ -38,8 +38,20 @@ urlpatterns = [
     # Home page for freelancers (dashboard)
     path("Home-Freelancer/", views.home_freelancer, name="home_freelancer"),
 
-    # URL for changing password
-    path("ChangePassword/", views.change_password, name="change_password"),
+    # URL for changing password client
+    path("changePasswordClient/", views.change_password_client, name="change_password_client"),
+
+    # URL for changing password freelancer
+    path("changePasswordFreelancer/", views.change_password_freelancer, name="change_password_freelancer"),
+
+    # URL for password recovery
+    path("passwordRecovery/", views.password_recovery, name="password_recovery"),
+
+    # URL for verfy code validation email
+    path('verify_code/<int:user_id>/', views.verify_code, name='verify_code'),
+
+    # URL for password reset
+    path('reset_password/<int:user_id>/', views.reset_password, name='reset_password'),
 
     # URL for profile settings freelancer
     path("profileSettingsFreelancer/", views.profile_settings_freelancer, name="profile_settings_freelancer"),
