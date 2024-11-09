@@ -179,6 +179,7 @@
                 </div>
               </div>
             </div>
+            
             <!-- Descripción  -->
             <div class="col-12">
               <div class="form-container">
@@ -194,7 +195,7 @@
             <div class="text mt-4">
               <div class="button-group">
                 <a href="{% url 'search_freelancer' project.id  %}" class="w-btn-secondary-lg">{% trans "Search Freelancer" %}</a>
-                <a href="{% url 'manage_applications' project.id  %}" class="w-btn-plus-lg">{% trans "Manage Applications Freelancer" %}</a>
+                <a href="{% url 'manage_applications' project.id  %}" class="w-btn-secondary-lg">{% trans "Manage Applications Freelancer" %}</a>
                 <a href="{% url 'freelancers_in_project' project.id  %}" class="w-btn-secondary-lg">{% trans "Freelancer List in the project" %}</a>
                 
               </div>
