@@ -6,7 +6,11 @@
     <a href="{% url 'freelancers_project_pay' project.id %}" class="w-btn-danger-lg" style="margin-right: 12px;">{% trans "Back" %}</a>
 </div>
 
-<div class="mt-5">
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="gig-info-card">
+            <div class="gig-info-body bg-white" style="border-radius: 16px;">
+<div class="container mt-5">
     <h3 class="text-24 fw-bold text-dark-300 mb-2">
         {% if periodic_payment %}
             {% trans "Update Periodic Payment for Freelancer:" %}
@@ -56,6 +60,11 @@
             {% endif %}
         </button>
     </form>
+</div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

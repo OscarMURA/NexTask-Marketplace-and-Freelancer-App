@@ -9,7 +9,6 @@ from django.contrib import messages
 from Projects.models import ProjectFreelancer, Project, Contract
 from Notifications.models import Notification
 from django.utils.translation import gettext_lazy as _
-import time
 
 @login_required
 def client_payment_history(request):
@@ -37,7 +36,7 @@ def freelancer_payment_history(request):
     """
     freelancer_profile = get_object_or_404(FreelancerProfile, user=request.user)
     
-    payments = Payment.objects.filter(freelancer=freelancer_profile).select_related('project')
+    payments = Payment.objects.filter(freelancer=freelancer_profile)
     
     return render(request, 'payments/freelancer_payment_history.html', {'payments': payments})
 
@@ -80,12 +79,12 @@ def freelancers_project_punctual_pay(request, project_id, freelancer_id):
                 freelancer=freelancer,
                 project=project,
                 amount=amount,
-                status=Payment.PaymentStatus.PENDING,
+                status=Payment.PaymentStatus.PAID,
                 client=client,
             )
             
             messages.success(request, _("Payment was successfully processed."))
-            return HttpResponseRedirect(reverse("client_payment_history"))
+            return HttpResponseRedirect(reverse("completed_payments"))
         
         except (ValueError, TypeError):
             messages.error(request, _("Invalid amount. Please enter a valid number."))
@@ -101,7 +100,6 @@ def freelancers_project_periodic_pay(request, project_id, freelancer_id):
 
     # Intenta cargar un pago periódico existente para el freelancer y el proyecto
     periodic_payment = PeriodicPayment.objects.filter(freelancer=freelancer, project=project).first()
-    print(periodic_payment)
 
     if request.method == "POST":
         amount = request.POST.get("amount")
@@ -137,7 +135,7 @@ def freelancers_project_periodic_pay(request, project_id, freelancer_id):
                 )
                 messages.success(request, _("Periodic payment setup was successful."))
 
-            return redirect('client_payment_history')
+            return redirect('home_client')
 
         except ValueError:
             messages.error(request, _("Invalid input. Please check your entries."))
@@ -149,14 +147,116 @@ def freelancers_project_periodic_pay(request, project_id, freelancer_id):
     })
 
 @login_required
-def payment_history(request):
-    # Filtra los pagos de acuerdo al tipo de usuario
+def pending_payments(request):
+    """
+    Muestra todos los pagos pendientes de un cliente o freelancer.
+    """
     if request.user.user_type == 'client':
-        payments = Payment.objects.filter(client__user=request.user).order_by('-created_at')
+        # Filtrar los pagos pendientes para el cliente
+        pending_payments = Payment.objects.filter(client__user=request.user, status='pending')
     elif request.user.user_type == 'freelancer':
-        payments = Payment.objects.filter(freelancer__user=request.user).order_by('-created_at')
+        # Filtrar los pagos pendientes para el freelancer
+        pending_payments = Payment.objects.filter(freelancer__user=request.user, status='pending')
     else:
-        payments = Payment.objects.none()  # Ningún pago si no es cliente o freelancer
+        pending_payments = Payment.objects.none()  # Ningún pago si no es cliente o freelancer
 
-    # Renderiza la plantilla con el historial de pagos
-    return render(request, 'Payments/payment_history.html', {'payments': payments})
+    return render(request, 'payments/pending_payments.html', {
+        'payments': pending_payments,
+    })
+
+
+@login_required
+def completed_payments(request):
+    """
+    Muestra todos los pagos completados de un cliente o freelancer.
+    """
+    if request.user.user_type == 'client':
+        # Filtrar los pagos completados para el cliente
+        completed_payments = Payment.objects.filter(client__user=request.user, status='paid')
+    elif request.user.user_type == 'freelancer':
+        # Filtrar los pagos completados para el freelancer
+        completed_payments = Payment.objects.filter(freelancer__user=request.user, status='paid')
+    else:
+        completed_payments = Payment.objects.none()
+
+    return render(request, 'payments/completed_payments.html', {
+        'payments': completed_payments,
+    })
+
+@login_required
+def choose_payment_method(request, project_id, freelancer_id):
+    """
+    Permite al cliente escoger el método de pago y completa el pago si es seleccionado.
+    """
+    project = get_object_or_404(Project, id=project_id)
+    freelancer = get_object_or_404(FreelancerProfile, id=freelancer_id)
+    client = get_object_or_404(ClientProfile, user=request.user)
+
+    # Verificar si ya existe un pago pendiente
+    payment = Payment.objects.filter(
+        freelancer=freelancer,
+        project=project,
+        client=client,
+        status=Payment.PaymentStatus.PENDING
+    ).first()
+
+    if request.method == "POST":
+        method = request.POST.get("method")  # Método de pago seleccionado
+
+        if payment:
+            # Si ya existe un pago pendiente, completarlo
+            payment.status = Payment.PaymentStatus.PAID
+            payment.save()
+            messages.success(request, "Pago completado exitosamente.")
+        else:
+            # Si no existe un pago pendiente, muestra un mensaje de error
+            messages.error(request, "No hay pagos pendientes para este proyecto y freelancer.")
+            return redirect('pending_payments')
+
+        # Redirigir a la vista de recibo después del pago
+        return redirect('payment_receipt', payment_id=payment.id)
+
+    return render(request, 'payments/choose_payment_method.html', {
+        'project': project,
+        'freelancer': freelancer,
+        'payment': payment
+    })
+
+@login_required
+def payment_receipt(request, payment_id):
+    """
+    Muestra el recibo de un pago completado.
+    """
+    payment = get_object_or_404(Payment, id=payment_id)
+
+    if payment.status == Payment.PaymentStatus.PENDING:
+        messages.warning(request, "Este pago está pendiente. Completa el pago para ver el recibo.")
+        return redirect('choose_payment_method', project_id=payment.project.id, freelancer_id=payment.freelancer.id)
+
+
+    if request.user.user_type == 'freelancer':
+        # Redirigir a la plantilla de recibo para freelancers
+        template_name = 'payments/payment_receipt_freelancer.html'
+    else:
+        # Usar la plantilla de recibo para clientes
+        template_name = 'payments/payment_receipt.html'
+
+    return render(request, template_name, {
+        'payment': payment,
+    })
+
+
+@login_required
+def make_payment(request, payment_id):
+    """
+    Redirige a la selección del método de pago para el pago pendiente.
+    """
+    payment = get_object_or_404(Payment, id=payment_id)
+    
+    # Redirigir a la selección del método de pago si el pago está pendiente
+    if payment.status == Payment.PaymentStatus.PENDING:
+        messages.info(request, "Por favor selecciona un método de pago.")
+        return redirect('choose_payment_method', project_id=payment.project.id, freelancer_id=payment.freelancer.id)
+
+    # Si el pago no está pendiente, redirige a la lista de pagos pendientes como fallback
+    return redirect('pending_payments')

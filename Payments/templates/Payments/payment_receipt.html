@@ -1,0 +1,41 @@
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="gig-info-card">
+            <div class="gig-info-body bg-white" style="border-radius: 16px;">
+
+<div class="container mt-5">
+    <div class="receipt border p-4 shadow-sm">
+        <h2 class="text-center mb-4">{% trans "Payment Receipt" %}</h2>
+        
+        <div class="receipt-details">
+            <p><strong>{% trans "Receipt Number:" %}</strong> {{ payment.id }}</p>
+            <p><strong>{% trans "Date:" %}</strong> {{ payment.created_at|date:"d M Y, H:i" }}</p>
+            <p><strong>{% trans "Project:" %}</strong> {{ payment.project.title }}</p>
+            <p><strong>{% trans "Freelancer:" %}</strong> {{ payment.freelancer.user.first_name }} {{ payment.freelancer.user.last_name }}</p>
+            <p><strong>{% trans "Client:" %}</strong> {{ payment.client.user.first_name }} {{ payment.client.user.last_name }}</p>
+            <p><strong>{% trans "Amount:" %}</strong> ${{ payment.amount }}</p>
+            <p><strong>{% trans "Status:" %}</strong> 
+                {% if payment.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
+                {% elif payment.status == 'paid' %}
+                    <span class="badge bg-success text-light">{% trans "Paid" %}</span>
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'home_client' %}" class="btn btn-secondary">{% trans "Back home" %}</a>
+            <button class="btn btn-primary" onclick="window.print();">{% trans "Print Receipt" %}</button>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

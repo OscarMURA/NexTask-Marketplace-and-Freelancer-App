@@ -105,5 +105,8 @@ urlpatterns = [
     path('tasks/<int:milestone_id>/deleted/', views.deleted_tasks, name='deleted_tasks'),
     path('tasks/<int:task_id>/restore/', views.restore_task, name='restore_task'),
     path('tasks/<int:task_id>/permanent_delete/', views.permanently_delete_task, name='permanent_delete_task'),
-  
+
+    path('redirect-to-payments/', views.redirect_to_client_payment_history, name='redirect_to_client_payments'),
+    path('redirect-to-payments/', views.redirect_to_freelancer_payment_history, name='redirect_to_freelancer_payments'),
+
 ]

@@ -30,6 +30,7 @@ class Payment(models.Model):
         default=PaymentStatus.PENDING
     )
     client = models.ForeignKey('Users.ClientProfile', on_delete=models.CASCADE, related_name='payments')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Payment of {self.amount} for {self.freelancer.user.username} - Status: {self.status}"

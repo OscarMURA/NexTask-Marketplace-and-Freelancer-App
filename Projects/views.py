@@ -960,13 +960,6 @@ def freelancers_in_project(request, project_id):
         'freelancers': freelancers,
     })
 
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Task, ProjectFreelancer, Project
-from Comments.forms import CommentForm
-from Users.models import ClientProfile, FreelancerProfile
-
 def handle_comments(request, task, user):
     print(f"Manejando comentarios para la tarea: {task.title}")
     project = task.milestone.project
@@ -1147,3 +1140,9 @@ def permanently_delete_task(request, task_id):
         return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
 
     return redirect('deleted_tasks',milestone_id=milestone.id)
+
+def redirect_to_client_payment_history(request):
+    return redirect('client_payment_history')
+
+def redirect_to_freelancer_payment_history(request):
+    return redirect('freelancer_payment_history')
