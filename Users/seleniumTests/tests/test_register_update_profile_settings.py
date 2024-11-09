@@ -1,7 +1,7 @@
 import pytest
 from pages.client_signup_page import ClientSignUpPage
 from pages.profile_settings_page import ProfileSettingsPage
-
+from selenium.webdriver.common.by import By
 @pytest.mark.usefixtures("setup")
 class TestClientFullFlow:
     
@@ -39,5 +39,5 @@ class TestClientFullFlow:
             phone="987654321",
             address="123 New Address"
         )
-        profile_settings_page.submit_form()
+        self.driver.find_element(By.NAME, "update_user_info").click()
         assert profile_settings_page.is_profile_updated(), "Profile update failed"
