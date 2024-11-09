@@ -6,9 +6,8 @@ from django.conf.urls.static import static  # Para servir archivos estáticos y 
 from . import views
 from django.conf.urls.i18n import i18n_patterns
 
-
 # Rutas que no deben tener prefijo de idioma (como las APIs)
-urlpatterns = [path('messaging/', include('Messaging.urls', namespace='messaging')),]  # Incluye las rutas de la app Messaging sin i18n]
+urlpatterns = [path('messaging/', include('Messaging.urls')),]  # Incluye las rutas de la app Messaging sin i18n]
 
 # Rutas con soporte de internacionalización
 urlpatterns += i18n_patterns(
