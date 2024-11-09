@@ -221,6 +221,15 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
 ]
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_BEAT_SCHEDULE = {
+    'check-periodic-payments-every-day': {
+        'task': 'Payments.tasks.check_periodic_payments',
+        'schedule': 3600.0,  # 86400 segundos = 24 horas,  3600.0 = 1 hora
+    },
+}
 
 
 #MERCADOPAGO_PUBLIC_KEY = 'tu_public_key'

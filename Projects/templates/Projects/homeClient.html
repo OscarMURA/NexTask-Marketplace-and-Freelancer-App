@@ -27,24 +27,11 @@
     </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div
-      class="p-4 d-flex align-items-center dashobard-widget justify-content-between bg-white rounded-4"
-    >
-      <div>
-        <h5 class="dashboard-widget-title fw-bold text-dark-300">{{ total_balance }}</h5>
-        <p class="text-18 text-dark-200">{% trans "Total Balance" %}</p>
-      </div>
-      <div class="dashboard-widget-icon">
-        <img src="{% static 'img/dashboard/icon/icon-1.png' %}" alt="" />
-      </div>
-    </div>
-  </div>
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div
-      class="p-4 d-flex align-items-center dashobard-widget justify-content-between bg-white rounded-4"
-    >
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <!-- Total Projects Widget -->
+  <div class="col mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
       <div>
         <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ total_projects }}</h3>
         <p class="text-18 text-dark-200">{% trans "Total Projects" %}</p>
@@ -54,26 +41,26 @@
       </div>
     </div>
   </div>
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div
-      class="p-4 d-flex align-items-center dashobard-widget justify-content-between bg-white rounded-4"
-    >
+  
+  <!-- Completed Payments Widget -->
+  <div class="col mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
       <div>
-        <h3 class="dashboard-widget-title fw-bold text-dark-300">35</h3>
-        <p class="text-18 text-dark-200">{% trans "Complete Order" %}</p>
+        <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ completed_payments_count }}</h3>
+        <p class="text-18 text-dark-200">{% trans "Completed Payments" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-3.png' %}" alt="" />
       </div>
     </div>
   </div>
-  <div class="col-xl-3 col-md-6">
-    <div
-      class="p-4 d-flex align-items-center dashobard-widget justify-content-between bg-white rounded-4"
-    >
+  
+  <!-- Pending Payments Widget -->
+  <div class="col mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
       <div>
-        <h3 class="dashboard-widget-title fw-bold text-dark-300">02</h3>
-        <p class="text-18 text-dark-200">{% trans "Active Order" %}</p>
+        <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ pending_payments_count }}</h3>
+        <p class="text-18 text-dark-200">{% trans "Pending Payments" %}</p>
       </div>
       <div class="dashboard-widget-icon">
         <img src="{% static 'img/dashboard/icon/icon-4.png' %}" alt="" />

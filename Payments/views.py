@@ -10,6 +10,17 @@ from Projects.models import ProjectFreelancer, Project, Contract
 from Notifications.models import Notification
 from django.utils.translation import gettext_lazy as _
 
+def create_payment_notification(user, message):
+    """
+    Crea una notificación para el usuario.
+    """
+    Notification.objects.create(
+        recipient=user,
+        message=message,
+        created_at=timezone.now(),
+        is_read=False
+    )
+
 @login_required
 def client_payment_history(request):
     """
@@ -82,6 +93,16 @@ def freelancers_project_punctual_pay(request, project_id, freelancer_id):
                 status=Payment.PaymentStatus.PAID,
                 client=client,
             )
+
+            # Crear notificaciones
+            create_payment_notification(
+                user=client.user,
+                message=_("Payment of ${} for project '{}' has been processed.").format(amount, project.title)
+            )
+            create_payment_notification(
+                user=freelancer.user,
+                message=_("You have received a payment of ${} for project '{}'.").format(amount, project.title)
+            )
             
             messages.success(request, _("Payment was successfully processed."))
             return HttpResponseRedirect(reverse("completed_payments"))
@@ -101,6 +122,8 @@ def freelancers_project_periodic_pay(request, project_id, freelancer_id):
     # Intenta cargar un pago periódico existente para el freelancer y el proyecto
     periodic_payment = PeriodicPayment.objects.filter(freelancer=freelancer, project=project).first()
 
+    latest_message = None  # Inicializa la variable para almacenar el último mensaje
+
     if request.method == "POST":
         amount = request.POST.get("amount")
         frequency = request.POST.get("frequency")
@@ -108,21 +131,36 @@ def freelancers_project_periodic_pay(request, project_id, freelancer_id):
         end_date = request.POST.get("end_date") or None
 
         try:
+            # Convertir y validar el monto
             amount = float(amount)
+            if amount <= 0:
+                latest_message = _("The amount must be positive.")
+                raise ValueError
+
+            # Convertir y validar las fechas
             start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = timezone.datetime.strptime(end_date, "%Y-%m-%d").date() if end_date else None
+            today = timezone.now().date()
 
+            # Validación de fechas
+            if start_date < today:
+                latest_message = _("The start date cannot be before today.")
+                raise ValueError
+            
+            if end_date and end_date <= start_date:
+                latest_message = _("The end date must be after the start date.")
+                raise ValueError
+
+            # Si existe un pago periódico, actualizarlo; si no, crear uno nuevo
             if periodic_payment:
-                # Si existe, actualizar el pago periódico existente
                 periodic_payment.amount = amount
                 periodic_payment.frequency = frequency
                 periodic_payment.start_date = start_date
                 periodic_payment.end_date = end_date
                 periodic_payment.next_payment_date = start_date
                 periodic_payment.save()
-                messages.success(request, _("Periodic payment updated successfully."))
+                latest_message = _("Periodic payment updated successfully.")
             else:
-                # Si no existe, crear un nuevo pago periódico
                 PeriodicPayment.objects.create(
                     freelancer=freelancer,
                     project=project,
@@ -133,17 +171,19 @@ def freelancers_project_periodic_pay(request, project_id, freelancer_id):
                     end_date=end_date,
                     next_payment_date=start_date
                 )
-                messages.success(request, _("Periodic payment setup was successful."))
+                latest_message = _("Periodic payment setup was successful.")
 
             return redirect('home_client')
 
         except ValueError:
-            messages.error(request, _("Invalid input. Please check your entries."))
-    
+            # El mensaje de error ya ha sido definido en `latest_message`
+            pass
+
     return render(request, "Payments/periodic_payment.html", {
         "project": project,
         "freelancer": freelancer,
-        "periodic_payment": periodic_payment
+        "periodic_payment": periodic_payment,
+        "latest_message": latest_message
     })
 
 @login_required
@@ -207,10 +247,21 @@ def choose_payment_method(request, project_id, freelancer_id):
             # Si ya existe un pago pendiente, completarlo
             payment.status = Payment.PaymentStatus.PAID
             payment.save()
-            messages.success(request, "Pago completado exitosamente.")
+
+            # Crear notificaciones
+            create_payment_notification(
+                user=client.user,
+                message=_("Payment of ${} for project '{}' has been completed.").format(payment.amount, project.title)
+            )
+            create_payment_notification(
+                user=freelancer.user,
+                message=_("You have received a payment of ${} for project '{}'.").format(payment.amount, project.title)
+            )
+
+            messages.success(request, _("Payment completed successfully."))
         else:
             # Si no existe un pago pendiente, muestra un mensaje de error
-            messages.error(request, "No hay pagos pendientes para este proyecto y freelancer.")
+            messages.error(request, _("There is no pending payment to complete."))
             return redirect('pending_payments')
 
         # Redirigir a la vista de recibo después del pago
@@ -230,7 +281,7 @@ def payment_receipt(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id)
 
     if payment.status == Payment.PaymentStatus.PENDING:
-        messages.warning(request, "Este pago está pendiente. Completa el pago para ver el recibo.")
+        messages.warning(request, _("This payment is still pending."))
         return redirect('choose_payment_method', project_id=payment.project.id, freelancer_id=payment.freelancer.id)
 
 
@@ -255,7 +306,7 @@ def make_payment(request, payment_id):
     
     # Redirigir a la selección del método de pago si el pago está pendiente
     if payment.status == Payment.PaymentStatus.PENDING:
-        messages.info(request, "Por favor selecciona un método de pago.")
+        messages.info(request, _("Please select a payment method to complete the payment."))
         return redirect('choose_payment_method', project_id=payment.project.id, freelancer_id=payment.freelancer.id)
 
     # Si el pago no está pendiente, redirige a la lista de pagos pendientes como fallback

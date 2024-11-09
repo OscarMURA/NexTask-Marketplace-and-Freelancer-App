@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
+
+from Payments.models import Payment
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -387,9 +389,14 @@ def home_freelancer(request):
     projects = [contract.project for contract in active_contracts]
     total_projects = len(projects)  # Count projects
 
+    pending_payments_count = Payment.objects.filter(freelancer=freelancer_profile, status='pending').count()
+    completed_payments_count = Payment.objects.filter(freelancer=freelancer_profile, status='paid').count()
+    
     return render(request, 'Users/homeFreelancer.html', {
         'projects': projects,
         'total_projects': total_projects,
+        'pending_payments_count': pending_payments_count,
+        'completed_payments_count': completed_payments_count,
     })
 
 
