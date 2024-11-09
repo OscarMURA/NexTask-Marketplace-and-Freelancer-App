@@ -69,6 +69,7 @@
                     <h5 class="card-title">{{ freelancer.user.username }}</h5>
                     <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
                     <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ freelancer.country }}</p>
+                   
                     <a href="{% url 'freelancer_profile' project.id freelancer.user.id %}" class="btn btn-primary">{% trans "View freelancer profile" %}</a>
                 </div>
             </div>
@@ -124,7 +125,7 @@
     }
 
     .card {
-        padding: 20px;
+        padding: 20px; /* Espacio interno de la tarjeta */
         border-radius: 10px;
         text-align: center;
         min-height: 350px;
@@ -133,8 +134,10 @@
         justify-content: space-between;
         width: 100%;
         max-width: 300px;
-        margin: auto;
+        margin: 20px auto; /* Margen exterior superior e inferior de 20px */
+        gap: 15px; /* Espacio entre elementos internos */
     }
+    
 
     .card img {
         width: 150px;

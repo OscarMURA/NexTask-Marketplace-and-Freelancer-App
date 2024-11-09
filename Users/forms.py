@@ -11,6 +11,9 @@ from crispy_forms.layout import Submit
 from django_select2.forms import *
 import re
 from django.db.models import Count
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ValidationError
+
 
 # Base class for User Signup
 class UserSignUpForm(UserCreationForm):
@@ -42,6 +45,15 @@ class UserSignUpForm(UserCreationForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Sign Up'))
+
+    def clean_email(self):
+        """
+        Validates that the email is unique across all users.
+        """
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("A user with that email already exists.")
+        return email
 
 
 # Form for Freelancer Signup
@@ -367,3 +379,18 @@ class ClientSearchForm(forms.Form):
         required=False,
         widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})  # Country selection styling
     )
+
+# Formulario para cambiar la contraseña
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
+        # Aplicar la clase CSS a cada campo relevante
+        for fieldname in ['old_password', 'new_password1', 'new_password2']:
+            self.fields[fieldname].widget.attrs.update({'class': 'form-control'})
+
+    def clean_old_password(self):
+        old_password = self.cleaned_data.get("old_password")
+        user = self.user
+        if not user.check_password(old_password):
+            raise ValidationError("Your current password is incorrect.")
+        return old_password

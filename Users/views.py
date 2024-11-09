@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login
 from .forms import *
 from django.contrib.auth.decorators import login_required
@@ -8,8 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
-from django.shortcuts import get_object_or_404
-from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio, Language
+from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio, Language,ClientProfile
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from Projects.models import *
@@ -20,8 +19,18 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from urllib.parse import urlencode  # Importa urlencode para agregar parámetros a la URL
-
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from Comments.forms import FreelancerCommentForm
+from Comments.models import FreelancerComment
+from django.db.models import Avg
+from .forms import CustomPasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from .models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib import messages
 
 
 @never_cache
@@ -402,16 +411,157 @@ def createProject(request):
     """
     return render(request, 'Users/createProject.html')  # Render project creation template
 
-
-def change_password(request):
+@login_required
+def change_password_client(request):
     """
-    View for rendering the change password page for users.
+    View for rendering the change password page for users (clients).
 
     Returns:
         Rendered template for changing the user's password.
     """
-    return render(request, 'Users/changePassword.html')  # Render change password template
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
+            messages.success(request, 'Your password has been updated successfully!')
+            return render(request, 'Users/changePasswordClient.html', {
+                'form': form,
+                'show_modal': True,  # Mostrar modal si la contraseña se actualizó correctamente
+                'is_submitted': True,
+            })
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordClient.html', {
+                'form': form,
+                'show_modal': False,  # No mostrar modal si hubo errores
+                'is_submitted': True,
+            })
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+        return render(request, 'Users/changePasswordClient.html', {
+            'form': form,
+            'show_modal': False,  # No mostrar modal en la primera carga
+            'is_submitted': False,
+        })
 
+
+@login_required
+def change_password_freelancer(request):
+    """
+    View for rendering the change password page for users (freelancers).
+
+    Returns:
+        Rendered template for changing the user's password.
+    """
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # Mantener la sesión activa después de cambiar la contraseña
+            messages.success(request, 'Your password has been updated successfully!')
+            return render(request, 'Users/changePasswordFreelancer.html', {
+                'form': form,
+                'show_modal': True,  # Mostrar modal si la contraseña se actualizó correctamente
+                'is_submitted': True,
+            })
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            return render(request, 'Users/changePasswordFreelancer.html', {
+                'form': form,
+                'show_modal': False,  # No mostrar modal si hubo errores
+                'is_submitted': True,
+            })
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+        return render(request, 'Users/changePasswordFreelancer.html', {
+            'form': form,
+            'show_modal': False,  # No mostrar modal en la primera carga
+            'is_submitted': False,
+        })
+
+
+def password_recovery(request):
+    storage = messages.get_messages(request)
+    for _ in storage:  # Esto fuerza la evaluación y marca los mensajes como usados
+        pass
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        user = User.objects.filter(email__iexact=email).first()
+
+        if user:
+            # Verificar si el usuario es freelancer o cliente para obtener el perfil
+            if hasattr(user, 'freelancer_profile'):
+                profile = user.freelancer_profile
+            elif hasattr(user, 'clientprofile'):
+                profile = user.clientprofile
+            else:
+                messages.error(request, 'No profile associated with this email.')
+                return render(request, 'Users/passwordRecovery.html')
+
+            # Generar un código de verificación aleatorio
+            verification_code = get_random_string(length=6, allowed_chars='0123456789')
+            
+            # Almacenar el código de verificación en el perfil del usuario
+            profile.verification_code = verification_code  # Asegúrate de tener este campo en tu modelo
+            profile.save()
+
+            # Enviar correo con el código de verificación
+            subject = "Password Recovery Code"
+            message = f"Your password recovery code is: {verification_code}"
+            send_mail(subject, message, 'no-reply@yourapp.com', [email])
+
+            # Redirigir al formulario de verificación del código
+            return redirect('verify_code', user_id=user.id)
+        else:
+            messages.error(request, 'Email not found.', extra_tags='password_recovery')
+
+
+    return render(request, 'Users/passwordRecovery.html')
+
+
+def verify_code(request, user_id):
+    user = User.objects.get(id=user_id)
+
+    if request.method == "POST":
+        verification_code = request.POST.get('verification_code')
+
+        # Verificar si el usuario es freelancer o cliente para acceder al perfil correcto
+        if hasattr(user, 'freelancer_profile'):
+            profile = user.freelancer_profile
+        elif hasattr(user, 'clientprofile'):
+            profile = user.clientprofile
+        else:
+            messages.error(request, 'No profile associated with this user.')
+            return render(request, 'Users/verify_code.html')
+
+        # Verificar si el código coincide con el guardado en el perfil
+        if profile.verification_code == verification_code:
+            # El código es correcto, redirigir a la página de cambio de contraseña
+            return redirect('reset_password', user_id=user.id)
+        else:
+            messages.error(request, 'Invalid verification code.')
+    
+    return render(request, 'Users/verify_code.html', {'user_id': user_id})
+
+
+def reset_password(request, user_id):
+    """
+    View for resetting the password after verifying the code.
+    """
+    user = User.objects.get(pk=user_id)
+
+    if request.method == 'POST':
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = SetPasswordForm(user)
+
+    return render(request, 'Users/reset_password.html', {'form': form})
+    
 
 @login_required
 def profile_settings_freelancer(request):
@@ -763,19 +913,84 @@ def search_freelancers(request):
 
 def freelancer_profile(request, id):
     """
-    View for displaying a freelancer's profile.
-
-    This view retrieves the freelancer's profile using the provided user ID 
-    and renders the corresponding template.
-
-    Args:
-        id (int): The user ID of the freelancer.
-
-    Returns:
-        Rendered template displaying the freelancer's profile.
+    View para mostrar el perfil de un freelancer, incluyendo comentarios y calificaciones.
     """
-    freelancer = get_object_or_404(FreelancerProfile, user__id=id)  # Get the freelancer profile or 404
-    return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})  # Render the profile template
+    freelancer = get_object_or_404(FreelancerProfile, user__id=id)
+    
+    # Calcular la calificación promedio
+    average_rating = FreelancerComment.objects.filter(freelancer=freelancer).aggregate(Avg('rating'))['rating__avg'] or 0
+    average_rating = round(average_rating, 1)
+    
+    # Calcular estrellas completas, medias y vacías para el promedio
+    full_stars = int(average_rating)
+    half_stars = 1 if (average_rating - full_stars) >= 0.5 else 0
+    empty_stars = 5 - full_stars - half_stars
+    
+    # Manejar los comentarios
+    if request.method == 'POST':
+        form = FreelancerCommentForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            rating = form.cleaned_data['rating']
+            comment_content = form.cleaned_data['comment']
+            
+            try:
+                user = User.objects.get(username=username)
+                if user.email != email:
+                    messages.error(request, _("El email no coincide con el username proporcionado."))
+                else:
+                    # Verificar si el usuario ya ha comentado
+                    existing_comment = FreelancerComment.objects.filter(freelancer=freelancer, user=user).first()
+                    if existing_comment:
+                        messages.error(request, _("Ya has comentado a este freelancer."))
+                    else:
+                        # Crear y guardar el comentario
+                        FreelancerComment.objects.create(
+                            freelancer=freelancer,
+                            user=user,
+                            rating=rating,
+                            comment=comment_content
+                        )
+                        messages.success(request, _("¡Gracias por tu comentario!"))
+                        return redirect('freelancer_profile', id=freelancer.user.id)
+            except User.DoesNotExist:
+                messages.error(request, _("El username proporcionado no existe."))
+        else:
+            messages.error(request, _("Por favor, corrige los errores en el formulario."))
+    else:
+        form = FreelancerCommentForm()
+    
+    # Obtener todos los comentarios existentes ordenados por fecha de creación
+    comments = FreelancerComment.objects.filter(freelancer=freelancer).order_by('-created_at')
+    
+    # Implementar Paginación: 5 comentarios por página
+    paginator = Paginator(comments, 5)  # 5 comentarios por página
+    page = request.GET.get('page')
+    
+    try:
+        comments_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        comments_paginated = paginator.page(1)
+    except EmptyPage:
+        comments_paginated = paginator.page(paginator.num_pages)
+    
+    # Calcular la calificación promedio (ya calculado arriba)
+    
+    context = {
+        'freelancer': freelancer,
+        'comments': comments_paginated,
+        'form': form,
+        'average_rating': average_rating,
+        'full_stars': range(full_stars),
+        'half_stars': range(half_stars),
+        'empty_stars': range(empty_stars),
+        'is_paginated': comments_paginated.has_other_pages(),
+        'paginator': paginator,
+        'page_obj': comments_paginated,
+    }
+    
+    return render(request, 'Users/freelancer_profile.html', context)
 
 
 def search_clients(request):
@@ -825,5 +1040,8 @@ def client_profile(request, id):
     Returns:
         Rendered template displaying the client's profile.
     """
-    client = get_object_or_404(ClientProfile, user__id=id)  # Get the client profile or 404
-    return render(request, 'Users/clientProfile.html', {'client': client})  # Render the profile template
+    print(1)
+    client = get_object_or_404(ClientProfile, id=id)  # Get the freelancer profile or 404
+    print(client)
+
+    return render(request, 'Users/client_profile.html', {'client': client})  # Render the profile template
