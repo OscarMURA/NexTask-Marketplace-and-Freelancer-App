@@ -15,8 +15,7 @@ class TestClientFullFlow:
             email="client123@example.com",
             first_name="Test",
             last_name="Client",
-            password1="SecurePassword123",  
-            password2="SecurePassword123",
+            password="SecurePassword123",  
             country="USA",
             city="Los Angeles",
             phone="123456789",
@@ -27,11 +26,11 @@ class TestClientFullFlow:
         assert signup_page.is_redirected_to_client_home(), "User registration failed"
         
         # Actualización del perfil
-        profile_settings_page = ProfileSettingsPage(self.driver)  # Inicializar aquí
+        profile_settings_page = ProfileSettingsPage(self.driver)
         profile_settings_page.go_to_profile_settings()
         profile_settings_page.fill_profile_form(
             username="testclient123",
-            email="clientnewemail@example.com",  # Cambiar algunos datos
+            email="clientnewemail@example.com",
             first_name="NewName",
             last_name="NewClient",
             company_name="UpdatedCompany",

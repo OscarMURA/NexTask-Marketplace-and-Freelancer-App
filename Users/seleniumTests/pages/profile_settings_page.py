@@ -38,6 +38,6 @@ class ProfileSettingsPage:
             WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located((By.ID, "profileUpdateModal"))
             )
-            return True
+            return "Your profile information has been updated successfully." in self.driver.page_source
         except:
             return False
