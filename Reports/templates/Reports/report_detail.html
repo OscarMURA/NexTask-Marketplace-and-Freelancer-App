@@ -1,184 +1,218 @@
-{% extends 'NextTask/base.html' %}
-{% load i18n %}
+{% extends 'Users/baseFreelancer.html' %} {% load i18n %} {% block content %}
 
-{% block content %}
-<div class="container mt-5" id="reportContent"> <!-- ID agregado para el contenido del informe -->
-    <h3 class="text-24 fw-bold text-dark-300 mb-4">{% trans "Report Generated" %}</h3>
+<div class="projects-section container">
+  <div class="row justify-content-center">
+    <div class="gig-info-body bg-white">
+      <div class="container mt-5" id="reportContent">
+        <!-- ID agregado para el contenido del informe -->
+        <h3 class="text-24 fw-bold text-dark-300 mb-4">
+          {% trans "Report Generated" %}
+        </h3>
 
-    <p><strong>{% trans "Project:" %}</strong> {{ report.project }}</p>
+        <p><strong>{% trans "Project:" %}</strong> {{ report.project }}</p>
 
-    <!-- Tabla de métricas detalladas -->
-    <div class="table-responsive mt-4">
-        <h3 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Detail of the Metrics" %}</h3>
-        <table class="table table-bordered">
+        <!-- Tabla de métricas detalladas -->
+        <div class="table-responsive mt-4">
+          <h3 class="text-20 fw-semibold text-dark-300 mb-3">
+            {% trans "Detail of the Metrics" %}
+          </h3>
+          <table class="table table-bordered">
             <thead class="table-light">
-                <tr>
-                    <th scope="col">{% trans "Metric" %}</th>
-                    <th scope="col">{% trans "Value" %}</th>
-                </tr>
+              <tr>
+                <th scope="col">{% trans "Metric" %}</th>
+                <th scope="col">{% trans "Value" %}</th>
+              </tr>
             </thead>
             <tbody>
-                {% if 'progress' in selected_metrics %}
-                    <tr>
-                        <td><strong>{% trans "Completed Progress" %}</strong></td>
-                        <td>{{ progress|default:"0" }}%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>{% trans "Remaining Progress" %}</strong></td>
-                        <td>{{ remaining_progress|default:"0" }}%</td>
-                    </tr>
-                {% endif %}
-
-                {% if 'budget' in selected_metrics %}
-                    <tr>
-                        <td><strong>{% trans "Budget Used" %}</strong></td>
-                        <td>{{ budget_used|default:"0" }}</td>
-                    </tr>
-                {% endif %}
-
-                {% if 'milestones' in selected_metrics %}
-                    <tr>
-                        <td><strong>{% trans "Total Milestones" %}</strong></td>
-                        <td>{{ milestones_count|default:"0" }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>{% trans "Completed Milestones" %}</strong></td>
-                        <td>{{ completed_milestones|default:"0" }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>{% trans "Uncompleted Milestones" %}</strong></td>
-                        <td>{{ incomplete_milestones|default:"0" }}</td>
-                    </tr>
-                {% endif %}
-
-                {% if 'tasks' in selected_metrics %}
-                    <tr>
-                        <td><strong>{% trans "Completed Tasks" %}</strong></td>
-                        <td>{{ completed_tasks_count|default:"0" }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>{% trans "Uncompleted Tasks" %}</strong></td>
-                        <td>{{ incomplete_tasks_count|default:"0" }}</td>
-                    </tr>
-                {% endif %}
+              {% if 'progress' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Completed Progress" %}</strong></td>
+                <td>{{ progress|default:"0" }}%</td>
+              </tr>
+              <tr>
+                <td><strong>{% trans "Remaining Progress" %}</strong></td>
+                <td>{{ remaining_progress|default:"0" }}%</td>
+              </tr>
+              {% endif %} {% if 'budget' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Budget Used" %}</strong></td>
+                <td>{{ budget_used|default:"0" }}</td>
+              </tr>
+              {% endif %} {% if 'milestones' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Total Milestones" %}</strong></td>
+                <td>{{ milestones_count|default:"0" }}</td>
+              </tr>
+              <tr>
+                <td><strong>{% trans "Completed Milestones" %}</strong></td>
+                <td>{{ completed_milestones|default:"0" }}</td>
+              </tr>
+              <tr>
+                <td><strong>{% trans "Uncompleted Milestones" %}</strong></td>
+                <td>{{ incomplete_milestones|default:"0" }}</td>
+              </tr>
+              {% endif %} {% if 'tasks' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Completed Tasks" %}</strong></td>
+                <td>{{ completed_tasks_count|default:"0" }}</td>
+              </tr>
+              <tr>
+                <td><strong>{% trans "Uncompleted Tasks" %}</strong></td>
+                <td>{{ incomplete_tasks_count|default:"0" }}</td>
+              </tr>
+              {% endif %}
             </tbody>
-        </table>
-    </div>
+          </table>
+        </div>
 
-    <!-- Título para la sección de gráficas -->
-    <h3 class="text-20 fw-semibold text-dark-300 mt-5">{% trans "Graphics" %}</h3>
+        <!-- Título para la sección de gráficas -->
+        <h3 class="text-20 fw-semibold text-dark-300 mt-5">
+          {% trans "Graphics" %}
+        </h3>
 
-    <!-- Gráfica de Progreso -->
-    {% if 'progress' in selected_metrics %}
-    <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 350px; margin: auto;">
-        <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Project Progress" %}</h3>
-        <canvas id="progressChart" style="max-width: 200px; height: auto;"></canvas>
-        <p class="mt-3"><strong>{% trans "Completed Progress:" %}</strong> {{ progress|default:"0" }}%</p>
-        <p><strong>{% trans "Remaining Progress:" %}</strong> {{ remaining_progress|default:"0" }}%</p>
-    </div>
-    {% endif %}
+        <!-- Gráfica de Progreso -->
+        {% if 'progress' in selected_metrics %}
+        <div
+          class="card p-4 mb-4 shadow-sm d-flex align-items-center"
+          style="max-width: 350px; margin: auto"
+        >
+          <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">
+            {% trans "Project Progress" %}
+          </h3>
+          <canvas
+            id="progressChart"
+            style="max-width: 200px; height: auto"
+          ></canvas>
+          <p class="mt-3">
+            <strong>{% trans "Completed Progress:" %}</strong> {{
+            progress|default:"0" }}%
+          </p>
+          <p>
+            <strong>{% trans "Remaining Progress:" %}</strong> {{
+            remaining_progress|default:"0" }}%
+          </p>
+        </div>
+        {% endif %}
 
-    <!-- Gráfica de Hitos y Tareas -->
-    {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
-    <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 600px; margin: auto;">
-        <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Milestones and Tasks Completed" %}</h3>
-        <canvas id="milestonesTasksChart" style="max-width: 1000px; height: 600px;"></canvas>
-    </div>
-    {% endif %}
+        <!-- Gráfica de Hitos y Tareas -->
+        {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
+        <div
+          class="card p-4 mb-4 shadow-sm d-flex align-items-center"
+          style="max-width: 600px; margin: auto"
+        >
+          <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">
+            {% trans "Milestones and Tasks Completed" %}
+          </h3>
+          <canvas
+            id="milestonesTasksChart"
+            style="max-width: 1000px; height: 600px"
+          ></canvas>
+        </div>
+        {% endif %}
 
-    <!-- Botón para descargar el PDF al final del contenido -->
-    <div class="text-center mt-5 d-flex justify-content-center" id="buttonContainer">
-        <button id="downloadPdfBtn" class="btn btn-primary" 
+        <!-- Botón para descargar el PDF al final del contenido -->
+        <div
+          class="text-center mt-5 d-flex justify-content-center"
+          id="buttonContainer"
+        >
+          <button
+            id="downloadPdfBtn"
+            class="btn btn-primary"
             style="
-                border-radius: 50px; 
-                padding: 12px 24px; 
-                background-color: #635fd9; 
-                color: white; 
-                border: none; 
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-                transition: background-color 0.3s, box-shadow 0.3s;
-                outline: none;">
+              border-radius: 50px;
+              padding: 12px 24px;
+              background-color: #635fd9;
+              color: white;
+              border: none;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+              transition: background-color 0.3s, box-shadow 0.3s;
+              outline: none;
+            "
+          >
             {% trans "Download Report" %}
-        </button>
+          </button>
+        </div>
+
+        <div style="height: 50px"></div>
+        <!-- Ajusta el 'height' según el espacio deseado -->
+      </div>
     </div>
-
-    <div style="height: 50px;"></div> <!-- Ajusta el 'height' según el espacio deseado -->
-
+  </div>
 </div>
 
 <!-- Script de Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
-    // Configuración y creación de la gráfica de progreso solo si 'progress' está en selected_metrics
-    {% if 'progress' in selected_metrics %}
-    const progressData = {
-        labels: ['{% trans "Progreso Completado" %}', '{% trans "Progreso Restante" %}'],
-        datasets: [{
-            data: [{{ progress|default:"0" }}, {{ remaining_progress|default:"0" }}],
-            backgroundColor: ['#4caf50', 'blue'] // Cambia '#FFB6C1' al color deseado para "Progreso Restante"
-        }]
-    };
+      // Configuración y creación de la gráfica de progreso solo si 'progress' está en selected_metrics
+      {% if 'progress' in selected_metrics %}
+      const progressData = {
+          labels: ['{% trans "Progreso Completado" %}', '{% trans "Progreso Restante" %}'],
+          datasets: [{
+              data: [{{ progress|default:"0" }}, {{ remaining_progress|default:"0" }}],
+              backgroundColor: ['#4caf50', 'blue'] // Cambia '#FFB6C1' al color deseado para "Progreso Restante"
+          }]
+      };
 
-    const progressConfig = {
-        type: 'doughnut',
-        data: progressData,
-        options: {
-            responsive: true,
-            cutout: '70%',
-            plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: (context) => context.label + ': ' + context.raw + '%' } }
-            }
-        }
-    };
+      const progressConfig = {
+          type: 'doughnut',
+          data: progressData,
+          options: {
+              responsive: true,
+              cutout: '70%',
+              plugins: {
+                  legend: { display: false },
+                  tooltip: { callbacks: { label: (context) => context.label + ': ' + context.raw + '%' } }
+              }
+          }
+      };
 
-    new Chart(document.getElementById('progressChart'), progressConfig);
-    {% endif %}
+      new Chart(document.getElementById('progressChart'), progressConfig);
+      {% endif %}
 
-    // Configuración y creación de la gráfica de hitos y tareas solo si 'milestones' o 'tasks' están en selected_metrics
-    {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
-    const milestonesTasksData = {
-        labels: ['{% trans "Hitos Completados" %}', '{% trans "Hitos sin Completar" %}', '{% trans "Tareas Completadas" %}', '{% trans "Tareas sin Completar" %}'],
-        datasets: [{
-            label: '{% trans "Cantidad" %}',
-            data: [{{ completed_milestones|default:"0" }}, {{ incomplete_milestones|default:"0" }}, {{ completed_tasks_count|default:"0" }}, {{ incomplete_tasks_count|default:"0" }}],
-            backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f']
-        }]
-    };
+      // Configuración y creación de la gráfica de hitos y tareas solo si 'milestones' o 'tasks' están en selected_metrics
+      {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
+      const milestonesTasksData = {
+          labels: ['{% trans "Hitos Completados" %}', '{% trans "Hitos sin Completar" %}', '{% trans "Tareas Completadas" %}', '{% trans "Tareas sin Completar" %}'],
+          datasets: [{
+              label: '{% trans "Cantidad" %}',
+              data: [{{ completed_milestones|default:"0" }}, {{ incomplete_milestones|default:"0" }}, {{ completed_tasks_count|default:"0" }}, {{ incomplete_tasks_count|default:"0" }}],
+              backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f']
+          }]
+      };
 
-    const milestonesTasksConfig = {
-        type: 'bar',
-        data: milestonesTasksData,
-        options: {
-            responsive: true,
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-            plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: (context) => context.raw + ' {% trans "completados" %}' } }
-            }
-        }
-    };
+      const milestonesTasksConfig = {
+          type: 'bar',
+          data: milestonesTasksData,
+          options: {
+              responsive: true,
+              scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+              plugins: {
+                  legend: { display: false },
+                  tooltip: { callbacks: { label: (context) => context.raw + ' {% trans "completados" %}' } }
+              }
+          }
+      };
 
-    new Chart(document.getElementById('milestonesTasksChart'), milestonesTasksConfig);
-    {% endif %}
+      new Chart(document.getElementById('milestonesTasksChart'), milestonesTasksConfig);
+      {% endif %}
 
-    // Generar PDF usando html2pdf.js cuando se haga clic en el botón
-    document.getElementById("downloadPdfBtn").addEventListener("click", function () {
-    const element = document.getElementById("reportContent");
-    const options = {
-        margin: 0.5,
-        filename: 'Informe.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-            scale: 0.8, // Reduce la escala a 0.8 para disminuir el tamaño
-            ignoreElements: (element) => element.id === "downloadPdfBtn"
-        },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
+      // Generar PDF usando html2pdf.js cuando se haga clic en el botón
+      document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+      const element = document.getElementById("reportContent");
+      const options = {
+          margin: 0.5,
+          filename: 'Informe.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+              scale: 0.8, // Reduce la escala a 0.8 para disminuir el tamaño
+              ignoreElements: (element) => element.id === "downloadPdfBtn"
+          },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
 
-    html2pdf().set(options).from(element).save();
-});
+      html2pdf().set(options).from(element).save();
+  });
 </script>
 
 {% endblock %}
