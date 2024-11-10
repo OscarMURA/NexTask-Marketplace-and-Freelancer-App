@@ -1,0 +1,42 @@
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="gig-info-card">
+            <div class="gig-info-body bg-white" style="border-radius: 16px;">
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{% trans "Choose Payment Method" %}</h2>
+    <p>{% trans "Project:" %} {{ project.title }}</p>
+    <p>{% trans "Freelancer:" %} {{ freelancer.user.username }}</p>
+
+    {% if payment %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="method" class="form-label">{% trans "Payment Method" %}</label>
+                <select class="form-control" id="method" name="method" required>
+                    <option value="credit_card">{% trans "Credit Card" %}</option>
+                    <option value="paypal">{% trans "Debit Card" %}</option>
+                    <option value="paypal">{% trans "PayPal" %}</option>
+                    <option value="paypal">{% trans "Nequi" %}</option>
+                    <option value="paypal">{% trans "PSE" %}</option>
+                    <!-- Agrega más métodos de pago según sea necesario -->
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">{% trans "Complete Payment" %}</button>
+        </form>
+    {% else %}
+        <p class="text-center text-muted">{% trans "No pending payments for this project and freelancer." %}</p>
+    {% endif %}
+</div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

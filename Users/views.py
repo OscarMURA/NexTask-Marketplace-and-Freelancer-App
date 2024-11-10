@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login
+
+from Payments.models import Payment
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -8,8 +10,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages  # Para los mensajes de error y éxito
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import ModelBackend 
-from django.shortcuts import get_object_or_404
-from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio, Language
+from .models import FreelancerProfile, Skill, Certification, WorkExperience, Portfolio, Language,ClientProfile
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from Projects.models import *
@@ -20,6 +21,10 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from urllib.parse import urlencode  # Importa urlencode para agregar parámetros a la URL
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from Comments.forms import FreelancerCommentForm
+from Comments.models import FreelancerComment
+from django.db.models import Avg
 from .forms import CustomPasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.core.mail import send_mail
@@ -393,9 +398,14 @@ def home_freelancer(request):
     projects = [contract.project for contract in active_contracts]
     total_projects = len(projects)  # Count projects
 
+    pending_payments_count = Payment.objects.filter(freelancer=freelancer_profile, status='pending').count()
+    completed_payments_count = Payment.objects.filter(freelancer=freelancer_profile, status='paid').count()
+    
     return render(request, 'Users/homeFreelancer.html', {
         'projects': projects,
         'total_projects': total_projects,
+        'pending_payments_count': pending_payments_count,
+        'completed_payments_count': completed_payments_count,
     })
 
 
@@ -918,19 +928,84 @@ def search_freelancers(request):
 
 def freelancer_profile(request, id):
     """
-    View for displaying a freelancer's profile.
-
-    This view retrieves the freelancer's profile using the provided user ID 
-    and renders the corresponding template.
-
-    Args:
-        id (int): The user ID of the freelancer.
-
-    Returns:
-        Rendered template displaying the freelancer's profile.
+    View para mostrar el perfil de un freelancer, incluyendo comentarios y calificaciones.
     """
-    freelancer = get_object_or_404(FreelancerProfile, user__id=id)  # Get the freelancer profile or 404
-    return render(request, 'Users/freelancer_profile.html', {'freelancer': freelancer})  # Render the profile template
+    freelancer = get_object_or_404(FreelancerProfile, user__id=id)
+    
+    # Calcular la calificación promedio
+    average_rating = FreelancerComment.objects.filter(freelancer=freelancer).aggregate(Avg('rating'))['rating__avg'] or 0
+    average_rating = round(average_rating, 1)
+    
+    # Calcular estrellas completas, medias y vacías para el promedio
+    full_stars = int(average_rating)
+    half_stars = 1 if (average_rating - full_stars) >= 0.5 else 0
+    empty_stars = 5 - full_stars - half_stars
+    
+    # Manejar los comentarios
+    if request.method == 'POST':
+        form = FreelancerCommentForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            rating = form.cleaned_data['rating']
+            comment_content = form.cleaned_data['comment']
+            
+            try:
+                user = User.objects.get(username=username)
+                if user.email != email:
+                    messages.error(request, _("El email no coincide con el username proporcionado."))
+                else:
+                    # Verificar si el usuario ya ha comentado
+                    existing_comment = FreelancerComment.objects.filter(freelancer=freelancer, user=user).first()
+                    if existing_comment:
+                        messages.error(request, _("Ya has comentado a este freelancer."))
+                    else:
+                        # Crear y guardar el comentario
+                        FreelancerComment.objects.create(
+                            freelancer=freelancer,
+                            user=user,
+                            rating=rating,
+                            comment=comment_content
+                        )
+                        messages.success(request, _("¡Gracias por tu comentario!"))
+                        return redirect('freelancer_profile', id=freelancer.user.id)
+            except User.DoesNotExist:
+                messages.error(request, _("El username proporcionado no existe."))
+        else:
+            messages.error(request, _("Por favor, corrige los errores en el formulario."))
+    else:
+        form = FreelancerCommentForm()
+    
+    # Obtener todos los comentarios existentes ordenados por fecha de creación
+    comments = FreelancerComment.objects.filter(freelancer=freelancer).order_by('-created_at')
+    
+    # Implementar Paginación: 5 comentarios por página
+    paginator = Paginator(comments, 5)  # 5 comentarios por página
+    page = request.GET.get('page')
+    
+    try:
+        comments_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        comments_paginated = paginator.page(1)
+    except EmptyPage:
+        comments_paginated = paginator.page(paginator.num_pages)
+    
+    # Calcular la calificación promedio (ya calculado arriba)
+    
+    context = {
+        'freelancer': freelancer,
+        'comments': comments_paginated,
+        'form': form,
+        'average_rating': average_rating,
+        'full_stars': range(full_stars),
+        'half_stars': range(half_stars),
+        'empty_stars': range(empty_stars),
+        'is_paginated': comments_paginated.has_other_pages(),
+        'paginator': paginator,
+        'page_obj': comments_paginated,
+    }
+    
+    return render(request, 'Users/freelancer_profile.html', context)
 
 
 def search_clients(request):
@@ -979,5 +1054,9 @@ def client_profile(request, id):
     Returns:
         Rendered template displaying the client's profile.
     """
-    client = get_object_or_404(ClientProfile, user__id=id)  # Get the client profile or 404
+    
+    print(1)
+    client = get_object_or_404(ClientProfile, id=id)  # Get the freelancer profile or 404
+    print(client)
+
     return render(request, 'Users/client_profile.html', {'client': client})  # Render the profile template
