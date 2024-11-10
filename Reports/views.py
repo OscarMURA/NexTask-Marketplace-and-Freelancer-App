@@ -12,9 +12,12 @@ from django.template.loader import render_to_string
 def get_client_report_context(request):
     client = request.user.clientprofile
     reports = ReportLog.objects.filter(user=request.user).order_by('-created_at')  # Obtener informes generados anteriormente
+    total_reports = reports.count()  # Cuenta los reportes generados por el usuario
+
 
     return {
         'reports': reports,  # Pasar los informes generados al template
+        'total_reports': total_reports,  # Total de reportes para mostrar en el dashboard
     }
 
 def client_report_view(request):
@@ -85,6 +88,7 @@ def get_generate_report_context(request):
         return {'report': report_log}
 
     return {'form': form}
+
 
 def generate_report_view(request):
     form = ReportFilterForm(request.GET or None, user=request.user)
