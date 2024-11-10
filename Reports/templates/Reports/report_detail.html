@@ -19,34 +19,49 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><strong>{% trans "Progreso Completado" %}</strong></td>
-                    <td>{{ progress }}%</td>
-                </tr>
-                <tr>
-                    <td><strong>{% trans "Progreso Restante" %}</strong></td>
-                    <td>{{ remaining_progress }}%</td>
-                </tr>
-                <tr>
-                    <td><strong>{% trans "Hitos Completados" %}</strong></td>
-                    <td>{{ completed_milestones }}</td>
-                </tr>
-                <tr>
-                    <td><strong>{% trans "Hitos sin Completar" %}</strong></td>
-                    <td>{{ incomplete_milestones }}</td>
-                </tr>
-                <tr>
-                    <td><strong>{% trans "Tareas Completadas" %}</strong></td>
-                    <td>{{ completed_tasks_count }}</td>
-                </tr>
-                <tr>
-                    <td><strong>{% trans "Tareas sin Completar" %}</strong></td>
-                    <td>{{ incomplete_tasks_count }}</td>
-                </tr>
-                <tr>
-                    <td><strong>{% trans "Presupuesto Utilizado" %}</strong></td>
-                    <td>{{ budget_used }}</td>
-                </tr>
+                {% if 'progress' in selected_metrics %}
+                    <tr>
+                        <td><strong>{% trans "Progreso Completado" %}</strong></td>
+                        <td>{{ progress|default:"0" }}%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{% trans "Progreso Restante" %}</strong></td>
+                        <td>{{ remaining_progress|default:"0" }}%</td>
+                    </tr>
+                {% endif %}
+
+                {% if 'budget' in selected_metrics %}
+                    <tr>
+                        <td><strong>{% trans "Presupuesto Utilizado" %}</strong></td>
+                        <td>{{ budget_used|default:"0" }}</td>
+                    </tr>
+                {% endif %}
+
+                {% if 'milestones' in selected_metrics %}
+                    <tr>
+                        <td><strong>{% trans "Hitos Totales" %}</strong></td>
+                        <td>{{ milestones_count|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{% trans "Hitos Completados" %}</strong></td>
+                        <td>{{ completed_milestones|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{% trans "Hitos sin Completar" %}</strong></td>
+                        <td>{{ incomplete_milestones|default:"0" }}</td>
+                    </tr>
+                {% endif %}
+
+                {% if 'tasks' in selected_metrics %}
+                    <tr>
+                        <td><strong>{% trans "Tareas Completadas" %}</strong></td>
+                        <td>{{ completed_tasks_count|default:"0" }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{% trans "Tareas sin Completar" %}</strong></td>
+                        <td>{{ incomplete_tasks_count|default:"0" }}</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -54,22 +69,26 @@
     <!-- Título para la sección de gráficas -->
     <h3 class="text-20 fw-semibold text-dark-300 mt-5">{% trans "Gráficas" %}</h3>
 
-    <!-- Contenedor compacto para la gráfica de Progreso -->
+    <!-- Gráfica de Progreso -->
+    {% if 'progress' in selected_metrics %}
     <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 350px; margin: auto;">
         <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Progreso del Proyecto" %}</h3>
         <canvas id="progressChart" style="max-width: 200px; height: auto;"></canvas>
-        <p class="mt-3"><strong>{% trans "Progreso Completado:" %}</strong> {{ progress }}%</p>
-        <p><strong>{% trans "Progreso Restante:" %}</strong> {{ remaining_progress }}%</p>
+        <p class="mt-3"><strong>{% trans "Progreso Completado:" %}</strong> {{ progress|default:"0" }}%</p>
+        <p><strong>{% trans "Progreso Restante:" %}</strong> {{ remaining_progress|default:"0" }}%</p>
     </div>
+    {% endif %}
 
-    <!-- Contenedor agrandado para la gráfica de Hitos y Tareas -->
+    <!-- Gráfica de Hitos y Tareas -->
+    {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
     <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 600px; margin: auto;">
         <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Hitos y Tareas Completadas" %}</h3>
-        <canvas id="milestonesTasksChart" style="max-width: 1000px; height: 600px;"></canvas> <!-- Ajuste del tamaño -->
+        <canvas id="milestonesTasksChart" style="max-width: 1000px; height: 600px;"></canvas>
     </div>
+    {% endif %}
 
     <!-- Botón para descargar el PDF al final del contenido -->
-    <div class="text-center mt-5">
+    <div class="text-center mt-5 d-flex justify-content-center" id="buttonContainer">
         <button id="downloadPdfBtn" class="btn btn-primary" 
             style="
                 border-radius: 50px; 
@@ -90,19 +109,18 @@
 
 <!-- Script de Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script> <!-- Cargar html2pdf.js -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Font Awesome para el icono -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
-    // Datos para el gráfico de progreso
+    // Configuración y creación de la gráfica de progreso solo si 'progress' está en selected_metrics
+    {% if 'progress' in selected_metrics %}
     const progressData = {
         labels: ['{% trans "Progreso Completado" %}', '{% trans "Progreso Restante" %}'],
         datasets: [{
-            data: [{{ progress }}, {{ remaining_progress }}],
-            backgroundColor: ['#4caf50', '#e0e0e0'],
+            data: [{{ progress|default:"0" }}, {{ remaining_progress|default:"0" }}],
+            backgroundColor: ['#4caf50', 'blue'] // Cambia '#FFB6C1' al color deseado para "Progreso Restante"
         }]
     };
 
-    // Configuración del gráfico de progreso
     const progressConfig = {
         type: 'doughnut',
         data: progressData,
@@ -110,83 +128,58 @@
             responsive: true,
             cutout: '70%',
             plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.label + ': ' + context.raw + '%';
-                        }
-                    }
-                }
+                legend: { display: false },
+                tooltip: { callbacks: { label: (context) => context.label + ': ' + context.raw + '%' } }
             }
         }
     };
 
-    // Crear el gráfico de progreso
-    const progressChart = new Chart(
-        document.getElementById('progressChart'),
-        progressConfig
-    );
+    new Chart(document.getElementById('progressChart'), progressConfig);
+    {% endif %}
 
-    // Datos para el gráfico de hitos y tareas
+    // Configuración y creación de la gráfica de hitos y tareas solo si 'milestones' o 'tasks' están en selected_metrics
+    {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
     const milestonesTasksData = {
         labels: ['{% trans "Hitos Completados" %}', '{% trans "Hitos sin Completar" %}', '{% trans "Tareas Completadas" %}', '{% trans "Tareas sin Completar" %}'],
         datasets: [{
             label: '{% trans "Cantidad" %}',
-            data: [{{ completed_milestones }}, {{ incomplete_milestones }}, {{ completed_tasks_count }}, {{ incomplete_tasks_count }}],
-            backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f'],
+            data: [{{ completed_milestones|default:"0" }}, {{ incomplete_milestones|default:"0" }}, {{ completed_tasks_count|default:"0" }}, {{ incomplete_tasks_count|default:"0" }}],
+            backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f']
         }]
     };
 
-    // Configuración del gráfico de hitos y tareas
     const milestonesTasksConfig = {
         type: 'bar',
         data: milestonesTasksData,
         options: {
             responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        callback: function(value) { return value; }
-                    }
-                }
-            },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
             plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.raw + ' {% trans "completados" %}';
-                        }
-                    }
-                }
+                legend: { display: false },
+                tooltip: { callbacks: { label: (context) => context.raw + ' {% trans "completados" %}' } }
             }
         }
     };
 
-    // Crear el gráfico de hitos y tareas
-    const milestonesTasksChart = new Chart(
-        document.getElementById('milestonesTasksChart'),
-        milestonesTasksConfig
-    );
+    new Chart(document.getElementById('milestonesTasksChart'), milestonesTasksConfig);
+    {% endif %}
 
     // Generar PDF usando html2pdf.js cuando se haga clic en el botón
     document.getElementById("downloadPdfBtn").addEventListener("click", function () {
-        const element = document.getElementById("reportContent"); // Seleccionar el contenido a convertir
-        const options = {
-            margin:       0.5,
-            filename:     'Informe.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(options).from(element).save();
-    });
+    const element = document.getElementById("reportContent");
+    const options = {
+        margin: 0.5,
+        filename: 'Informe.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 0.8, // Reduce la escala a 0.8 para disminuir el tamaño
+            ignoreElements: (element) => element.id === "downloadPdfBtn"
+        },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(options).from(element).save();
+});
 </script>
+
 {% endblock %}

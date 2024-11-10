@@ -82,6 +82,23 @@
   </div>
 </div>
 
+ <!-- Nueva Sección de Informes del Cliente -->
+ <div class="reports-section mt-4">
+  <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Reports Section" %}</h2>
+  <p>{% trans "Access your detailed reports here:" %}</p>
+
+  <!-- Botón para ver el informe del cliente -->
+  <a href="{% url 'client_report' %}" class="btn btn-primary mb-3">
+      {% trans "View Client Report" %}
+  </a>
+
+  <!-- Botón para generar un informe personalizado -->
+  <a href="{% url 'generate_report' %}" class="btn btn-secondary mb-3">
+      {% trans "Generate Custom Report" %}
+  </a>
+</div>
+
+
 <!-- Sección de Proyectos -->
 <div class="projects-section container">
     <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Latest Projects" %}</h2>
@@ -212,6 +229,7 @@
 
 
 <div class="projects-section container">
+  <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "TimeLine" %}</h2>
   <div class="row justify-content-center">
     <div class="gig-info-body bg-white">
 

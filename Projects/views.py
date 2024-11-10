@@ -23,6 +23,10 @@ from Comments.forms import CommentForm
 from Comments.models import Comment
 from django.http import HttpRequest, HttpResponse
 import random
+from Reports.views import client_report_view, generate_report_view
+from Reports.forms import ReportFilterForm
+from Reports.views import get_client_report_context, get_generate_report_context
+
 
 def create_project(request):
     """
@@ -87,12 +91,21 @@ def home_client(request: HttpRequest) -> HttpResponse:
         for project in projects
     ]
 
-    return render(request, 'Projects/homeClient.html', {
+    client_report_data = get_client_report_context(request)
+    generate_report_data = get_generate_report_context(request)
+
+    context = {
         'projects': projects,
         'total_projects': total_projects,
         'total_balance': total_balance,
         'events_json': events,
-    })
+        'form': client_report_data.get('form'),
+        **client_report_data,
+        **generate_report_data,
+    }
+
+    return render(request, 'Projects/homeClient.html', context)
+
 
 @login_required
 def project_detail(request, project_id):
