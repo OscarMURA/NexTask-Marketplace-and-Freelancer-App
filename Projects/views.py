@@ -55,34 +55,45 @@ def create_project(request):
 
     return render(request, 'Projects/createProject.html', {'form': form})
 
-def home_client(request: HttpRequest) -> HttpResponse:
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Project
+from Payments.models import Payment
+import random
+
+@login_required
+def home_client(request):
     """
     Display the home page for the client.
 
-    Retrieves all projects associated with the client's profile, the total number 
-    of projects, and the total budget. The data is rendered in the 'homeClient.html' template.
+    Retrieves all projects associated with the client's profile, 
+    the total number of projects, total budget, and payment statuses.
 
     Args:
         request (HttpRequest): The HTTP request object.
 
     Returns:
-        HttpResponse: Renders the 'homeClient.html' template with projects and budget context.
+        HttpResponse: Renders the 'homeClient.html' template with project, budget, and payment information.
     """
     client_profile = request.user.clientprofile
     projects = client_profile.projects.all()
     total_projects = projects.count()
     total_balance = client_profile.get_total_budget()
 
-    # Lista de colores para asignar a los proyectos
+    # Count pending and completed payments for the client's projects
+    pending_payments_count = Payment.objects.filter(client=client_profile, status='pending').count()
+    completed_payments_count = Payment.objects.filter(client=client_profile, status='paid').count()
+
+    # List of colors for project events
     colors = ['#FF5733', '#33FF57', '#3357FF', '#F0A500', '#8E44AD', '#1ABC9C', '#E74C3C', '#3498DB']
 
-    # Creación de eventos con colores asignados
+    # Creating events with assigned colors
     events = [
         {
             'title': project.title,
             'start': project.start_date.isoformat(),
             'end': project.due_date.isoformat(),
-            'color': random.choice(colors)  # Asignar un color aleatorio de la lista
+            'color': random.choice(colors)
         }
         for project in projects
     ]
@@ -91,8 +102,11 @@ def home_client(request: HttpRequest) -> HttpResponse:
         'projects': projects,
         'total_projects': total_projects,
         'total_balance': total_balance,
+        'pending_payments_count': pending_payments_count,
+        'completed_payments_count': completed_payments_count,
         'events_json': events,
     })
+
 
 @login_required
 def project_detail(request, project_id):
@@ -960,13 +974,6 @@ def freelancers_in_project(request, project_id):
         'freelancers': freelancers,
     })
 
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Task, ProjectFreelancer, Project
-from Comments.forms import CommentForm
-from Users.models import ClientProfile, FreelancerProfile
-
 def handle_comments(request, task, user):
     print(f"Manejando comentarios para la tarea: {task.title}")
     project = task.milestone.project
@@ -1147,3 +1154,9 @@ def permanently_delete_task(request, task_id):
         return redirect('deleted_tasks',milestone_id=milestone.id)  # O 'projects:deleted_tasks' si usas namespace
 
     return redirect('deleted_tasks',milestone_id=milestone.id)
+
+def redirect_to_client_payment_history(request):
+    return redirect('client_payment_history')
+
+def redirect_to_freelancer_payment_history(request):
+    return redirect('freelancer_payment_history')

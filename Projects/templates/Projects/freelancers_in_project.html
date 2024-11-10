@@ -4,7 +4,8 @@
 
 {% block content %}
 <div class="text mt-4">
-    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg"> {% trans "Back" %} </a>
+    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg" style="margin-right: 12px;"> {% trans "Back" %} </a>
+    <a href="{% url 'freelancers_project_pay' project.id%}" class="w-btn-secondary-sm" style="margin-right: 12px;">{% trans "View Payments" %}</a>
 </div>
 
 <div>
