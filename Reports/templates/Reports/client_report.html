@@ -79,7 +79,7 @@
                 {% for report in reports %}
                     <tr>
                         <td>{{ report.created_at|date:"d/m/Y" }}</td>
-                        <td>{{ report.project }}</td>
+                        <td>{{ report.project.title }}</td>
                         <td>
                             <a href="{% url 'view_report_detail' report.id %}" class="btn btn-view-report btn-sm">
                                 {% trans "View Report" %}
