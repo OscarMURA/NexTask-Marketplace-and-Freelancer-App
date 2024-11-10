@@ -75,7 +75,7 @@
                                 </div>
                             </div> 
                             <!-- Archivo del hito -->
-                            <divclass="col-md-6">
+                            <div class="col-md-6">
                                 <label for="id_file" class="form-container">{% trans "File (optional)" %}</label>
                                 {{ form.file }}
                                 {% if form.file.errors %}
@@ -132,13 +132,14 @@
 </style>
 
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.getElementById('create_milestone_form').addEventListener('submit', function(event) {
         const startDate = new Date(document.getElementById('id_start_date').value); // Agregamos la validación de fecha de inicio
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
         const title = document.getElementById('id_title').value.trim();
         const maxTitleLength = 50;
 
+        console.log("La fecha de inicio es después de hoy: ", startDate < today);
             // Validación de fecha de inicio (no puede ser anterior a hoy)
         if (startDate < today) {
             alert('The start date cannot be in the past.');
@@ -146,6 +147,7 @@
             isValid = false;
         }
 
+        console.log("La fecha de vencimiento es después de la fecha de inicio: ", dueDate <= startDate);
         // Validación de fecha de vencimiento (debe ser después de la fecha de inicio)
         if (dueDate <= startDate) {
             alert('The due date must be after the start date.');
@@ -153,6 +155,7 @@
             isValid = false;
         }
 
+        console.log("El título del hito no excede los 50 caracteres: ", title.length <= maxTitleLength);
         // Validación del título del hito (no debe exceder 50 caracteres)
         if (title.length > maxTitleLength) {
             let titleError = document.getElementById('title-error');
