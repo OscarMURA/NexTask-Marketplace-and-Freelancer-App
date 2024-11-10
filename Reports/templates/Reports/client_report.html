@@ -63,49 +63,44 @@
 <div class="projects-section container">
   <div class="row justify-content-center">
     <div class="gig-info-body bg-white">
-      <div class="container mt-5">
-        <h2 class="text-24 fw-bold text-dark-300 mb-4 text-center">
-          {% trans "Generated Reports" %}
-        </h2>
 
-        <!-- Contenedor de la tabla de reportes generados -->
-        <div class="table-reports-container">
-          <table class="table-reports">
+      <div class="container mt-5">
+    <h2 class="text-24 fw-bold text-dark-300 mb-4 text-center">{% trans "Generated Reports" %}</h2>
+
+    <!-- Contenedor de la tabla de reportes generados -->
+    <div class="table-reports-container">
+        <table class="table-reports">
             <thead>
-              <tr>
-                <th>{% trans "Date" %}</th>
-                <th>{% trans "Project" %}</th>
-                <th>{% trans "Actions" %}</th>
-              </tr>
+                <tr>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Project" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
             </thead>
             <tbody>
-              {% for report in reports %}
-              <tr>
-                <td>{{ report.created_at|date:"d/m/Y" }}</td>
-                <td>{{ report.project }}</td>
-                <td>
-                  <a
-                    href="{% url 'view_report_detail' report.id %}"
-                    class="btn btn-view-report btn-sm"
-                  >
-                    {% trans "View Report" %}
-                  </a>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="3" class="no-reports">
-                  {% trans "No reports generated yet." %}
-                </td>
-              </tr>
-              {% endfor %}
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ report.project.title }}</td>
+                        <td>
+                            <a href="{% url 'view_report_detail' report.id %}" class="btn btn-view-report btn-sm">
+                                {% trans "View Report" %}
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="no-reports">
+                            {% trans "No reports generated yet." %}
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
-          </table>
-        </div>
+        </table>
+    </div>
 
-        <div style="height: 50px"></div>
-        <!-- Espaciado al final de la página -->
-      </div>
+    <div style="height: 50px;"></div> <!-- Espaciado al final de la página -->
+</div>
     </div>
   </div>
 </div>
