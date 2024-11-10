@@ -1,34 +1,63 @@
-{% extends "base.html" %}
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
 
 {% block content %}
-<div class="container">
-    <h1>Client Report</h1>
+<div class="container mt-5">
+    <h2 class="text-24 fw-bold text-dark-300 mb-4">{% trans "Client Report" %}</h2>
+    
+    <!-- Formulario de Filtro -->
+    <form method="get" class="mb-4">
+        <div class="row">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">{% trans "Filter Report" %}</button>
+    </form>
 
-    <div class="summary-section">
-        <h2>Summary</h2>
-        <p><strong>Total Projects:</strong> {{ total_projects }}</p>
-        <p><strong>Projects In Progress:</strong> {{ projects_in_progress }}</p>
-        <p><strong>Completed Projects:</strong> {{ completed_projects }}</p>
+    <!-- Resumen de Proyectos -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card p-4 bg-light">
+                <h5 class="text-dark-300 mb-2">{% trans "Total Projects" %}</h5>
+                <p class="text-20 fw-semibold">{{ total_projects }}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 bg-light">
+                <h5 class="text-dark-300 mb-2">{% trans "Projects in Progress" %}</h5>
+                <p class="text-20 fw-semibold">{{ projects_in_progress }}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 bg-light">
+                <h5 class="text-dark-300 mb-2">{% trans "Completed Projects" %}</h5>
+                <p class="text-20 fw-semibold">{{ completed_projects }}</p>
+            </div>
+        </div>
     </div>
 
-    <div class="projects-section">
-        <h2>Projects Overview</h2>
-        {% if total_tasks %}
-            <ul>
-                {% for project, task_count in total_tasks.items %}
-                    <li>
-                        <h3>{{ project.title }}</h3>
-                        <p><strong>Start Date:</strong> {{ project.start_date }}</p>
-                        <p><strong>Due Date:</strong> {{ project.due_date }}</p>
-                        <p><strong>Category:</strong> {{ project.category }}</p>
-                        <p><strong>Description:</strong> {{ project.description }}</p>
-                        <p><strong>Tasks Completed:</strong> {{ task_count }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No projects to display.</p>
+    <!-- Métricas -->
+    <div class="metrics-section mb-4">
+        {% if progress %}
+            <div class="alert alert-info">
+                <strong>{% trans "Average Progress:" %}</strong> {{ progress }}%
+            </div>
+        {% endif %}
+        {% if milestones %}
+            <div class="alert alert-info">
+                <strong>{% trans "Total Milestones across Projects:" %}</strong> {{ milestones }}
+            </div>
         {% endif %}
     </div>
+
+    <!-- Listado de Proyectos y Tareas Completadas -->
+    <h4 class="fw-semibold text-dark-300 mb-3">{% trans "Projects and Completed Tasks" %}</h4>
+    <ul class="list-group">
+        {% for project, completed_tasks in tasks.items %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ project.title }}
+                <span class="badge bg-primary rounded-pill">{{ completed_tasks }} {% trans "Completed Tasks" %}</span>
+            </li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}

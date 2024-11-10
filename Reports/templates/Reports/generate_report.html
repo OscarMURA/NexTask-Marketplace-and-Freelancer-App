@@ -1,0 +1,102 @@
+{% extends 'NextTask/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .container {
+        max-width: 700px;
+    }
+    .form-card {
+        border: 1px solid #e1e4e8;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-label {
+        font-weight: bold;
+        color: #34495e;
+    }
+    .form-check {
+        margin-bottom: 10px;
+    }
+    .metrics-section .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .metrics-section label {
+        margin-left: 5px;
+        font-weight: normal;
+    }
+    .btn-primary {
+        background-color: #3498db;
+        border-color: #3498db;
+        font-weight: bold;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #2980b9;
+        border-color: #2980b9;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-24 fw-bold text-dark-300 mb-4">{% trans "Generate Custom Report" %}</h2>
+
+    <!-- Formulario para generar informe -->
+    <form method="get" class="form-card" id="custom-report-form">
+        <div class="mb-3">
+            <label for="start_date" class="form-label">{{ form.start_date.label }}</label>
+            {{ form.start_date }}
+        </div>
+        <div class="mb-3">
+            <label for="end_date" class="form-label">{{ form.end_date.label }}</label>
+            {{ form.end_date }}
+        </div>
+        <div class="mb-3">
+            <label for="report_type" class="form-label">{{ form.report_type.label }}</label>
+            {{ form.report_type }}
+        </div>
+        <div class="mb-3 metrics-section">
+            <label class="form-label">{{ form.metrics.label }}</label>
+            {% for checkbox in form.metrics %}
+                <div class="form-check">
+                    {{ checkbox.tag }}
+                    <label for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label for="project" class="form-label">{{ form.project.label }}</label>
+            {{ form.project }}
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">{% trans "Generate Report" %}</button>
+    </form>
+
+    <!-- Resultado del informe -->
+    {% if report %}
+        <div class="report-section mt-4">
+            <h3 class="text-20 fw-semibold text-dark-300 mb-3">
+                {% trans "Report on" %} {{ report.report_type }}
+            </h3>
+            <p class="text-muted mb-2">
+                {% trans "Generated for project:" %} <strong>{{ report.project }}</strong>
+            </p>
+            <ul class="list-group mt-3">
+                {% for metric, value in report.data.items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">{{ metric|title }}:</span>
+                        <span>{{ value }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            {% trans "Fill out the form above to generate a report." %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
