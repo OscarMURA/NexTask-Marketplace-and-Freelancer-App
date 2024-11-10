@@ -1,5 +1,11 @@
 from django.conf import settings
 from django.db import models
+from Projects.models import Project
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
 
 class ReportLog(models.Model):
     """
@@ -13,15 +19,12 @@ class ReportLog(models.Model):
                                        automatically set to the current time when the object is created.
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, default=1)
     report_type = models.CharField(max_length=50)
-    generated_at = models.DateTimeField(auto_now_add=True)
+    data = models.JSONField(default=dict)  # O el tipo de campo que hayas definido para `data`
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
-        """
-        String representation of the ReportLog instance.
-
-        Returns:
-            str: A formatted string showing the user and the type of report generated.
-        """
-        return f"{self.user} - {self.report_type}"
+        return f"{self.user} - {self.project.title} - {self.report_type}"
