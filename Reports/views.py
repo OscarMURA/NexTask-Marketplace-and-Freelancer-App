@@ -8,50 +8,51 @@ from reportlab.pdfgen import canvas
 from django.template.loader import render_to_string
 
 
+
 def get_client_report_context(request):
     client = request.user.clientprofile
-    projects = client.projects.all()
-
-    total_projects = projects.count()
-    projects_in_progress = projects.filter(actual_end_date__isnull=True).count()
-    completed_projects = projects.filter(actual_end_date__isnull=False).count()
-
-    form = ReportFilterForm(request.GET or None)
-    filtered_data = {}
-    
-    if form.is_valid():
-        start_date = form.cleaned_data.get('start_date')
-        end_date = form.cleaned_data.get('end_date')
-
-        for project in projects:
-            tasks = project.tasks.filter(status='completed')
-            if start_date:
-                tasks = tasks.filter(due_date__gte=start_date)
-            if end_date:
-                tasks = tasks.filter(due_date__lte=end_date)
-            filtered_data[project] = tasks.count()
-
-        metrics = form.cleaned_data.get('metrics')
-        if metrics:
-            if 'progress' in metrics:
-                filtered_data['progress'] = sum(project.get_progress() for project in projects) / total_projects
-            if 'milestones' in metrics:
-                filtered_data['milestones'] = sum(project.milestones.count() for project in projects)
-            if 'tasks' in metrics:
-                filtered_data['tasks'] = {project: filtered_data.get(project, 0) for project in projects}
+    reports = ReportLog.objects.filter(user=request.user).order_by('-created_at')  # Obtener informes generados anteriormente
 
     return {
-        'form': form,
-        'total_projects': total_projects,
-        'projects_in_progress': projects_in_progress,
-        'completed_projects': completed_projects,
-        **filtered_data,
+        'reports': reports,  # Pasar los informes generados al template
     }
 
 def client_report_view(request):
     context = get_client_report_context(request)
     return render(request, 'reports/client_report.html', context)
 
+def view_report_detail(request, report_id):
+    report = get_object_or_404(ReportLog, id=report_id, user=request.user)
+    report_data = report.data or {}
+
+    # Obtenemos todas las métricas presentes en report_data
+    selected_metrics = report_data.keys()
+
+    # Extrae los valores de las métricas
+    progress = report_data.get("progress", 0)  # Valor predeterminado de 0 si no está definido
+    remaining_progress = 100 - progress if progress is not None else 100
+    budget_used = report_data.get("budget_used")
+    milestones_count = report_data.get("milestones")
+    completed_milestones = report_data.get("completed_milestones")
+    incomplete_milestones = report_data.get("incomplete_milestones")
+    completed_tasks_count = report_data.get("completed_tasks")
+    incomplete_tasks_count = report_data.get("incomplete_tasks")
+
+    context = {
+        "report": report,
+        "selected_metrics": selected_metrics,
+        "progress": progress,
+        "remaining_progress": remaining_progress,
+        "budget_used": budget_used,
+        "milestones_count": milestones_count,
+        "completed_milestones": completed_milestones,
+        "incomplete_milestones": incomplete_milestones,
+        "completed_tasks_count": completed_tasks_count,
+        "incomplete_tasks_count": incomplete_tasks_count,
+    }
+
+    return render(request, "reports/report_detail.html", context)
+    
 def get_generate_report_context(request):
     form = ReportFilterForm(request.GET or None)
     report_data = {}
@@ -59,7 +60,6 @@ def get_generate_report_context(request):
     if form.is_valid():
         start_date = form.cleaned_data.get('start_date')
         end_date = form.cleaned_data.get('end_date')
-        report_type = form.cleaned_data.get('report_type')
         metrics = form.cleaned_data.get('metrics')
         project = form.cleaned_data.get('project')
 
@@ -80,7 +80,6 @@ def get_generate_report_context(request):
         report_log = ReportLog.objects.create(
             user=request.user,
             project=project,
-            report_type=report_type,
             data=report_data
         )
         return {'report': report_log}
@@ -95,7 +94,6 @@ def generate_report_view(request):
     if form.is_valid():
         start_date = form.cleaned_data['start_date']
         end_date = form.cleaned_data['end_date']
-        report_type = form.cleaned_data['report_type']
         metrics = form.cleaned_data['metrics']
         project_id = form.cleaned_data['project']
 
@@ -131,7 +129,6 @@ def generate_report_view(request):
         report_log = ReportLog.objects.create(
             user=request.user,
             project=project,
-            report_type=report_type,
             data=report_data
         )
         

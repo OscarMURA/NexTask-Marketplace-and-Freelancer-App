@@ -2,15 +2,14 @@
 {% load i18n %}
 
 {% block content %}
+
 <style>
-    /* Estilos limitados al contenedor principal del formulario */
     .report-container {
         max-width: 700px;
         margin: auto;
-        text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+        text-align: left;
     }
 
-    /* Estilos del formulario */
     .form-card {
         border: 1px solid #e1e4e8;
         border-radius: 10px;
@@ -24,7 +23,14 @@
         color: #34495e;
     }
 
-    /* Estilos de los checkboxes */
+    /* Ajuste para que el título "Metrics" tenga un formato consistente */
+    .metrics-title {
+        font-weight: bold;
+        color: #34495e;
+        font-size: 1.1rem; /* Tamaño de fuente consistente */
+        margin-bottom: 10px; /* Espaciado similar a los otros títulos */
+    }
+
     .metrics-section .form-check {
         display: flex;
         align-items: center;
@@ -36,10 +42,10 @@
         font-weight: normal;
     }
 
-    /* Botón de envío */
+    /* Botón de "Generate Report" con color personalizado */
     .btn-primary {
-        background-color: #3498db;
-        border-color: #3498db;
+        background-color: #635fd9;
+        border-color: #635fd9;
         font-weight: bold;
         width: 100%;
         padding: 10px;
@@ -49,7 +55,8 @@
     }
 
     .btn-primary:hover {
-        background-color: #2980b9;
+        background-color: #4743b3;
+        border-color: #635fd9;
     }
 
     /* Estilos de la sección de resultados */
@@ -82,7 +89,6 @@
         font-weight: 600;
         color: #2c3e50;
     }
-
 </style>
 
 <div class="report-container mt-5">
@@ -98,12 +104,9 @@
             <label for="end_date" class="form-label">{{ form.end_date.label }}</label>
             {{ form.end_date }}
         </div>
-        <div class="mb-3">
-            <label for="report_type" class="form-label">{{ form.report_type.label }}</label>
-            {{ form.report_type }}
-        </div>
+        
         <div class="mb-3 metrics-section">
-            <label class="form-label">{{ form.metrics.label }}</label>
+            <label class="metrics-title">{{ form.metrics.label }}</label> <!-- Aplicando clase personalizada -->
             {% for checkbox in form.metrics %}
                 <div class="form-check">
                     {{ checkbox.tag }}
@@ -111,21 +114,19 @@
                 </div>
             {% endfor %}
         </div>
+        
         <div class="mb-3">
             <label for="project" class="form-label">{{ form.project.label }}</label>
             {{ form.project }}
         </div>
         <button type="submit" class="btn btn-primary mt-3">{% trans "Generate Report" %}</button>
-        
     </form>
 
     <div style="height: 50px;"></div> <!-- Ajusta el 'height' según el espacio deseado -->
 
-
     <!-- Resultado del informe -->
     {% if report %}
         <div class="report-section mt-4">
-            <h3>{% trans "Report on" %} {{ report.report_type }}</h3>
             <p class="text-muted mb-2">
                 {% trans "Generated for project:" %} <strong>{{ report.project }}</strong>
             </p>
@@ -138,7 +139,6 @@
                 {% endfor %}
             </ul>
         </div>
-    {% else %}
     {% endif %}
 </div>
 {% endblock %}

@@ -3,62 +3,61 @@
 
 {% block content %}
 <div class="container mt-5" id="reportContent"> <!-- ID agregado para el contenido del informe -->
-    <h3 class="text-24 fw-bold text-dark-300 mb-4">{% trans "Informe Generado" %}</h3>
+    <h3 class="text-24 fw-bold text-dark-300 mb-4">{% trans "Report Generated" %}</h3>
 
-    <p><strong>{% trans "Tipo de Informe:" %}</strong> {{ report.report_type }}</p>
-    <p><strong>{% trans "Proyecto:" %}</strong> {{ report.project }}</p>
+    <p><strong>{% trans "Project:" %}</strong> {{ report.project }}</p>
 
     <!-- Tabla de métricas detalladas -->
     <div class="table-responsive mt-4">
-        <h3 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Detalle de las Métricas" %}</h3>
+        <h3 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Detail of the Metrics" %}</h3>
         <table class="table table-bordered">
             <thead class="table-light">
                 <tr>
-                    <th scope="col">{% trans "Métrica" %}</th>
-                    <th scope="col">{% trans "Valor" %}</th>
+                    <th scope="col">{% trans "Metric" %}</th>
+                    <th scope="col">{% trans "Value" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% if 'progress' in selected_metrics %}
                     <tr>
-                        <td><strong>{% trans "Progreso Completado" %}</strong></td>
+                        <td><strong>{% trans "Completed Progress" %}</strong></td>
                         <td>{{ progress|default:"0" }}%</td>
                     </tr>
                     <tr>
-                        <td><strong>{% trans "Progreso Restante" %}</strong></td>
+                        <td><strong>{% trans "Remaining Progress" %}</strong></td>
                         <td>{{ remaining_progress|default:"0" }}%</td>
                     </tr>
                 {% endif %}
 
                 {% if 'budget' in selected_metrics %}
                     <tr>
-                        <td><strong>{% trans "Presupuesto Utilizado" %}</strong></td>
+                        <td><strong>{% trans "Budget Used" %}</strong></td>
                         <td>{{ budget_used|default:"0" }}</td>
                     </tr>
                 {% endif %}
 
                 {% if 'milestones' in selected_metrics %}
                     <tr>
-                        <td><strong>{% trans "Hitos Totales" %}</strong></td>
+                        <td><strong>{% trans "Total Milestones" %}</strong></td>
                         <td>{{ milestones_count|default:"0" }}</td>
                     </tr>
                     <tr>
-                        <td><strong>{% trans "Hitos Completados" %}</strong></td>
+                        <td><strong>{% trans "Completed Milestones" %}</strong></td>
                         <td>{{ completed_milestones|default:"0" }}</td>
                     </tr>
                     <tr>
-                        <td><strong>{% trans "Hitos sin Completar" %}</strong></td>
+                        <td><strong>{% trans "Uncompleted Milestones" %}</strong></td>
                         <td>{{ incomplete_milestones|default:"0" }}</td>
                     </tr>
                 {% endif %}
 
                 {% if 'tasks' in selected_metrics %}
                     <tr>
-                        <td><strong>{% trans "Tareas Completadas" %}</strong></td>
+                        <td><strong>{% trans "Completed Tasks" %}</strong></td>
                         <td>{{ completed_tasks_count|default:"0" }}</td>
                     </tr>
                     <tr>
-                        <td><strong>{% trans "Tareas sin Completar" %}</strong></td>
+                        <td><strong>{% trans "Uncompleted Tasks" %}</strong></td>
                         <td>{{ incomplete_tasks_count|default:"0" }}</td>
                     </tr>
                 {% endif %}
@@ -67,22 +66,22 @@
     </div>
 
     <!-- Título para la sección de gráficas -->
-    <h3 class="text-20 fw-semibold text-dark-300 mt-5">{% trans "Gráficas" %}</h3>
+    <h3 class="text-20 fw-semibold text-dark-300 mt-5">{% trans "Graphics" %}</h3>
 
     <!-- Gráfica de Progreso -->
     {% if 'progress' in selected_metrics %}
     <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 350px; margin: auto;">
-        <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Progreso del Proyecto" %}</h3>
+        <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Project Progress" %}</h3>
         <canvas id="progressChart" style="max-width: 200px; height: auto;"></canvas>
-        <p class="mt-3"><strong>{% trans "Progreso Completado:" %}</strong> {{ progress|default:"0" }}%</p>
-        <p><strong>{% trans "Progreso Restante:" %}</strong> {{ remaining_progress|default:"0" }}%</p>
+        <p class="mt-3"><strong>{% trans "Completed Progress:" %}</strong> {{ progress|default:"0" }}%</p>
+        <p><strong>{% trans "Remaining Progress:" %}</strong> {{ remaining_progress|default:"0" }}%</p>
     </div>
     {% endif %}
 
     <!-- Gráfica de Hitos y Tareas -->
     {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
     <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 600px; margin: auto;">
-        <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Hitos y Tareas Completadas" %}</h3>
+        <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">{% trans "Milestones and Tasks Completed" %}</h3>
         <canvas id="milestonesTasksChart" style="max-width: 1000px; height: 600px;"></canvas>
     </div>
     {% endif %}
@@ -99,7 +98,7 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
                 transition: background-color 0.3s, box-shadow 0.3s;
                 outline: none;">
-            {% trans "Descargar Informe" %}
+            {% trans "Download Report" %}
         </button>
     </div>
 

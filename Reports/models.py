@@ -21,7 +21,6 @@ class ReportLog(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=1)
-    report_type = models.CharField(max_length=50)
     data = models.JSONField(default=dict)  # O el tipo de campo que hayas definido para `data`
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -8,16 +8,12 @@ class ReportFilterForm(forms.Form):
     end_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
     )
-    report_type = forms.ChoiceField(
-        choices=[('mensual', 'Mensual'), ('anual', 'Anual')],
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
     metrics = forms.MultipleChoiceField(
         choices=[
-            ('progress', 'Progreso del Proyecto'),
-            ('budget', 'Presupuesto Utilizado'),
-            ('milestones', 'Estado de Hitos'),
-            ('tasks', 'Estado de Tareas')
+            ('progress', 'Progress of the Projects'),
+            ('budget', 'Budget used'),
+            ('milestones', 'Milestones status'), 
+            ('tasks', 'Tasks status')
         ],
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'})
     )
