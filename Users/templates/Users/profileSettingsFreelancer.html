@@ -689,6 +689,12 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Eliminar el mensaje de "no languages registered" si existe
+                const noLanguagesItem = currentLanguagesList.querySelector('.list-group-item');
+                if (noLanguagesItem && noLanguagesItem.textContent.includes('You have no languages registered')) {
+                    noLanguagesItem.remove();
+                }
+
                 // Agregar los nuevos idiomas a la lista de "Current Languages"
                 data.new_languages.forEach(lang => {
                     const li = document.createElement('li');
@@ -717,27 +723,27 @@
         .catch(error => console.error('Error:', error));
     });
 
+    // Código existente para manejar los modales
+    const showUpdateModal = {{ show_update_modal|yesno:"true,false" }};
+    const showAddModal = {{ show_add_modal|yesno:"true,false" }};
+    const showDeleteModal = {{ show_delete_modal|yesno:"true,false" }};
+    
+    if (showUpdateModal) {
+        const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+        updateModal.show();
+    }
 
-        // Código existente para manejar los modales
-        const showUpdateModal = {{ show_update_modal|yesno:"true,false" }};
-        const showAddModal = {{ show_add_modal|yesno:"true,false" }};
-        const showDeleteModal = {{ show_delete_modal|yesno:"true,false" }};
-        
-        if (showUpdateModal) {
-            const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
-            updateModal.show();
-        }
+    if (showAddModal) {
+        var addModal = new bootstrap.Modal(document.getElementById('addModal'));
+        addModal.show();
+    }
 
-        if (showAddModal) {
-            var addModal = new bootstrap.Modal(document.getElementById('addModal'));
-            addModal.show();
-        }
+    if (showDeleteModal) {
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+});
 
-        if (showDeleteModal) {
-            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            deleteModal.show();
-        }
-    });
 </script>
 
 <style> 

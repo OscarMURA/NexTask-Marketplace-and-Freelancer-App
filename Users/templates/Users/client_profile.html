@@ -3,6 +3,9 @@
 {% load i18n %}
 
 {% block content %}
+
+  <!-- django-quill-editor Media -->
+{% include 'django_quill/media.html' %}
 <style>
     .profile-header {
         background-color: #f7f7f7;
@@ -100,6 +103,20 @@
             margin-top: 20px;
         }
     }
+
+    .quill-content {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow: hidden;
+        max-width: 100%;
+    }
+
+    .quill-content img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
 </style>
 
 <div class="container">
@@ -128,7 +145,7 @@
     {% if client.description %}
         <div class="profile-details">
             <h2>{% trans "Description" %}</h2>
-            <p>{{ client.description }}</p>
+            <p>{{ client.description  }}</p>
         </div>
     {% else %}
         <div class="profile-details">
@@ -143,7 +160,9 @@
             <h2>Projects</h2>
             <ul>
                 {% for project in client.projects.all %}
-                    <li><strong>{{ project.title }}</strong> - {{ project.description }}</li>
+                <div class="quill-content">
+                    <li><strong>{{ project.title }}</strong> - {{ project.description.html|safe }}</li>
+                </div>
                 {% endfor %}
             </ul>
         </div>

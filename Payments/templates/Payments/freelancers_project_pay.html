@@ -1,0 +1,53 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="text mt-4">
+    <a href="{% url 'freelancers_in_project' project.id %}" class="w-btn-danger-lg" style="margin-right: 12px;">{% trans "Back" %}</a>
+</div>
+
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Freelancers Working on Project:" %} {{ project.title }}</h3>
+    <div class="overflow-x-auto">
+        <div class="w-100">
+            <table class="w-100 dashboard-table">
+                <thead class="pb-3">
+                    <tr>
+                        <th scope="col" class="ps-4">{% trans "Freelancer" %}</th>
+                        <th scope="col">{% trans "Full Name" %}</th>
+                        <th scope="col" class="text-center">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contract in freelancers %}
+                    <tr>
+                        <td>
+                            <div class="d-flex gap-3 align-items-center project-name">
+                                <div class="rounded-3">
+                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="{% trans "Avatar" %}" class="img-fluid" style="border-radius: 100%;">
+                                </div>
+                                <div>
+                                    <p class="text-dark-200">{{ contract.freelancer.user.username }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-dark-200">
+                            {{ contract.freelancer.user.first_name }} {{ contract.freelancer.user.last_name }}
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'freelancers_project_punctual_pay' project.id contract.freelancer.id %}" class="w-btn-secondary-sm" style="margin-right: 8px;">{% trans "Punctual Payment" %}</a>
+                            <a href="{% url 'freelancers_project_periodic_pay' project.id contract.freelancer.id %}" class="w-btn-secondary-sm">{% trans "Periodic Payment" %}</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">{% trans "No freelancers are currently working on this project." %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
