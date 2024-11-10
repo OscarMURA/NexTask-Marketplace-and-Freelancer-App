@@ -1,0 +1,49 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+
+<div class="text mt-4">
+    <a href="{% url 'home_client' %}" class="w-btn-danger-lg" style="margin-right: 12px;">{% trans "Back" %}</a>
+    <a href="{% url 'completed_payments' %}" class="w-btn-secondary-sm" style="margin-right: 12px;">{% trans "Historical" %}</a>
+</div>
+
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{% trans "Pending Payments" %}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle border">
+            <thead class="bg-light">
+                <tr>
+                    <th scope="col" class="text-center border-bottom">{% trans "Project" %}</th>
+                    <th scope="col" class="text-center border-bottom">{% trans "Freelancer Username" %}</th>
+                    <th scope="col" class="text-center border-bottom">{% trans "Freelancer Name" %}</th>
+                    <th scope="col" class="text-center border-bottom">{% trans "Amount" %}</th>
+                    <th scope="col" class="text-center border-bottom">{% trans "Action" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td class="text-center">{{ payment.project.title }}</td>
+                    <td class="text-center">{{ payment.freelancer.user.username }}</td>
+                    <td class="text-center">{{ payment.freelancer.user.first_name }} {{ payment.freelancer.user.last_name }}</td>
+                    <td class="text-center">${{ payment.amount }}</td>
+                    <td class="text-center">
+                        <form method="post" action="{% url 'make_payment' payment.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">{% trans "Pay" %}</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-3">{% trans "No pending payments." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
