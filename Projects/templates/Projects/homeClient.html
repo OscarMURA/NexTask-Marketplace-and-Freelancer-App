@@ -140,6 +140,19 @@
     </div>
   </div>
 
+   <!-- Pending Payments Widget -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
+      <div>
+        <h5 class="dashboard-widget-title fw-bold text-dark-300">{{ pending_payments_count }}</h5>
+        <p class="text-18 text-dark-200">{% trans "Pending Payments" %}</p>
+      </div>
+      <div class="dashboard-widget-icon">
+        <img src="{% static 'img/dashboard/icon/icon-4.png' %}" alt="" />
+      </div>
+    </div>
+  </div>
+
 <div class="reports-section mt-4 bg-white p-3 rounded-3 shadow-sm d-flex align-items-center justify-content-between">
   <!-- Contenido de los informes -->
   <div class="report-content me-3">
@@ -155,19 +168,9 @@
       <a href="{% url 'generate_report' %}" class="btn btn-generate-report">
         {% trans "Generate Custom Report" %}
       </a>
-
-  <!-- Pending Payments Widget -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
-      <div>
-        <h5 class="dashboard-widget-title fw-bold text-dark-300">{{ pending_payments_count }}</h5>
-        <p class="text-18 text-dark-200">{% trans "Pending Payments" %}</p>
-      </div>
-      <div class="dashboard-widget-icon">
-        <img src="{% static 'img/dashboard/icon/icon-4.png' %}" alt="" />
-      </div>
     </div>
   </div>
+    
 
   <!-- Contenedor de la imagen decorativa alineada a la derecha -->
   <div class="reports-image">
