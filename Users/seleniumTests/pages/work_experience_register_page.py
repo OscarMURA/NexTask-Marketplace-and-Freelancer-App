@@ -17,3 +17,6 @@ class WorkExperienceRegisterPage:
 
     def submit_form(self):
         self.driver.find_element(By.ID, "submit-btn").click()
+    
+    def is_on_work_experience_page(self):
+        return "work-experience/register" in self.driver.current_url

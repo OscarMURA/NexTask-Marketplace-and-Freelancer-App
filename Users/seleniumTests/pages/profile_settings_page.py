@@ -1,4 +1,6 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class ProfileSettingsPage:
     def __init__(self, driver):
@@ -32,4 +34,10 @@ class ProfileSettingsPage:
         self.driver.find_element(By.ID, "submit-btn").click()
 
     def is_profile_updated(self):
-        return "Profile updated successfully" in self.driver.page_source
+        try:
+            WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located((By.ID, "profileUpdateModal"))
+            )
+            return True
+        except:
+            return False
