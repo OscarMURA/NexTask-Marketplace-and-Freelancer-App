@@ -20,11 +20,13 @@
   </div>
   <div> 
     <div class="button-group">
-    <a href="{% url 'createProject' %}" class="w-btn-secondary-lg">
-      {% trans "Create Project" %}</a>
-      <a href="{% url 'deleted_projects' %}" class="w-btn-secondary-lg">
-        {% trans "See deleted projects" %}</a>
-    </div>
+      <a href="{% url 'createProject' %}" class="w-btn-secondary-lg" id="create-project-btn">
+        {% trans "Create Project" %}
+      </a>
+      <a href="{% url 'deleted_projects' %}" class="w-btn-secondary-lg" id="deleted-projects-btn">
+        {% trans "See deleted projects" %}
+      </a>
+  </div>  
   </div>
 </div>
 
