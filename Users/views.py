@@ -33,7 +33,7 @@ from .models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib import messages
-
+from .models import FreelancerProfile, ClientProfile
 
 @never_cache
 def freelancer_signup(request):
@@ -867,7 +867,6 @@ def profile_settings_client(request):
         'countries': countries
     })
     
-    
 def search_freelancers(request):
     """
     View for searching freelancers based on a keyword and selected skills.
@@ -882,10 +881,19 @@ def search_freelancers(request):
     Returns:
         Rendered template displaying the search form and list of freelancers.
     """
-    form = FreelancerSearchForm(request.GET or None)  # Initialize the search form with GET data
-    freelancers = FreelancerProfile.objects.all()  # Start with all freelancers
 
-    print("GET request:", request.GET)  # Debugging: log GET request parameters
+    # Copy the GET parameters to modify them
+    filtered_get = request.GET.copy()
+
+    # Remove the 'skills' parameter if it is empty
+    if 'skills' in filtered_get and filtered_get['skills'] == '':
+        del filtered_get['skills']
+
+    # Initialize the search form with the filtered GET data
+    form = FreelancerSearchForm(filtered_get or None)
+    freelancers = FreelancerProfile.objects.all()
+
+    print("GET request después de limpieza:", filtered_get)  # Debugging: log GET request after cleaning
 
     if form.is_valid():  # Check if the form is valid
         # Capture the value of the keyword field
@@ -1021,7 +1029,6 @@ def search_clients(request):
         if keyword:  # Filter by keyword
             clients = clients.filter(
                 Q(company_name__icontains=keyword) |
-                Q(city__icontains=keyword) |
                 Q(country__icontains=keyword)
             ).distinct()  # Remove duplicates
 
@@ -1047,6 +1054,7 @@ def client_profile(request, id):
     Returns:
         Rendered template displaying the client's profile.
     """
+    
     print(1)
     client = get_object_or_404(ClientProfile, id=id)  # Get the freelancer profile or 404
     print(client)

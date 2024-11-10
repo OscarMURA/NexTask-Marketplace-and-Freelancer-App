@@ -361,6 +361,13 @@ class ClientProfileForm(forms.ModelForm):
         fields = ['avatar', 'company_name', 'company_website', 'country', 'city', 'phone', 'address']  # Fields to include
 
 
+
+class CountrySelectNoFlagWidget(forms.Select):
+    def __init__(self, *args, **kwargs):
+        kwargs['attrs'] = {'class': 'form-control shadow-none'}
+        super().__init__(*args, **kwargs)
+        
+
 class ClientSearchForm(forms.Form):
     """
     Form for searching clients.
@@ -372,12 +379,12 @@ class ClientSearchForm(forms.Form):
     keyword = forms.CharField(
         required=False,
         max_length=255,
-        label="Search by keyword (company name, city, country)",
-        widget=forms.TextInput(attrs={'placeholder': 'Enter keyword...'})  # Placeholder text for the input
+        label="Search by keyword (company name, country)",
+        widget=forms.TextInput(attrs={'placeholder': 'Search by company name', 'class': 'form-control shadow-none'})  # Placeholder text for the input
     )
     country = CountryField().formfield(
         required=False,
-        widget=CountrySelectWidget(attrs={'class': 'form-control shadow-none'})  # Country selection styling
+        widget=CountrySelectNoFlagWidget(),
     )
 
 # Formulario para cambiar la contraseña

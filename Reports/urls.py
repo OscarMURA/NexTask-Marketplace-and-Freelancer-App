@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('freelancer/', views.freelancer_report, name='freelancer_report'),  # URL para el informe del freelancer
-    path('client/', views.client_report, name='client_report'),  # URL para el informe del cliente
+    path('client/', views.client_report_view, name='client_report'),  # Para informes generales de clientes
+    path('generate/', views.generate_report_view, name='generate_report'),  # Genera informe personalizado
+    path('project/<int:project_id>/report/', views.project_report, name='project_report'),  # Informe de un proyecto específico
+    path('client/report/<int:report_id>/', views.view_report_detail, name='view_report_detail'),  # Detalle de informe específico
 ]

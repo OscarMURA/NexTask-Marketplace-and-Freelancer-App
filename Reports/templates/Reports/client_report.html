@@ -1,34 +1,103 @@
-{% extends "base.html" %}
+{% extends 'NextTask/base.html' %}
+{% load i18n %}
 
 {% block content %}
-<div class="container">
-    <h1>Client Report</h1>
 
-    <div class="summary-section">
-        <h2>Summary</h2>
-        <p><strong>Total Projects:</strong> {{ total_projects }}</p>
-        <p><strong>Projects In Progress:</strong> {{ projects_in_progress }}</p>
-        <p><strong>Completed Projects:</strong> {{ completed_projects }}</p>
-    </div>
+<style>
+    /* Estilo personalizado para el botón "View Report" */
+    .btn-view-report {
+        background-color: #635fd9;
+        border-color: #635fd9;
+        color: white;
+        font-weight: bold;
+        padding: 6px 12px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        text-align: center;
+    }
+    
+    .btn-view-report:hover {
+        background-color: #4743b3;
+        border-color: #4743b3;
+    }
 
-    <div class="projects-section">
-        <h2>Projects Overview</h2>
-        {% if total_tasks %}
-            <ul>
-                {% for project, task_count in total_tasks.items %}
-                    <li>
-                        <h3>{{ project.title }}</h3>
-                        <p><strong>Start Date:</strong> {{ project.start_date }}</p>
-                        <p><strong>Due Date:</strong> {{ project.due_date }}</p>
-                        <p><strong>Category:</strong> {{ project.category }}</p>
-                        <p><strong>Description:</strong> {{ project.description }}</p>
-                        <p><strong>Tasks Completed:</strong> {{ task_count }}</p>
-                    </li>
+    /* Estilos para el contenedor de la tabla y la tabla */
+    .table-reports-container {
+        max-width: 90%; /* Aumenta el ancho máximo del contenedor */
+        margin: 0 auto;
+        margin-top: 1.5rem;
+    }
+
+    .table-reports {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-reports th, .table-reports td {
+        padding: 15px 20px; /* Ajusta el padding para mayor visibilidad */
+        text-align: center;
+        border-bottom: 1px solid #e1e4e8;
+    }
+
+    .table-reports th {
+        background-color: #635fd9;
+        color: white;
+        font-weight: bold;
+    }
+
+    .table-reports td {
+        color: #34495e;
+    }
+
+    .table-reports tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .no-reports {
+        text-align: center;
+        color: #666;
+        font-size: 1rem;
+        padding: 15px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-24 fw-bold text-dark-300 mb-4 text-center">{% trans "Generated Reports" %}</h2>
+
+    <!-- Contenedor de la tabla de reportes generados -->
+    <div class="table-reports-container">
+        <table class="table-reports">
+            <thead>
+                <tr>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Project" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ report.project }}</td>
+                        <td>
+                            <a href="{% url 'view_report_detail' report.id %}" class="btn btn-view-report btn-sm">
+                                {% trans "View Report" %}
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="no-reports">
+                            {% trans "No reports generated yet." %}
+                        </td>
+                    </tr>
                 {% endfor %}
-            </ul>
-        {% else %}
-            <p>No projects to display.</p>
-        {% endif %}
+            </tbody>
+        </table>
     </div>
+
+    <div style="height: 50px;"></div> <!-- Espaciado al final de la página -->
 </div>
+
 {% endblock %}
