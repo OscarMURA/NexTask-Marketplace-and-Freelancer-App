@@ -10,7 +10,7 @@ class ModalInteraction:
         """
         Confirma la eliminación del proyecto dentro del modal.
         """
-        # Esperar que el modal de confirmación sea visible y hacer clic en el botón 'Remove'
+       
         remove_button = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Remove']"))
         )

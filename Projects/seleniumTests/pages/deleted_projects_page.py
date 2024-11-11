@@ -17,21 +17,18 @@ class DeletedProjectsPage:
         return deleted_project_titles
 
     def click_delete_permanently_button(self, project_id):
-        # Esperamos a que el botón de "Delete Permanently" esté visible y disponible para hacer clic
         delete_permanently_button = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.ID, f"delete-permanently-btn-{project_id}"))
         )
-        # Hacemos clic en el botón
         delete_permanently_button.click()
 
-        # Esperamos que la alerta sea visible y la aceptamos
         alert = WebDriverWait(self.driver, 10).until(EC.alert_is_present())
-        alert.accept()  # Aceptar la alerta (confirmar la eliminación permanente)
+        alert.accept()  
 
     def click_restore_button(self, project_id):
-        # Esperamos a que el botón "Restore" esté visible y disponible para hacer clic
+       
         restore_button = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.ID, f"restore-btn-{project_id}"))
         )
-        # Hacemos clic en el botón de restauración
+       
         restore_button.click()

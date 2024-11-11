@@ -26,5 +26,4 @@ class ClientSignUpPage:
         self.driver.find_element(By.ID, "submit-btn").click()
 
     def is_redirected_to_client_home(self):
-        # Espera a que el redireccionamiento suceda y valida si está en la página de inicio del cliente
         return self.wait.until(EC.url_contains("home-Client"))

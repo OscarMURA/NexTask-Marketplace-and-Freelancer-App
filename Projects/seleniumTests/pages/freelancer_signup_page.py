@@ -8,11 +8,9 @@ class FreelancerSignUpPage:
         self.driver = driver
 
     def go_to_signup_page(self):
-        # Navegar a la página de registro del freelancer
         self.driver.get("http://127.0.0.1:8000/en/users/signup/freelancer/")
 
     def fill_signup_form(self, username, first_name, last_name, phone, email, country, city, address, password, confirm_password):
-        # Completar el formulario de registro
         self.driver.find_element(By.ID, "username").send_keys(username)
         self.driver.find_element(By.ID, "first_name").send_keys(first_name)
         self.driver.find_element(By.ID, "last_name").send_keys(last_name)

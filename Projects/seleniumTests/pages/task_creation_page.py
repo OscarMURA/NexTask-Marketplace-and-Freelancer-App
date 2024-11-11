@@ -13,11 +13,11 @@ class TaskCreationPage:
         self.driver.find_element(By.ID, "id_start_date").send_keys(start_date)
         self.driver.find_element(By.ID, "id_due_date").send_keys(due_date)
         
-        # Seleccionar prioridad y estado
+       
         self.driver.find_element(By.ID, "id_priority").send_keys(priority)
         self.driver.find_element(By.ID, "id_status").send_keys(status)
 
-        # Usar el editor Quill para ingresar la descripción
+       
         description_element = self.driver.find_element(By.CLASS_NAME, "ql-editor")
         description_element.click()
         description_element.send_keys(description)
@@ -26,5 +26,5 @@ class TaskCreationPage:
         self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 
     def is_task_created_successfully(self, milestone_id):
-        # Confirmar redirección a la página de detalle del milestone
+       
         return f"/milestone/{milestone_id}/" in self.driver.current_url

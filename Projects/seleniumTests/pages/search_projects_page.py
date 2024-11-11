@@ -7,7 +7,7 @@ class SearchProjectsPage:
         self.driver = driver
 
     def click_on_project(self, project_id):
-        # Esperamos que la tarjeta del proyecto esté visible y hacemos clic en ella
+        
         project_card = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, f"//div[@class='card h-100' and @onclick=\"window.location.href='/en/projects/project/view/{project_id}/'\"]"))
         )
