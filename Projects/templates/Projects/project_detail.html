@@ -194,7 +194,7 @@
 
             <div class="text mt-4">
               <div class="button-group">
-                <a href="{% url 'search_freelancer' project.id  %}" class="w-btn-secondary-lg">{% trans "Search Freelancer" %}</a>
+                <a href="{% url 'search_freelancer' project.id  %}" class="w-btn-secondary-lg" id="search_freelancer_btt">{% trans "Search Freelancer" %}</a>
                 <a href="{% url 'manage_applications' project.id  %}" class="w-btn-secondary-lg" id="manage_freelancer_applications_btn">{% trans "Manage Applications Freelancer" %}</a>
                 <a href="{% url 'freelancers_in_project' project.id  %}" class="w-btn-secondary-lg">{% trans "Freelancer List in the project" %}</a>
                 

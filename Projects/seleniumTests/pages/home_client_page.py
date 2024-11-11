@@ -47,3 +47,9 @@ class HomeClientPage:
             EC.element_to_be_clickable((By.ID, "manage_freelancer_applications_btn"))
         )
         manage_applications_button.click()
+        
+    def click_search_freelancer_button(self):
+        search_freelancer_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "search_freelancer_btt"))
+        )
+        search_freelancer_button.click()
