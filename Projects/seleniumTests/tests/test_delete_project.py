@@ -73,6 +73,10 @@ class TestDeleteProject:
         # Verificar que el mensaje "No projects available." esté presente
         assert no_projects_message.text == "No projects available.", "The 'No projects available.' message was not displayed."
 
-    
+        # Paso 5: Verificar que el proyecto eliminado aparece en la página de proyectos eliminados
+        self.driver.get("http://127.0.0.1:8000/en/projects/projects/deleted/")
 
-       
+        deleted_projects_page = DeletedProjectsPage(self.driver)
+
+        # Verificar que el proyecto eliminado está en la lista de proyectos eliminados  
+        assert "Proyecto de Prueba" in deleted_projects_page.get_deleted_project_titles(), "Deleted project not found in the deleted projects page"
