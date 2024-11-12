@@ -21,3 +21,16 @@ class ProjectDetailClientPage:
     # Method to get the project title
     def get_project_title(self):
         return self.driver.find_element(By.CSS_SELECTOR, "h3.text-24").text
+    
+    EDIT_MILESTONE_BUTTON = (By.ID, "edit_milestone_btt")
+
+    def click_edit_milestone_button(self):
+        try:
+        # Esperar hasta que el botón sea clickeable y luego hacer clic
+            edit_button = WebDriverWait(self.driver, 20).until(
+                EC.element_to_be_clickable(self.EDIT_MILESTONE_BUTTON)
+            )
+            edit_button.click()
+        except Exception as e:
+            print(f"Error: {e}")
+            raise
