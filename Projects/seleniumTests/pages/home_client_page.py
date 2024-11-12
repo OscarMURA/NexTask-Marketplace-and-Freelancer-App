@@ -33,7 +33,7 @@ class HomeClientPage:
         no_projects_message = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'No projects available.')]"))
         )
-        return no_projects_messageç
+        return no_projects_message
     
     def click_view_project_button(self):
       
@@ -54,3 +54,15 @@ class HomeClientPage:
             EC.element_to_be_clickable((By.ID, "search_freelancer_btt"))
         )
         search_freelancer_button.click()
+    EDIT_PROJECT_BUTTON = (By.ID, "edit_project_btt")
+    
+    def click_edit_project_button(self):
+        try:
+            # Wait until the button is clickable and then click it
+            edit_button = WebDriverWait(self.driver, 20).until(
+                EC.element_to_be_clickable(self.EDIT_PROJECT_BUTTON)
+            )
+            edit_button.click()
+        except Exception as e:
+            print(f"Error: {e}")
+            raise
