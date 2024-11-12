@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class HomeClientPage:
     def __init__(self, driver):
         self.driver = driver
+        self.VIEW_PROJECT_BUTTON = (By.ID, "view_project_btt")
 
     def find_delete_button(self, project_id):
        
@@ -36,8 +37,8 @@ class HomeClientPage:
     
     def click_view_project_button(self):
       
-        view_project_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "view_project_btt"))
+        view_project_button = WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable(self.VIEW_PROJECT_BUTTON)
         )
         view_project_button.click()
 
