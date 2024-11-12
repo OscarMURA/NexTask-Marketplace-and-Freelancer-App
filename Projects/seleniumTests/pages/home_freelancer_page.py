@@ -8,3 +8,5 @@ class HomeFreelancerPage:
       
         search_button = self.driver.find_element(By.ID, "id_search_project")
         search_button.click()
+        
+    
