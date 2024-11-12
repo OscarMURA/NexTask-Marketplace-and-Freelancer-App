@@ -124,7 +124,7 @@
     >
     <div class="card h-100">
       <div class="position-relative">
-      <img onclick="window.location.href='{% url 'milestone_detail_freelancer' milestone.id %}'" src="{% static 'img/category/hitos/' %}{{ milestone.category }}.png" class="recently-view-card-img w-100" alt="{{ milestone.title }}" style="height: 200px; object-fit: cover;">
+      <img onclick="window.location.href='{% url 'milestone_detail_freelancer' milestone.id %}'" src="{% static 'img/category/hitos/' %}{{ milestone.category }}.png" class="recently-view-card-img w-100" alt="{{ milestone.title }}" style="height: 200px; object-fit: cover;" id="on_click_milestone">
       </div>
       <div class="card-body d-flex flex-column">
       <div onclick="window.location.href='{% url 'milestone_detail_freelancer' milestone.id %}'">

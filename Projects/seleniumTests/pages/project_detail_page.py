@@ -12,3 +12,5 @@ class ProjectDetailPage:
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Apply to Project']"))
         )
         apply_button.click()
+    
+
