@@ -39,7 +39,7 @@ class TestProjectMilestoneTask:
             start_date="01/12/2024",
             due_date="01/12/2025",
             budget="1000",
-            category="web_development",
+            category="Content-Writing",
             description="Descripción detallada del proyecto"
         )
         project_page.submit_form()

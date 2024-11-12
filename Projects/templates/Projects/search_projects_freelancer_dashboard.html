@@ -14,7 +14,7 @@
         <input type="text" name="q" class="form-control" placeholder="{% trans 'Search by project title, description, client...' %}" value="{{ request.GET.q }}" style="flex: 1; max-width: 400px;" id="search_project_bar">
         
         <!-- Dropdown para la categoría -->
-        <select name="category" class="form-control" style="max-width: 200px;">
+        <select name="category" class="form-control" style="max-width: 200px;" id="category_selector">
             <option value="all">{% trans "All Categories" %}</option>
             {% for value, label in categories %}
                 <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>

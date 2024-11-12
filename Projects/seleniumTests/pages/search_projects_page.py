@@ -35,3 +35,11 @@ class SearchProjectsPage:
         )
         project_titles = self.driver.find_elements(By.CLASS_NAME, "card-title")
         return [title.text for title in project_titles]
+    def get_project_titles(self):
+        # Obtener los títulos de los proyectos visibles
+        titles = []
+        projects = self.driver.find_elements(By.CSS_SELECTOR, ".card-title")
+        for project in projects:
+            titles.append(project.text)
+        return titles
+
