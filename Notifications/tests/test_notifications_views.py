@@ -8,6 +8,7 @@ from Notifications.models import Notification
 from django.utils import translation
 from django.conf import settings
 
+
 User = get_user_model()
 
 class NotificationViewTests(TestCase):

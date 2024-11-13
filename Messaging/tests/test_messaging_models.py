@@ -67,9 +67,9 @@ class ConversationSerializerTest(TestCase):
         # Probar la serialización de la conversación
         serializer = ConversationSerializer(instance=self.conversation)
         data = serializer.data
-        self.assertEqual(len(data['participants']), 2)  # Verificar la cantidad de participantes
-        self.assertEqual(len(data['messages']), 2)      # Verificar la cantidad de mensajes
-        self.assertEqual(data['messages'][0]['content'], 'Hello')  # Verificar el contenido del primer mensaje
-        self.assertEqual(data['messages'][1]['content'], 'Hi there')  # Verificar el contenido del segundo mensaje
-        self.assertEqual(data['messages'][0]['sender_name'], 'user1')  # Verificar sender_name del primer mensaje
-        self.assertEqual(data['messages'][1]['sender_name'], 'user2')  # Verificar sender_name del segundo mensaje
+        self.assertEqual(len(data['participants']), 2)  # Verifica la cantidad de participantes
+        self.assertEqual(len(data['messages']), 2)      # Verifica la cantidad de mensajes
+        self.assertEqual(data['messages'][0]['content'], 'Hello')  # Verifica el contenido del primer mensaje
+        self.assertEqual(data['messages'][1]['content'], 'Hi there')  # Verifica el contenido del segundo mensaje
+        self.assertEqual(data['messages'][0]['sender_name'], 'user1')  # Verifica sender_name del primer mensaje
+        self.assertEqual(data['messages'][1]['sender_name'], 'user2')  # Verifica sender_name del segundo mensaje
