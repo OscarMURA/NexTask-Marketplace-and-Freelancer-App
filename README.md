@@ -13,7 +13,7 @@ Este proyecto será una aplicación de freelancer que permitirá a los usuarios 
 - **Óscar Stiven Muñoz Ramírez** - [oscarmunozramirez01@gmail.com](mailto:oscarmunozramirez01@gmail.com)
 - **Diego Armando Polanco Lozano** - [diegoarmandopolancolozano@gmail.com](mailto:diegoarmandopolancolozano@gmail.com)
 - **Luis Manuel Rojas Correa** - [luis.manuel.rojas71@gmail.com](mailto:luis.manuel.rojas71@gmail.com)
-
+- **Maria Fanny Giraldo Grisales** - [fannygiraldo2004@gmail.com](mailto:fannygiraldo2004@gmail.com)
 ## Estructura del Proyecto
 
 El proyecto se compondrá de los siguientes módulos principales:
@@ -79,3 +79,4 @@ Si tiene alguna pregunta o comentario sobre el proyecto, podrá contactar a cual
 - **Óscar Stiven Muñoz Ramírez** - [oscarmunozramirez01@gmail.com](mailto:oscarmunozramirez01@gmail.com)
 - **Diego Armando Polanco Lozano** - [diegoarmandopolancolozano@gmail.com](mailto:diegoarmandopolancolozano@gmail.com)
 - **Luis Manuel Rojas Correa** - [luis.manuel.rojas71@gmail.com](mailto:luis.manuel.rojas71@gmail.com)
+- **Maria Fanny Giraldo Grisales** - [fannygiraldo2004@gmail.com](mailto:fannygiraldo2004@gmail.com)
