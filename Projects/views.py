@@ -877,10 +877,6 @@ def edit_task_freelancer(request, task_id):
     else:
         form = TaskForm(instance=task)
 
-    # Allow only the assigned freelancer to view their task
-    if task.assigned_to != freelancer_profile:
-        return render(request, 'Projects/access_denied.html')  # Render an appropriate access denied page
-
     return render(request, 'Projects/edit_task_freelancer.html', {
         'form': form,
         'task': task
