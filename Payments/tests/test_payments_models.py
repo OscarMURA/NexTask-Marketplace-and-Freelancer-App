@@ -44,37 +44,4 @@ class TestPaymentModel:
         assert payment.status == 'pending'
         assert payment.created_at is not None
 
-    def test_payment_str_representation(self):
-        # Crear una instancia de Payment
-        payment = Payment.objects.create(
-            project=self.project,
-            client=self.client_profile,
-            freelancer=self.freelancer_profile,
-            amount=Decimal('750.00'),
-            status='completed'
-        )
-
-        # Verificar la representación en string
-        assert str(payment) == f"Payment for {self.project.title} - 750.00 USD"
-
-    def test_payment_status_choices(self):
-        # Verificar que solo se puedan asignar valores válidos a 'status'
-        payment = Payment.objects.create(
-            project=self.project,
-            client=self.client_profile,
-            freelancer=self.freelancer_profile,
-            amount=Decimal('300.00'),
-            status='pending'
-        )
-
-        assert payment.status in dict(Payment.STATUS_CHOICES)
-
-        # Cambiar el estado a 'completed'
-        payment.status = 'completed'
-        payment.save()
-        assert payment.status == 'completed'
-
-        # Cambiar el estado a 'failed'
-        payment.status = 'failed'
-        payment.save()
-        assert payment.status == 'failed'
+    

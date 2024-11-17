@@ -1,4 +1,3 @@
-
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
@@ -40,16 +39,6 @@ def client_payment_history(request):
     
     return render(request, 'payments/client_payment_history.html', {'payments': payments})
 
-<<<<<<< HEAD
-    # Redirect the user to the payment initiation point
-    return redirect(preference["response"]["init_point"])
-
-def client_payment_history(request):
-    return HttpResponse("Client payment history placeholder.")
-
-def freelancer_payment_history(request):
-    return HttpResponse("Freelancer payment history placeholder.")
-=======
 @login_required
 def freelancer_payment_history(request):
     """
@@ -322,4 +311,3 @@ def make_payment(request, payment_id):
 
     # Si el pago no está pendiente, redirige a la lista de pagos pendientes como fallback
     return redirect('pending_payments')
->>>>>>> e1b03b1e80f629f3d56da00c99511f223e6c3eba
