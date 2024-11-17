@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from Projects.models import Project
 from Users.models import ClientProfile, FreelancerProfile
 from .models import Payment
+from django.http import HttpResponse
 
 def create_payment(request, project_id):
     """
@@ -55,3 +56,9 @@ def create_payment(request, project_id):
 
     # Redirect the user to the payment initiation point
     return redirect(preference["response"]["init_point"])
+
+def client_payment_history(request):
+    return HttpResponse("Client payment history placeholder.")
+
+def freelancer_payment_history(request):
+    return HttpResponse("Freelancer payment history placeholder.")

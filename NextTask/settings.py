@@ -223,5 +223,5 @@ LOCALE_PATHS = [
 
 
 
-#MERCADOPAGO_PUBLIC_KEY = 'tu_public_key'
-#MERCADOPAGO_ACCESS_TOKEN = 'tu_access_token'
+MERCADOPAGO_PUBLIC_KEY = 'tu_public_key'
+MERCADOPAGO_ACCESS_TOKEN = 'tu_access_token'

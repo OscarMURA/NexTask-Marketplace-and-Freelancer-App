@@ -39,8 +39,10 @@ class Project(models.Model):
         ('project_management', 'Project Management'),
         ('accounting_finance', 'Accounting & Finance'),
         ('legal_consulting', 'Legal Consulting'),
+        
     ]
-
+    
+    description = QuillField(default='{"delta": {}, "html": ""}')  # JSON válido para QuillField
     is_deleted = models.BooleanField(default=False)  # Campo para soft delete
 
     objects = ActiveManager()  # Administrador que filtra objetos activos

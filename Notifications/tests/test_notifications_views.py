@@ -5,9 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from unittest.mock import patch, PropertyMock
 from Notifications.models import Notification
-from django.utils import translation
-from django.conf import settings
-
+from django.test.utils import override_settings
 
 User = get_user_model()
 
@@ -86,14 +84,13 @@ class NotificationViewTests(TestCase):
         self.assertEqual(str(messages[0]), "Notificación eliminada exitosamente.")
 
     def test_create_notification_view_get(self):
-        # Activar el idioma correcto para la prueba
-        translation.activate('en-us')
-        response = self.client.get(reverse('create_notification'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'notifications/create_notification.html')
+        # Reutilizar la lista de notificaciones para mostrar el formulario
+        with patch.object(type(self.user), 'is_freelancer', new_callable=PropertyMock, return_value=False):
+            response = self.client.get(reverse('create_notification'))
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, 'notifications_list_client.html')
 
     def test_create_notification_view_post(self):
-        # Probar la creación de una notificación con un POST
         response = self.client.post(reverse('create_notification'), {
             'recipient': self.user.id,
             'message': 'New Notification'

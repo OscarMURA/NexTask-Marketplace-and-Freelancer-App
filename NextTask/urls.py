@@ -20,6 +20,7 @@ urlpatterns += i18n_patterns(
     path('', views.home, name='home'),  # Ruta para la página principal
     path('projects/', include('Projects.urls')),  # Incluye las rutas de la app Projects
     path('notifications/', include('Notifications.urls')),  # Incluye las rutas de la app Notifications sin i18n
+    path('payments/', include('Payments.urls')),  # Incluye las rutas de la app Payments
 )
 
 # Configuración para servir archivos multimedia durante el desarrollo
