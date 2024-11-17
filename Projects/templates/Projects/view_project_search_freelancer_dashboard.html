@@ -3,6 +3,61 @@
 {% load static %}
 {% load i18n %}
 
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+  
+    <style>
+        .quill-content {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .quill-content img {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            box-sizing: border-box;
+            max-height: 500px !important; /* Ajusta según sea necesario */
+            padding: 0 !important;
+            margin: 0 auto !important;
+        }
+
+        /* Opcional: Estilos adicionales para la tarjeta y otros elementos */
+        .card {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto; /* Margen exterior superior e inferior de 20px */
+            gap: 15px; /* Espacio entre elementos internos */
+            box-sizing: border-box;
+        }
+
+        .card-body {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            padding: 0 15px; /* Ajusta el padding según sea necesario */
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
 {% if messages %}
     <div class="container mt-4">
         {% for message in messages %}
@@ -24,7 +79,7 @@
                     alert.remove();
                 }, 500);  // After fading out, remove from DOM
             }
-        }, 5000); // 5000 ms = 5 seconds
+        }, 5000); // 5000 ms = 5 segundos
     </script>
 {% endif %}
 
@@ -49,10 +104,10 @@
                         <p class="card-text"><strong>{% trans "Budget:" %}</strong> ${{ project.budget }}</p>
 
                         <!-- Mostrar descripción usando Quill renderizado -->
-                        <div class="mt-4">
-                            <h4 style="color: #1A1773;">{% trans "Description:" %}</h4>
-                            <div class="quill-content" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                                {{ project.description|safe }}
+                        <div class="col-12">
+                            <div class="form-container">
+                              <label class="text-18 fw-semibold text-dark-300">{% trans "Description" %}</label>
+                              <div class="quill-content">{{ project.description.html|safe }}</div>
                             </div>
                         </div>
 
@@ -61,14 +116,14 @@
                                 {% if request.user.is_freelancer %}
                                     <form method="POST" action="{% url 'apply_to_project' project.id %}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;">{% trans "Apply to Project" %}</button>
+                                        <button type="submit" class="btn btn-primary comment-form-btn" style="background-color: #635FD9; padding: 20px 20px;">{% trans "Apply to Project" %}</button>
                                     </form>
                                 {% else %}
                                     <p class="text-danger">{% trans "Only freelancers can apply to projects." %}</p>
                                 {% endif %}
                             {% else %}
                                 <!-- Siempre mostrar el botón y redirigir a login si el usuario no está autenticado -->
-                                <a href="{% url 'login' %}" next={% url 'apply_to_project' project.id %}" class="btn btn-primary" style="background-color: #635FD9; padding: 10px 20px;>{% trans "Apply to Project" %}</a>
+                                <a href="{% url 'login' %}?next={% url 'apply_to_project' project.id %}" class="btn btn-primary comment-form-btn">{% trans "Apply to Project" %}</a>
                                 <a href="{% url 'register_freelancer' %}" class="btn btn-secondary" style="padding: 10px 20px;">{% trans "Register as Freelancer" %}</a>
                             {% endif %}
                         </div>
@@ -78,5 +133,21 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
+<!-- JavaScript para limpiar estilos en línea, si es necesario -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const images = document.querySelectorAll('.quill-content img');
+        images.forEach(img => {
+            img.style.width = '';
+            img.style.height = '';
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            img.style.display = 'block';
+            img.style.marginLeft = 'auto';
+            img.style.marginRight = 'auto';
+            img.style.maxHeight = '500px'; // Ajusta según sea necesario
+        });
+    });
+</script>
+{% endblock %}

@@ -10,3 +10,7 @@ omit =
     NextTask/wsgi.py
     Messaging/routing.py
     Messaging/forms.py
+    */seleniumTests/*
+    Users/seleniumTests/tests/*
+    */seleniumTests/tests/*
+

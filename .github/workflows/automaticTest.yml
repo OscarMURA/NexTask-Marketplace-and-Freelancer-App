@@ -29,7 +29,7 @@ jobs:
 
     - name: Run Tests with Coverage
       run: |
-        coverage run -m pytest
+        coverage run -m pytest -m "not selenium"
         coverage report
         coverage xml
         coverage html

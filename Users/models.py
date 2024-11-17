@@ -68,9 +68,12 @@ class FreelancerProfile(models.Model):
     skills = models.ManyToManyField(Skill, related_name='freelancers', blank=True)
     languages = models.ManyToManyField('Language', blank=True)
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultFreelancerProfileImage.jpg', blank=True, null=True)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
+
     
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
+        
     def __str__(self):
         return self.user.username
     
@@ -93,7 +96,7 @@ class ClientProfile(models.Model):
         address (str): Address of the client.
         avatar (ImageField): Profile picture of the client.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='clientprofile')
     company_name = models.CharField(max_length=255)
     company_website = models.URLField(blank=True)
     country = CountryField(blank=False, null=False)  # Campo para seleccionar país
@@ -101,6 +104,7 @@ class ClientProfile(models.Model):
     phone = models.CharField(max_length=20, blank=True)  # Teléfono
     address = models.CharField(max_length=255, blank=True)  # Dirección
     avatar = models.ImageField(upload_to='avatars/', default='img/defaultClientProfileImage.jpg', blank=True, null=True)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
     # Método para calcular el presupuesto total de los proyectos del cliente
     def get_total_budget(self):
         """

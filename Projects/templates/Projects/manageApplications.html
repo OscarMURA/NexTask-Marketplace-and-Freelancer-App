@@ -3,6 +3,34 @@
 {% load i18n %}
 
 {% block content %}
+
+<style>
+    .button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 5px;
+        transition: background-color 0.3s;
+    }
+    .button-accept {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .button-accept:hover {
+        background-color: #45a049;
+    }
+    .button-cancel {
+        background-color: #f44336;
+        color: white;
+    }
+    .button-cancel:hover {
+        background-color: #d32f2f;
+    }
+</style>
+
+
 <div class="text mt-4">
     <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg"> {% trans "Back" %} </a>
 </div>
@@ -28,7 +56,23 @@
                         <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id application.freelancer.user.id %}'" style="cursor: pointer;">
                             <div class="d-flex gap-3 align-items-center project-name">
                                 <div class="rounded-3">
-                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="{% trans "Avatar" %}" class="img-fluid">
+                                    {% if application.freelancer.avatar %}
+                                        <img
+                                            src="{{ application.freelancer.avatar.url }}"
+                                            class="rounded-circle"
+                                            alt="{{ comment.author.username }}"
+                                            width="50"
+                                            height="50"
+                                        />
+                                        {% else %}
+                                        <img
+                                            src="{% static 'img/defaultFreelancerProfileImage.jpg' %}"
+                                            class="rounded-circle"
+                                            alt="{{ comment.author.username }}"
+                                            width="50"
+                                            height="50"
+                                        />
+                                    {% endif %}
                                 </div>
                                 <div>
                                     <p class="text-dark-200">{{ application.freelancer.user.username }}</p>
@@ -52,10 +96,10 @@
                                 <form method="post" class="d-inline-block">
                                     {% csrf_token %}
                                     <input type="hidden" name="application_id" value="{{ application.id }}">
-                                    <button type="submit" name="action" value="accept" class="dashboard-action-btn">
+                                    <button type="submit" name="action" value="accept" class="button button-accept">
                                         {% trans "Accept" %}
                                     </button>
-                                    <button type="submit" name="action" value="reject" class="dashboard-action-btn">
+                                    <button type="submit" name="action" value="reject" class="button button-cancel">
                                         {% trans "Reject" %}
                                     </button>
                                 </form>

@@ -8,18 +8,28 @@
 <title>{% trans "Home NexTask" %}</title>  <!-- Marcar el título para traducción -->
 <head>
     <style>
+        /* Estilos generales */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
         .info-section {
-            padding: 40px;
+            padding: 2rem;
             background-color: #f9f9f9;
             border-top: 1px solid #ddd;
         }
 
         .feature {
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 1rem;
+            padding: 1rem;
             background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
         }
 
         .feature h3 {
@@ -29,73 +39,145 @@
         .footer {
             background-color: #333;
             color: white;
-            padding: 20px;
+            padding: 1rem;
             text-align: center;
         }
 
         .button-container {
-            margin-top: 20px;
+            margin-top: 1rem;
             display: flex;
-            gap: 20px;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .btn-search {
-            background-color: #635FD9;
-            color: white;
-            padding: 10px 20px;
+            background-color: #f9f9f9;
+            color: #1A1773;
+            padding: 0.5rem 1rem;
             text-align: center;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 18px;
+            font-size: 1rem;
+            flex: 1;
         }
 
         .btn-search:hover {
-            background-color: #4c4dbf;
+            background-color: #dddddde5;
+        }
+
+        /* Banner Flexbox */
+        .banner-section {
+            background-color: #1A1773;
+            color: white;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 1rem;
+            align-items: center;
+            text-align: center;
+            width: 100%; /* Asegura que ocupe el ancho completo */
+            overflow: visible; /* Permite que el contenido sea visible */
+        }
+
+        .banner-content {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        .banner-content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .banner-content p {
+            font-size: 1.5rem;
+        }
+
+        /* Estilo de imagen responsivo */
+        .banner-image {
+            max-width: 900px; /* Tamaño máximo en pantallas grandes */
+            width: 100%; /* Se adapta al tamaño del contenedor */
+            height: auto;
+            margin-top: 1rem;
+            border-left: 5px solid #635FD9; /* Borde en el lado izquierdo */
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .banner-content h1 {
+                font-size: 2rem;
+            }
+
+            .banner-content p {
+                font-size: 1rem;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .feature {
+                margin: 1rem 0;
+            }
+
+            .banner-image {
+                max-width: 300px; /* Reduce el tamaño en tablets */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .banner-image {
+                max-width: 500px; /* Reduce más el tamaño en móviles */
+                border-left: 3px solid #635FD9; /* Ajuste del borde en móviles */
+            }
+
+            .btn-search {
+                font-size: 0.9rem;
+            }
         }
     </style>
-</head>
-<body>
-    <!-- Banner Section with Flexbox -->
-    <div style="background-color: #1A1773; display: flex; align-items: center; justify-content: space-between; padding: 20px; text-align: left; color: white;">
-        <div style="flex: 1; padding-right: 20px;">
-            <h1 style="font-size: 60px; font-weight: bold;">
-                {% trans "Find Your Perfect" %} <span style="color: #635FD9;">{% trans "Freelancer" %}</span> {% trans "or"%} <span style="color: #635FD9;">{% trans "Client" %}</span> {% trans "Quick" %}<br>
-            </h1>
-            <h1 style="font-size: 60px; font-weight: bold;">{% trans "and Easy" %}</h1><br><br>
-            <div style="margin-top: 20px; font-size: 30px;"><b>{% trans "We have" %}</b></div>
-            <p style="font-size: 24px;">{% trans "your next task!" %}</p>
-            <br>
-            <!-- Add the search links here -->
-            <div class="button-container">
-                <a href="{% url 'search_freelancers' %}" class="btn-search">
-                    {% trans "Search Freelancers" %}
-                </a>
-                <a href="{% url 'search_clients' %}" class="btn-search">
-                    {% trans "Search Clients" %}
-                </a>
-                <a href="{% url 'search_projects' %}" class="btn-search"> <!-- Nuevo botón para buscar proyectos -->
-                    {% trans "Search Projects" %}
-                </a>
-            </div>
-        </div>
-        <img src="{% static 'img/others/freelancerHome.png' %}" alt="{% trans 'Freelancer Working' %}" style="max-width: 55%; height: auto;">
-    </div>
 
-    <!-- New Information Section: Why Choose Us? -->
+    <!-- Banner Section with Flexbox -->
+    <div class="banner-section">
+        <div class="banner-content">
+            <p> ‎ </p>
+            <p> ‎ </p>
+            <p> ‎ </p>
+            <p> ‎ </p>
+            <h1>{% trans "Find Your Perfect" %} <span style="color: #635FD9;">{% trans "Freelancer" %}</span> {% trans "or" %} <span style="color: #635FD9;">{% trans "Client" %}</span> {% trans "Quick" %}</h1>
+            <p>{% trans "We have your next task!" %}</p>
+            <p> ‎ </p>
+            <div class="button-group">
+                <div class="button-container col-6">
+                <a href="{% url 'search_freelancers' %}" class="btn-search">{% trans "Search Freelancers" %}</a>
+                <a href="{% url 'search_clients' %}" class="btn-search">{% trans "Search Clients" %}</a>
+            </div>
+            </div>
+        </div >
+        <div class="button-group">
+        <img src="{% static 'img/others/freelancerHome.png' %}" alt="{% trans 'Freelancer Working' %}" class="banner-image">
+</div>
+</div>
+
+    <!-- Information Section -->
     <div class="info-section">
         <div class="container">
             <h2>{% trans "Why Choose Us?" %}</h2>
             <p>{% trans "Discover why NextTask is the best platform for freelancers and clients to connect and succeed." %}</p>
-            <div class="row">
-                <div class="col-md-4 feature">
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                <div class="feature">
                     <h3>{% trans "Reliable Service" %}</h3>
                     <p>{% trans "We offer 24/7 customer support to ensure you always have the help you need." %}</p>
                 </div>
-                <div class="col-md-4 feature">
+                <div class="feature">
                     <h3>{% trans "Wide Range of Categories" %}</h3>
                     <p>{% trans "From design to development, we have projects to suit every skill set." %}</p>
                 </div>
-                <div class="col-md-4 feature">
+                <div class="feature">
                     <h3>{% trans "Secure Payments" %}</h3>
                     <p>{% trans "Our payment system ensures that you get paid safely and promptly for every task." %}</p>
                 </div>
@@ -111,13 +193,13 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        <p>&copy; 2024 NextTask. {% trans "All rights reserved." %}</p>
-    </div>
 
     <!-- Scripts -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+
+<!-- Footer -->
+<div class="footer">
+    <p>&copy; 2024 NextTask. {% trans "All rights reserved." %}</p>
+</div>
+
 {% endblock %}

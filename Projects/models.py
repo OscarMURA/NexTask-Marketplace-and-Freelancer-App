@@ -2,7 +2,7 @@ from django.db import models
 from Users.models import ClientProfile, FreelancerProfile
 from django_quill.fields import QuillField
 from django.contrib.auth import get_user_model
-from .managers import ActiveManager  # Importa el administrador personalizado
+from .managers import ActiveManager
 
 class Project(models.Model):
     """
@@ -72,8 +72,8 @@ class Project(models.Model):
             return f"{delta} days to {self.due_date}"
         return "No due date"
 
-    def __str__(self):
-        return f"{self.title} by {self.client.user.username}"
+        def __str__(self):
+            return f"{self.title} by {self.client.user.username}"
 
 
 class Milestone(models.Model):
@@ -109,6 +109,11 @@ class Milestone(models.Model):
     due_date = models.DateField()  # Due date of the milestone
     file = models.FileField(upload_to='milestone_files/', null=True, blank=True)  # Optional file associated with the milestone
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='development')
+
+    def get_progress(self):
+        total_tasks = self.tasks.count()
+        completed_tasks = self.tasks.filter(status='completed').count()
+        return (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
 
     def __str__(self):
         return f"{self.title} - {self.project.title}"

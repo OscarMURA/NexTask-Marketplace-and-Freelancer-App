@@ -158,7 +158,7 @@
 </style>
 
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.getElementById('create_task_form').addEventListener('submit', function(event) {
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
         const title = document.getElementById('id_title').value.trim();
@@ -176,6 +176,8 @@
 
         let isValid = true;
 
+        console.log("Validaciones");
+        console.log("la fecha de vencimiento es despues de hoy: ", dueDate >= today);
         // Validación básica para la fecha de vencimiento
         if (dueDate < today) {
             alert('The due date cannot be in the past.');

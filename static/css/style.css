@@ -3743,7 +3743,7 @@ body {
 }
 .w-btn-danger-lg {
   color: #ffffff;
-  background-color: #ff5959; /* Rojo claro */
+  background-color: #635FD9; /* Rojo claro */
   padding: 16px 32px;
   border-radius: 30px;
   justify-content: center;
@@ -3751,11 +3751,11 @@ body {
   gap: 5px;
   overflow: hidden;
   position: relative;
-  white-space: nowrap; /* Transición suave para hover */
+  white-space: nowrap; /* Transición suave para hover  */
 }
 
 .w-btn-danger-lg:hover {
-  background-color: #fb1c1c; /* Rojo oscuro */
+  background-color: #635FD9; /* Rojo oscuro */
 }
 .button-group {
   display: flex;
@@ -3864,6 +3864,97 @@ body {
   border-color: #6f42c1;
   cursor: not-allowed;
 }
+
+
+
+/* Custom CSS for Purple Pagination */
+
+.pagination {
+  justify-content: center;
+}
+
+.pagination .page-link {
+  color: #ffffff;
+  background-color: #a37cec;
+  border: 1px solid #6f42c1;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.pagination .page-link:hover {
+  color: #ffffff;
+  background-color: #a37cec;
+  border-color: #5936a3;
+}
+
+.pagination .page-item.active .page-link {
+  color: #ffffff;
+  background-color: #5e3c9c;
+  border-color: #6f42c1;
+  cursor: default;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #a37cec;
+  background-color: #ffffff;
+  border-color: #6f42c1;
+  cursor: not-allowed;
+}
+
+.rating-stars .bi-star-fill,
+.rating-stars .bi-star-half {
+    color: gold;
+}
+
+.rating .star {
+    font-size: 32px;
+    color: #bbb;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+.rating .star.checked {
+    color: gold;
+}
+
+
+
+.w-btn-dangerb-lg {
+  color: #ffffff;
+  background-color: #ff5959; /* Rojo claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
+
+.w-btn-dangerb-lg:hover {
+  background-color: #fb1c1c; /* Rojo oscuro */
+}
+
+
+.w-btn-plus-lg-b {
+  color: #ffffff;
+  background-color: #71ea41; /* Verde claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
+
+.w-btn-plus-lg-b:hover {
+  background-color: #32ac0d; /* Rojo oscuro */
+}
+
+
 
 /*******************
 Footer   End

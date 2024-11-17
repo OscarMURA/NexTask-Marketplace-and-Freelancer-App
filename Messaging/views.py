@@ -46,7 +46,8 @@ def client_chat(request, conversation_id=None):
         'conversation': conversation,
         'messages': messages,
     }
-    return render(request, 'messaging/client_chat.html', context)
+    
+    return render(request, 'Messaging/client_chat.html', context)
 
 @login_required
 def freelancer_chat(request, conversation_id=None):
@@ -87,7 +88,7 @@ def freelancer_chat(request, conversation_id=None):
         'conversation': conversation,
         'messages': messages,
     }
-    return render(request, 'messaging/freelancer_chat.html', context)
+    return render(request, 'Messaging/freelancer_chat.html', context)
 
 @login_required
 def start_conversation(request, user_id):
@@ -118,7 +119,7 @@ def start_conversation(request, user_id):
             created_at=timezone.now()
         )
 
-    return redirect('messaging:client_chat', conversation_id=conversation.id)
+    return redirect('client_chat', conversation_id=conversation.id)
 
 # API para obtener y enviar mensajes
 @api_view(['GET'])

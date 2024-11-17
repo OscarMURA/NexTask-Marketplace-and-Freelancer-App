@@ -4,9 +4,10 @@
 {% load static %}
 
 {% block content %}
+
 <div class="banner" style="background-color: #f7f7f7; padding: 40px 0; margin-bottom: 20px;">
     <h1 class="text-center" style="font-size: 2.5rem; font-weight: bold; margin: 0;">{% trans "Project Results" %}</h1>
-</div>
+
 
 <!-- Barra de búsqueda -->
 <div class="container mt-4">
@@ -20,24 +21,31 @@
                 <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
-
-        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #635FD9; border: none;">{% trans "Find Projects" %}</button>
+        <button type="submit" class="comment-form-btn" style="padding: 20px 20px; background-color: #635FD9; border: none;">{% trans "Find Projects" %}</button>
     </form>
 </div>
 
 <!-- Resultados de Proyectos -->
 <div class="container mt-5">
-    <div class="row">
+    <div class="row justify-content-center" style="gap: 20px;">
         {% for project in projects %}
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm" style="border-radius: 10px; overflow: hidden;">
-                <div class="card-body text-center" style="padding: 20px;">
+        <div class="col-md-4" 
+        style="max-width: 300px; flex-grow: 1;" 
+        style="cursor: pointer;"
+        class="text-dark-200">
+            <div class="card h-100" onclick="window.location.href='{% url 'view_project_search' project.id %}'">
+                <div class="position-relative">
+                    <img src="{% static 'img/category/projects/' %}{{ project.category }}.png" class="recently-view-card-img w-100" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+                  </div>
+
+                <div class="card-body text-center" style="padding: 20px;" >
                     <h5 class="card-title" style="color: #1A1773; font-weight: bold;">{{ project.title }}</h5>
-                    <!-- Se usa el filtro |safe para renderizar correctamente el contenido del campo Quill -->
-                    <p class="card-text" style="font-size: 0.9rem; color: #555;">{{ project.description|safe|slice:100 }}...</p>
-                    <p class="card-text" style="font-size: 0.9rem;"><strong>Client:</strong> {{ project.client.user.username }}</p>
-                    <p class="card-text" style="font-size: 0.9rem;"><strong>Category:</strong> {{ project.get_category_display }}</p>
-                    <a href="{% url 'view_project_search' project.id %}" class="btn btn-primary" style="background-color: #635FD9; border: none; padding: 10px 20px; text-decoration: none;">View Project</a>
+
+
+                    <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Client:" %}</strong> {{ project.client.user.username }}</p>
+
+                    <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Category:" %}</strong> {{ project.get_category_display }}</p>
+             
                 </div>
             </div>
         </div>
@@ -45,5 +53,6 @@
         <p class="text-center" style="font-size: 1.2rem; color: #888;">{% trans "No projects found." %}</p>
         {% endfor %}
     </div>
+</div>
 </div>
 {% endblock %}
