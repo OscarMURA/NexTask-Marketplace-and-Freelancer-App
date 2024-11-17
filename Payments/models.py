@@ -89,7 +89,7 @@ class PeriodicPayment(models.Model):
         Valida que solo exista un pago periódico para cada freelancer y proyecto.
         """
         if PeriodicPayment.objects.filter(freelancer=self.freelancer, project=self.project).exists():
-            raise ValidationError(_('Ya existe un pago periódico para este freelancer en este proyecto.'))
+            raise ValidationError(_('There is already a periodic payment for this freelancer on this project.'))
 
     class Meta:
         constraints = [
