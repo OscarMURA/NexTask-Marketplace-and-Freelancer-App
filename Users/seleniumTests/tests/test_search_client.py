@@ -1,7 +1,7 @@
 import pytest
 from pages.search_client_page import SearchClientPage
 from pages.client_signup_page import ClientSignUpPage
-
+@pytest.mark.selenium
 @pytest.mark.usefixtures("setup")
 class TestSearchClient:
 

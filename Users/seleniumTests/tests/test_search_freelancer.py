@@ -1,7 +1,7 @@
 import pytest
 from pages.search_freelancer_page import SearchFreelancerPage
 from pages.freelancer_signup_page import FreelancerSignUpPage
-
+@pytest.mark.selenium
 @pytest.mark.usefixtures("setup")
 class TestSearchFreelancer:
 
