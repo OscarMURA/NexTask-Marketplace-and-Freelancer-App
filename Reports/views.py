@@ -36,6 +36,7 @@ def view_report_detail(request, report_id):
     remaining_progress = 100 - progress if progress is not None else 100
     budget_used = report_data.get("budget_used")
     milestones_count = report_data.get("milestones")
+    milestones_data = report_data.get("milestones", [])  # Asegúrate de extraer la información de los hitos
     completed_milestones = report_data.get("completed_milestones")
     incomplete_milestones = report_data.get("incomplete_milestones")
     completed_tasks_count = report_data.get("completed_tasks")
@@ -48,6 +49,7 @@ def view_report_detail(request, report_id):
         "remaining_progress": remaining_progress,
         "budget_used": budget_used,
         "milestones_count": milestones_count,
+        "milestones_data": milestones_data,  # Incluye los datos de los hitos en el contexto
         "completed_milestones": completed_milestones,
         "incomplete_milestones": incomplete_milestones,
         "completed_tasks_count": completed_tasks_count,
@@ -103,31 +105,70 @@ def generate_report_view(request):
 
         project = Project.objects.get(id=project_id)
 
-        # Cálculo del progreso
+        # Cálculo del progreso del proyecto
         if 'progress' in metrics:
             total_tasks = Task.objects.filter(milestone__project=project).count()
             completed_tasks = Task.objects.filter(milestone__project=project, status='completed').count()
             report_data['progress'] = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
-            selected_metrics.add('progress')  # Añadir a métricas seleccionadas
+            selected_metrics.add('progress')
 
         # Cálculo del presupuesto utilizado
         if 'budget' in metrics:
             report_data['budget_used'] = float(project.budget)
-            selected_metrics.add('budget')  # Añadir a métricas seleccionadas
+            selected_metrics.add('budget')
 
-        # Conteo de hitos
+        # Detalle de los hitos
         if 'milestones' in metrics:
-            milestones_count = project.milestones.count()
-            report_data['milestones'] = milestones_count
-            report_data['completed_milestones'] = project.milestones.filter(tasks__status='completed').distinct().count()
-            report_data['incomplete_milestones'] = milestones_count - report_data['completed_milestones']
-            selected_metrics.add('milestones')  # Añadir a métricas seleccionadas
+            completed_milestones = 0
+            incomplete_milestones = 0
+            milestones_data = []
 
-        # Conteo de tareas completadas y sin completar
+            for milestone in project.milestones.all():
+                milestone_tasks = milestone.tasks.all()
+                total_tasks = milestone_tasks.count()
+                completed_tasks = milestone_tasks.filter(status='completed').count()
+
+                # Determinar si el hito está completo
+                if total_tasks > 0 and total_tasks == completed_tasks:
+                    completed_milestones += 1
+                else:
+                    incomplete_milestones += 1
+
+                # Progreso del hito
+                progress = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+
+                # Obtener los freelancers asignados para cada tarea
+                tasks_data = []
+                for task in milestone_tasks:
+                    freelancers = []
+                    if task.assigned_to:
+                        freelancers.append(task.assigned_to.user.get_full_name())  # Obtener nombre completo
+
+                    tasks_data.append({
+                        'title': task.title,
+                        'status': task.status.replace('_', ' ').title(),
+                        'priority': task.priority.replace('_', ' ').title(),
+                        'freelancers': freelancers
+                    })
+
+                milestones_data.append({
+                    'title': milestone.title,
+                    'start_date': milestone.start_date.strftime('%Y-%m-%d') if milestone.start_date else None,
+                    'due_date': milestone.due_date.strftime('%Y-%m-%d') if milestone.due_date else None,
+                    'progress': progress,
+                    'tasks': tasks_data
+                })
+
+            report_data['milestones'] = milestones_data
+            report_data['completed_milestones'] = completed_milestones
+            report_data['incomplete_milestones'] = incomplete_milestones
+            selected_metrics.add('milestones')
+
+        # Conteo de tareas
         if 'tasks' in metrics:
             report_data['completed_tasks'] = Task.objects.filter(milestone__project=project, status='completed').count()
             report_data['incomplete_tasks'] = Task.objects.filter(milestone__project=project).exclude(status='completed').count()
-            selected_metrics.add('tasks')  # Añadir a métricas seleccionadas
+            selected_metrics.add('tasks')
 
         # Crear y almacenar el reporte
         report_log = ReportLog.objects.create(
@@ -135,58 +176,20 @@ def generate_report_view(request):
             project=project,
             data=report_data
         )
-        
+
         return render(request, 'reports/report_detail.html', {
             'report': report_log,
             'form': form,
-            'selected_metrics': metrics,  # Para verificar qué métricas se seleccionaron
-            'progress': report_data.get('progress'),  # Esto debería devolver el valor si existe
+            'selected_metrics': metrics,
+            'progress': report_data.get('progress'),
             'remaining_progress': 100 - report_data.get('progress', 0) if 'progress' in metrics else None,
             'budget_used': report_data.get('budget_used') if 'budget' in metrics else None,
-            'milestones_count': report_data.get('milestones') if 'milestones' in metrics else None,
-            'completed_milestones': report_data.get('completed_milestones') if 'milestones' in metrics else None,
-            'incomplete_milestones': report_data.get('incomplete_milestones') if 'milestones' in metrics else None,
+            'milestones_data': report_data.get('milestones') if 'milestones' in metrics else None,
+            'completed_milestones': report_data.get('completed_milestones') if 'milestones' in metrics else 0,
+            'incomplete_milestones': report_data.get('incomplete_milestones') if 'milestones' in metrics else 0,
             'completed_tasks_count': report_data.get('completed_tasks') if 'tasks' in metrics else None,
             'incomplete_tasks_count': report_data.get('incomplete_tasks') if 'tasks' in metrics else None,
         })
 
     # Si el formulario no es válido
     return render(request, 'reports/generate_report.html', {'form': form})
-    
-def project_report(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
-    form = ReportFilterForm(request.GET or None)
-    report_data = {
-        'project_title': project.title,
-        'total_milestones': project.milestones.count(),
-        'total_tasks': project.tasks.count(),
-    }
-
-    if form.is_valid():
-        start_date = form.cleaned_data.get('start_date')
-        end_date = form.cleaned_data.get('end_date')
-        metrics = form.cleaned_data.get('metrics')
-
-        if metrics:
-            if 'progress' in metrics:
-                report_data['progress'] = project.get_progress()
-            if 'milestones' in metrics:
-                milestones = project.milestones.all()
-                if start_date:
-                    milestones = milestones.filter(due_date__gte=start_date)
-                if end_date:
-                    milestones = milestones.filter(due_date__lte=end_date)
-                report_data['filtered_milestones'] = milestones.count()
-            if 'tasks' in metrics:
-                tasks = project.tasks.all()
-                if start_date:
-                    tasks = tasks.filter(due_date__gte=start_date)
-                if end_date:
-                    tasks = tasks.filter(due_date__lte=end_date)
-                report_data['filtered_tasks'] = tasks.count()
-
-    return render(request, 'reports/project_report.html', {
-        'form': form,
-        'report_data': report_data,
-        'project': project
-    })
