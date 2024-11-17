@@ -32,7 +32,7 @@
                     <td class="text-center">
                         <form method="post" action="{% url 'make_payment' payment.id %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-sm">{% trans "Pay" %}</button>
+                            <button type="submit" class="w-btn-secondary-sm">{% trans "Pay" %}</button>
                         </form>
                     </td>
                 </tr>
