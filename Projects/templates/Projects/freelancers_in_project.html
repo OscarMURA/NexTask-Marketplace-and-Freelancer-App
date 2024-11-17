@@ -28,7 +28,25 @@
                         <td onclick="window.location.href='{% url 'view_freelancer_profile_manage' project.id contract.freelancer.user.id %}'">
                             <div class="d-flex gap-3 align-items-center project-name">
                                 <div class="rounded-3">
-                                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="{% trans "Avatar" %}" class="img-fluid">
+
+
+                                    {% if contract.freelancer.avatar %}
+                                        <img
+                                            src="{{ contract.freelancer.avatar.url }}"
+                                            class="rounded-circle"
+                                            alt="{{ comment.author.username }}"
+                                            width="50"
+                                            height="50"
+                                        />
+                                        {% else %}
+                                        <img
+                                            src="{% static 'img/defaultFreelancerProfileImage.jpg' %}"
+                                            class="rounded-circle"
+                                            alt="{{ comment.author.username }}"
+                                            width="50"
+                                            height="50"
+                                        />
+                                    {% endif %}
                                 </div>
                                 <div>
                                     <p class="text-dark-200">{{ contract.freelancer.user.username }}</p>
