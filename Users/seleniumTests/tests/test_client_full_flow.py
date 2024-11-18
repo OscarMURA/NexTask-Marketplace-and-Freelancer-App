@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from pages.client_signup_page import ClientSignUpPage
 from pages.profile_settings_page import ProfileSettingsPage
 
+@pytest.mark.selenium
 @pytest.mark.usefixtures("setup")
 class TestClientFullFlow:
     
