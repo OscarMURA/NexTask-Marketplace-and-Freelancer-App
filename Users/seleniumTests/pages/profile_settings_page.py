@@ -31,7 +31,7 @@ class ProfileSettingsPage:
         self.driver.find_element(By.NAME, "address").send_keys(address)
 
     def submit_form(self):
-        self.driver.find_element(By.ID, "submit-btn").click()
+        self.driver.find_element(By.ID, "update_info_btt").click()
 
     def is_profile_updated(self):
         try:
@@ -39,5 +39,14 @@ class ProfileSettingsPage:
                 EC.visibility_of_element_located((By.ID, "profileUpdateModal"))
             )
             return "Your profile information has been updated successfully." in self.driver.page_source
+        except:
+            return False
+        
+    def is_on_profile_settings_page(self):
+        try:
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "profile_settings_form"))
+            )
+            return True
         except:
             return False

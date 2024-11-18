@@ -13,11 +13,7 @@ class SearchFreelancerPage:
         search_field.send_keys(username)
         self.driver.find_element(By.CSS_SELECTOR, "button.btn-primary").click()
 
-    def search_freelancer_by_skill(self, skill):
-        skill_field = self.driver.find_element(By.NAME, "skills")
-        skill_field.clear()
-        skill_field.send_keys(skill)
-        self.driver.find_element(By.CSS_SELECTOR, "button.btn-primary").click()
+    
 
     def is_freelancer_in_results(self, username):
         return username in self.driver.page_source
