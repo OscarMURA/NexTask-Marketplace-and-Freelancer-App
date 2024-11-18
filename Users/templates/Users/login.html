@@ -35,6 +35,10 @@
                 <form method="post"class="d-grid mt-4">
                   {% csrf_token %}
                   {{ form|crispy }} <!-- Crispy tag to render the form -->
+
+                  <div class="d-flex justify-content-between mt-2">
+                    <a href="{% url 'password_recovery' %}" class="forgot-password-link">{% trans "Forgot your password?" %}</a>
+                  </div>
                 
                   <div class="d-grid mt-4"> <!-- gap added for grid spacing -->
                     <!-- Botón de red social -->
@@ -62,4 +66,16 @@
       </section>
     </main>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <style>
+      .forgot-password-link {
+        color: #635FD9; /* Elige el color que prefieras */
+        text-decoration: none;
+      }
+      
+      .forgot-password-link:hover {
+        color: #524ec4; /* Color al pasar el mouse */
+        text-decoration: underline; /* Añadir subrayado al pasar el mouse */
+      }
+    </style>
 {% endblock %}
