@@ -83,6 +83,12 @@ class NotificationViewTests(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), "Notificación eliminada exitosamente.")
 
+    def test_create_notification_view_get(self):
+        # Reutilizar la lista de notificaciones para mostrar el formulario
+        with patch.object(type(self.user), 'is_freelancer', new_callable=PropertyMock, return_value=False):
+            response = self.client.get(reverse('create_notification'))
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, 'notifications_list_client.html')
 
     def test_create_notification_view_post(self):
         response = self.client.post(reverse('create_notification'), {
