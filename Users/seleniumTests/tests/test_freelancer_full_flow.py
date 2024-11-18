@@ -6,7 +6,7 @@ from pages.certification_register_page import CertificationRegisterPage
 from pages.portfolio_register_page import PortfolioRegisterPage
 from pages.language_register_page import LanguageRegisterPage
 from pages.skills_register_page import SkillsRegisterPage
-
+@pytest.mark.selenium
 @pytest.mark.usefixtures("setup")
 class TestFreelancerFullFlow:
     

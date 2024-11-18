@@ -3919,6 +3919,43 @@ body {
 
 
 
+.w-btn-dangerb-lg {
+  color: #ffffff;
+  background-color: #ff5959; /* Rojo claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
+
+.w-btn-dangerb-lg:hover {
+  background-color: #fb1c1c; /* Rojo oscuro */
+}
+
+
+.w-btn-plus-lg-b {
+  color: #ffffff;
+  background-color: #71ea41; /* Verde claro */
+  padding: 16px 32px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap; /* Transición suave para hover */
+}
+
+.w-btn-plus-lg-b:hover {
+  background-color: #32ac0d; /* Rojo oscuro */
+}
+
+
+
 /*******************
 Footer   End
 ********************/

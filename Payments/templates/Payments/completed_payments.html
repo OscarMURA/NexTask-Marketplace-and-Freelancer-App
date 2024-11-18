@@ -22,7 +22,7 @@
             </thead>
             <tbody>
                 {% for payment in payments %}
-                <tr>
+                <tr style="height: 64px;">
                     <td class="text-center">{{ payment.project.title }}</td>
                     <td class="text-center">{{ payment.freelancer.user.username }}</td>
                     <td class="text-center">${{ payment.amount }}</td>
@@ -37,7 +37,7 @@
                     <td class="text-center">
                         <!-- Botón para ver e imprimir el recibo -->
                         {% if payment.status == 'paid' %}
-                            <a href="{% url 'payment_receipt' payment.id %}" class="btn btn-secondary btn-sm">{% trans "Print Receipt" %}</a>
+                            <a href="{% url 'payment_receipt' payment.id %}" class="w-btn-secondary-sm">{% trans "Print Receipt" %}</a>
                         {% else %}
                             <span class="text-muted">{% trans "Not available" %}</span>
                         {% endif %}

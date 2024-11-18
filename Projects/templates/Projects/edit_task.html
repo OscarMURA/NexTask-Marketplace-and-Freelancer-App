@@ -25,7 +25,7 @@
 <!-- Form Section -->
 <div class="row justify-content-center">
     <div class="col-xl-8">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="edit_task_form">
             {% csrf_token %}
             <div class="d-flex flex-column gap-4">
                 <!-- Task Info -->
@@ -40,7 +40,7 @@
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
-                    <a href="{% url 'milestone_detail' task.milestone.id %}" class="w-btn-danger-lg">
+                    <a href="{% url 'milestone_detail' task.milestone.id %}" class="w-btn-dangerb-lg">
                         {% trans "Cancel" %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -69,7 +69,7 @@
 </style>
 
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.getElementById('edit_task_form').addEventListener('submit', function(event) {
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
         const title = document.getElementById('id_title').value.trim();

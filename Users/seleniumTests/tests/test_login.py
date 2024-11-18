@@ -1,6 +1,6 @@
 import pytest
 from pages.login_page import LoginPage
-
+@pytest.mark.selenium
 @pytest.mark.usefixtures("setup")
 class TestLogin:
     

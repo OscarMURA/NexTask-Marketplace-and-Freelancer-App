@@ -1,6 +1,6 @@
 import pytest
 from pages.client_signup_page import ClientSignUpPage
-
+@pytest.mark.selenium
 @pytest.mark.usefixtures("setup")
 class TestClientSignUp:
     

@@ -19,6 +19,7 @@ urlpatterns += i18n_patterns(
     path('', views.home, name='home'),  # Ruta para la página principal
     path('projects/', include('Projects.urls')),  # Incluye las rutas de la app Projects
     path('notifications/', include('Notifications.urls')),  # Incluye las rutas de la app Notifications sin i18n
+    path('reports/', include('Reports.urls')),    # Rutas del módulo Reports
     path('payments/', include('Payments.urls')),
 )
 

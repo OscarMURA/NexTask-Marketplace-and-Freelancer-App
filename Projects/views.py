@@ -23,6 +23,10 @@ from Comments.forms import CommentForm
 from Comments.models import Comment
 from django.http import HttpRequest, HttpResponse
 import random
+from Reports.views import client_report_view, generate_report_view
+from Reports.forms import ReportFilterForm
+from Reports.views import get_client_report_context, get_generate_report_context
+
 
 def create_project(request):
     """
@@ -98,14 +102,23 @@ def home_client(request):
         for project in projects
     ]
 
-    return render(request, 'Projects/homeClient.html', {
+    client_report_data = get_client_report_context(request)
+    generate_report_data = get_generate_report_context(request)
+
+    context = {
         'projects': projects,
         'total_projects': total_projects,
         'total_balance': total_balance,
         'pending_payments_count': pending_payments_count,
         'completed_payments_count': completed_payments_count,
         'events_json': events,
-    })
+        'form': client_report_data.get('form'),
+        **client_report_data,
+        **generate_report_data,
+    }
+
+    return render(request, 'Projects/homeClient.html', context)
+
 
 
 @login_required
@@ -863,10 +876,6 @@ def edit_task_freelancer(request, task_id):
             return redirect('milestone_detail_freelancer', pk=milestone.id)  # Redirect to the freelancer's milestones
     else:
         form = TaskForm(instance=task)
-
-    # Allow only the assigned freelancer to view their task
-    if task.assigned_to != freelancer_profile:
-        return render(request, 'Projects/access_denied.html')  # Render an appropriate access denied page
 
     return render(request, 'Projects/edit_task_freelancer.html', {
         'form': form,

@@ -8,6 +8,79 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js'></script>
 
+
+<style>
+  /* Estilo personalizado para el botón "View Client Report" */
+  .btn-view-client-report {
+      background-color: #635fd9; /* Color del botón "View Client Report" */
+      border-color: #635fd9;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .btn-view-client-report:hover {
+      background-color: #4743b3; /* Efecto hover para "View Client Report" */
+      border-color: #4743b3;
+  }
+
+  /* Estilo personalizado para el botón "Generate Custom Report" */
+  .btn-generate-report {
+      background-color: rgb(128, 128, 128); /* Color del botón "Generate Custom Report" */
+      border-color: rgb(128, 128, 128);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .btn-generate-report:hover {
+      background-color: rgb(128, 128, 128);
+      border-color: rgb(128, 128, 128);
+  }
+
+  /* Ajustes generales para los botones de informes */
+  .reports-section .btn {
+      margin-right: 10px; /* Espacio entre los botones */
+  }
+
+  .reports-section {
+    max-width: 500px; /* Ajusta el ancho máximo del contenedor */
+    padding: 1rem;
+    margin: 0 auto; /* Centrar el contenedor horizontalmente */
+  }
+
+  .reports-image img {
+    width: 150px; /* Aumenta el tamaño de la imagen */
+    max-width: 100%;
+  }
+
+  .report-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .btn-view-client-report, .btn-generate-report {
+    padding: 10px 30px;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  /* Para pantallas pequeñas */
+  @media (max-width: 768px) {
+    .reports-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    .reports-image {
+        margin-top: 1rem;
+    }
+  }
+</style>
+
 <!-- Page Header -->
 <div
   class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
@@ -43,7 +116,6 @@
       </div>
     </div>
   </div>
-
   <!-- Total Projects Widget -->
   <div class="col-xl-3 col-md-6 mb-4">
     <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
@@ -70,7 +142,7 @@
     </div>
   </div>
 
-  <!-- Pending Payments Widget -->
+   <!-- Pending Payments Widget -->
   <div class="col-xl-3 col-md-6 mb-4">
     <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
       <div>
@@ -82,11 +154,36 @@
       </div>
     </div>
   </div>
-</div>
 
+<div class="reports-section mt-4 bg-white p-3 rounded-3 shadow-sm d-flex align-items-center justify-content-between">
+  <!-- Contenido de los informes -->
+  <div class="report-content me-3">
+    <h2 class="text-18 fw-semibold text-dark-300 mb-1">{% trans "Reports Section" %}</h2>
+    <p class="text-dark-200 mb-3">{% trans "Access your detailed reports here:" %}</p>
+
+    <div class="d-flex flex-column gap-2">
+      <!-- Botón para ver el informe del cliente con estilo personalizado -->
+      <a href="{% url 'client_report' %}" class="btn btn-view-client-report">
+        {% trans "View Client Report" %}
+      </a>
+      <!-- Botón para generar un informe personalizado con estilo diferente -->
+      <a href="{% url 'generate_report' %}" class="btn btn-generate-report">
+        {% trans "Generate Custom Report" %}
+      </a>
+    </div>
+  </div>
+    
+
+  <!-- Contenedor de la imagen decorativa alineada a la derecha -->
+  <div class="reports-image">
+    <img src="{% static 'img/category/hitos/planning.png' %}" alt="Reports Icon" class="img-fluid">
+  </div>
+</div>
 
 <!-- Sección de Proyectos -->
 <div class="projects-section container">
+  <br>
+  <br>
     <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "Latest Projects" %}</h2>
 
     <!-- Proyectos en formato de tarjetas -->
@@ -216,6 +313,7 @@
 
 
 <div class="projects-section container">
+  <h2 class="text-20 fw-semibold text-dark-300 mb-3">{% trans "TimeLine" %}</h2>
   <div class="row justify-content-center">
     <div class="gig-info-body bg-white">
 

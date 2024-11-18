@@ -4,6 +4,7 @@
 {% load static %}
 
 {% block content %}
+
 <div class="banner" style="background-color: #f7f7f7; padding: 40px 0; margin-bottom: 20px;">
     <h1 class="text-center" style="font-size: 2.5rem; font-weight: bold; margin: 0;">{% trans "Project Results" %}</h1>
 
@@ -20,6 +21,7 @@
                 <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
+
 
         <button type="submit" class="comment-form-btn" style="padding: 20px 20px; background-color: #635FD9; border: none;" id="search_project_button">{% trans "Find Projects" %}</button>
     </form>
@@ -40,8 +42,7 @@
 
                 <div class="card-body text-center" style="padding: 20px;" >
                     <h5 class="card-title" style="color: #1A1773; font-weight: bold;">{{ project.title }}</h5>
-                    <!-- Se usa el filtro |safe para renderizar correctamente el contenido del campo Quill -->
-                    <p class="card-text" style="font-size: 0.9rem; color: #555;">{{ project.description|safe|slice:100 }}</p>
+
 
                     <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Client:" %}</strong> {{ project.client.user.username }}</p>
 

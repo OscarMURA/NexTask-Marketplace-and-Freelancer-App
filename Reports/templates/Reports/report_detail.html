@@ -1,0 +1,372 @@
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="projects-section container">
+  <div class="row justify-content-center">
+    <div class="gig-info-body bg-white">
+      <div class="container mt-5" id="reportContent">
+        <!-- Título del informe -->
+        <h3 class="text-24 fw-bold text-dark-300 mb-4">
+          {% trans "Report Generated" %}
+        </h3>
+
+        <!-- Título del proyecto -->
+        <p><strong>{% trans "Project:" %}</strong> {{ report.project.title }}</p>
+
+        <!-- Tabla de métricas generales del proyecto -->
+        <div class="table-responsive mt-4">
+          <h3 class="text-20 fw-semibold text-dark-300 mb-3">
+            {% trans "Detail of the Metrics" %}
+          </h3>
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">{% trans "Metric" %}</th>
+                <th scope="col">{% trans "Value" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if 'progress' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Completed Progress" %}</strong></td>
+                <td>{{ progress|default:"0" }}%</td>
+              </tr>
+              <tr>
+                <td><strong>{% trans "Remaining Progress" %}</strong></td>
+                <td>{{ remaining_progress|default:"0" }}%</td>
+              </tr>
+              {% endif %}
+              {% if 'budget' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Budget Used" %}</strong></td>
+                <td>{{ budget_used|default:"0" }}</td>
+              </tr>
+              {% endif %}
+              {% if 'milestones' in selected_metrics %}
+              <tr>
+                <td><strong>{% trans "Completed Milestones" %}</strong></td>
+                <td>{{ completed_milestones|default:"0" }}</td>
+              </tr>
+              <tr>
+                <td><strong>{% trans "Incomplete Milestones" %}</strong></td>
+                <td>{{ incomplete_milestones|default:"0" }}</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Detalle de Hitos -->
+        {% if 'milestones' in selected_metrics %}
+          <h3 class="text-20 fw-semibold text-dark-300 mt-5">{% trans "Milestone Details" %}</h3>
+          <div>
+            {% for milestone in milestones_data %}
+              <div class="milestone-section card my-4 p-3 shadow-sm">
+                <!-- Título del hito sin color azul -->
+                <h5 class="fw-bold mb-2">
+                  {% trans "Milestone" %} {{ forloop.counter }}: {{ milestone.title }}
+                </h5>
+                
+                <!-- Tabla con progreso y fechas del hito -->
+                <table class="table table-bordered">
+                  <thead class="table-light">
+                      <tr>
+                          <th scope="col">{% trans "Progress" %}</th>
+                          <th scope="col">{% trans "Start Date" %}</th>
+                          <th scope="col">{% trans "Due Date" %}</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>{{ milestone.progress }}%</td>
+                          <td>{{ milestone.start_date }}</td>
+                          <td>{{ milestone.due_date }}</td>
+                      </tr>
+                  </tbody>
+              </table>
+
+                <!-- Tareas del Hito -->
+                <table class="table table-bordered mt-3">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col">{% trans "Task Name" %}</th>
+                      <th scope="col">{% trans "Status" %}</th>
+                      <th scope="col">{% trans "Priority" %}</th>
+                      <th scope="col">{% trans "Assigned Freelancer(s)" %}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for task in milestone.tasks %}
+                    <tr>
+                      <td>{{ task.title }}</td>
+                      <td>{{ task.status|title }}</td>
+                      <td>{{ task.priority|title }}</td>
+                      <td>
+                        {% for freelancer in task.freelancers %}
+                          {{ freelancer }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Sección de Gráficas -->
+      <div class="graphics-section">
+        <h3 class="text-20 fw-semibold text-dark-300 mt-5">
+          {% trans "Graphics" %}
+        </h3>
+
+        <!-- Gráfica de Progreso -->
+        {% if 'progress' in selected_metrics %}
+        <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 350px; margin: auto">
+          <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">
+            {% trans "Project Progress" %}
+          </h3>
+          <canvas id="progressChart" style="max-width: 200px; height: auto"></canvas>
+          <p class="mt-3"><strong>{% trans "Completed Progress:" %}</strong> {{ progress|default:"0" }}%</p>
+          <p><strong>{% trans "Remaining Progress:" %}</strong> {{ remaining_progress|default:"0" }}%</p>
+        </div>
+        {% endif %}
+
+        <!-- Gráfica de Hitos y Tareas -->
+        {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
+        <div class="card p-4 mb-4 shadow-sm d-flex align-items-center" style="max-width: 600px; margin: auto">
+          <h3 class="text-18 fw-semibold text-dark-300 mb-3 text-center">
+            {% trans "Milestones and Tasks Completed" %}
+          </h3>
+          <canvas id="milestonesTasksChart" style="max-width: 1000px; height: 600px"></canvas>
+        </div>
+        {% endif %}
+      </div>
+
+        <!-- Botón para descargar el PDF -->
+        <div class="text-center mt-5 d-flex justify-content-center" id="buttonContainer">
+          <button id="downloadPdfBtn" class="btn btn-primary" style="border-radius: 50px; padding: 12px 24px; background-color: #635fd9; color: white; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); transition: background-color 0.3s, box-shadow 0.3s; outline: none;">
+            {% trans "Download Report" %}
+          </button>
+        </div>
+
+        <div style="height: 50px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts para gráficos y generación de PDF -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+  // Gráfica de Progreso del Proyecto
+  {% if 'progress' in selected_metrics %}
+  const progressData = {
+    labels: ['{% trans "Completed Progress" %}', '{% trans "Remaining Progress" %}'],
+    datasets: [{
+      data: [{{ progress|default:"0" }}, {{ remaining_progress|default:"0" }}],
+      backgroundColor: ['#4caf50', '#d9534f']
+    }]
+  };
+  const progressConfig = {
+    type: 'doughnut',
+    data: progressData,
+    options: {
+      responsive: true,
+      cutout: '70%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (context) => context.label + ': ' + context.raw + '%' } }
+      }
+    }
+  };
+  new Chart(document.getElementById('progressChart'), progressConfig);
+  {% endif %}
+
+  // Gráfica de Hitos y Tareas
+  {% if 'milestones' in selected_metrics or 'tasks' in selected_metrics %}
+  const milestonesTasksData = {
+    labels: ['{% trans "Completed Milestones" %}', '{% trans "Incomplete Milestones" %}', '{% trans "Completed Tasks" %}', '{% trans "Incomplete Tasks" %}'],
+    datasets: [{
+      label: '{% trans "Quantity" %}',
+      data: [
+        {{ completed_milestones|default:"0" }}, 
+        {{ incomplete_milestones|default:"0" }}, 
+        {{ completed_tasks_count|default:"0" }}, 
+        {{ incomplete_tasks_count|default:"0" }}
+      ],
+      backgroundColor: ['#5cb85c', '#d9534f', '#0275d8', '#f0ad4e']
+    }]
+  };
+  const milestonesTasksConfig = {
+    type: 'bar',
+    data: milestonesTasksData,
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (context) => context.raw + ' {% trans "units" %}' } }
+      }
+    }
+  };
+  new Chart(document.getElementById('milestonesTasksChart'), milestonesTasksConfig);
+  {% endif %}
+
+  // Generar PDF con ajustes mejorados
+  document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+  const reportContent = document.getElementById("reportContent");
+
+  // Clonar contenido para el PDF
+  const clonedContent = reportContent.cloneNode(true);
+  clonedContent.classList.add("pdf-content");
+
+  const tempContainer = document.createElement("div");
+  tempContainer.style.position = "absolute";
+  tempContainer.style.top = "-10000px"; // Ocultar fuera de la vista
+  tempContainer.style.width = "794px"; // Tamaño A4
+  tempContainer.appendChild(clonedContent);
+  document.body.appendChild(tempContainer);
+
+  // Ajustar gráficas dentro del contenido clonado
+  const originalCharts = reportContent.querySelectorAll("canvas");
+  const clonedCharts = clonedContent.querySelectorAll("canvas");
+
+  originalCharts.forEach((chart, index) => {
+    const clonedChart = clonedCharts[index];
+    const context = clonedChart.getContext("2d");
+    clonedChart.width = chart.width; // Mantener tamaño original
+    clonedChart.height = chart.height;
+    context.drawImage(chart, 0, 0, clonedChart.width, clonedChart.height);
+  });
+
+  // Configuración de html2pdf
+  const options = {
+    margin: [10, 10, 10, 10], // Márgenes en milímetros
+    filename: "Reporte.pdf",
+    image: { type: "jpeg", quality: 1 }, // Alta calidad
+    html2canvas: {
+      scale: 2, // Escala para calidad de renderizado
+      useCORS: true, // Habilitar CORS para las gráficas
+      ignoreElements: (element) => element.id === "buttonContainer", // Excluir botón
+    },
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait",
+    },
+  };
+
+  // Generar el PDF y limpiar el contenedor temporal
+  setTimeout(() => {
+    html2pdf().set(options).from(clonedContent).save();
+    setTimeout(() => {
+      document.body.removeChild(tempContainer);
+    }, 1000);
+  }, 500);
+});
+
+</script>
+
+<style>
+
+  /* Estilos exclusivos para el PDF */
+.pdf-content #milestoneDetailsTable {
+  width: auto; /* Ajuste automático al contenido */
+  table-layout: fixed; /* Columnas de tamaño proporcional */
+  font-size: 10px; /* Texto compacto */
+  margin: 0 auto; /* Centrar tabla */
+  border-collapse: collapse; /* Colapsar bordes */
+}
+
+.pdf-content #milestoneDetailsTable th,
+.pdf-content #milestoneDetailsTable td {
+  padding: 4px; /* Reducir espacio interno */
+  text-align: left; /* Alinear a la izquierda */
+  border: 1px solid #ddd; /* Bordes claros */
+  word-wrap: break-word; /* Ajustar texto largo */
+}
+
+.pdf-content #milestoneDetailsTable th {
+  background-color: #f4f4f4; /* Fondo para encabezados */
+  font-weight: bold;
+}
+
+.pdf-content canvas {
+  display: block;
+  max-width: 90%; /* Ajustar al ancho disponible */
+  height: auto;
+  margin: 10px auto; /* Centrar gráficos */
+  page-break-inside: avoid; /* Evitar cortes en gráficas */
+}
+
+/* Evitar cortes en tablas */
+.pdf-content .milestone-table {
+  page-break-inside: avoid;
+  margin-bottom: 20px;
+}
+
+.pdf-content .card {
+  page-break-inside: avoid;
+  padding: 10px;
+}
+
+.pdf-content .graphics-section {
+  margin-top: 230px; /* Añade un espacio superior */
+}
+
+  /* Tablas compactas en el PDF */
+  .pdf-content table {
+    width: 100%;
+    table-layout: fixed; /* Ajuste proporcional de columnas */
+    border-collapse: collapse;
+    font-size: 10px; /* Reducir tamaño de texto */
+  }
+
+  .pdf-content th,
+  .pdf-content td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: left;
+    word-wrap: break-word;
+  }
+
+  .pdf-content th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+
+  .pdf-content td {
+    word-wrap: break-word;
+  }
+
+  /* Gráficas ajustadas para el PDF */
+  .pdf-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 10px auto; /* Centrar gráficas */
+    page-break-inside: avoid; /* Evitar cortes en gráficas */
+  }
+
+
+  .pdf-content canvas {
+  display: block;
+  max-width: 90%; /* Limitar el ancho al 90% */
+  height: auto; /* Mantener la proporción */
+  margin: 10px auto; /* Centrar gráficas */
+  page-break-inside: avoid; /* Evitar cortes */
+}
+
+/* Ajustar el contenedor para prevenir cortes */
+.pdf-content .card,
+.pdf-content .table {
+  page-break-inside: avoid;
+  margin-bottom: 15px;
+}
+</style>
+
+{% endblock %}

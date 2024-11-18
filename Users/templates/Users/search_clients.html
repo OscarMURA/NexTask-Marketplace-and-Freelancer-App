@@ -1,20 +1,20 @@
 {% extends 'NextTask/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% load i18n %}
 {% block content %}
 <!-- Estilos CSS incluidos directamente en el archivo HTML -->
 <style>
     .banner {
         background-color: #f7f7f7;
-        padding: 20px 0;
+        padding: 40px 0;
         margin-bottom: 20px;
     }
 
     .banner h1 {
         font-size: 2.5rem;
         font-weight: bold;
-        margin-left: 15px;
-        text-align: left;
+        margin: 0;
     }
 
     .form-inline .form-group {
@@ -22,8 +22,18 @@
     }
 
     .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
+        background-color: #635fd9;
+        border-color: #635fd9;
+        border-radius: 20px;
+        padding: 10px 20px;
+        color: white;
+        text-align: center;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .btn-primary:hover {
+        background-color: #635fd9;
     }
 
     .search-bar {
@@ -34,8 +44,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
     }
+    
 
     .search-bar .form-group {
         flex: 1;
@@ -43,6 +53,7 @@
     }
 
     .search-bar input, .search-bar select {
+        margin-right: 10px;
         width: 100%;
     }
 
@@ -60,36 +71,41 @@
         padding: 20px;
     }
 
+    .btn-view-profile {
+        margin-top: 15px;
+    }
+
     .card {
-        padding: 20px;
-        border-radius: 10px;
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        min-height: 350px;
+        min-height: 400px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        max-width: 300px;
+        max-width: 340px;
         margin: auto;
-        margin-bottom: 20px;
+        width: 100%;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .card img {
-        max-width: 150px;
-        max-height: 150px;
+        width: 150px;
+        height: 150px;
         border-radius: 50%;
-        margin-bottom: 15px;
         object-fit: cover;
-        display: block;
         margin-left: auto;
         margin-right: auto;
+        display: block;
+        border: 2px solid #ddd;
     }
 
     .card-body {
         flex-grow: 1;
     }
 
-    .row {
+    .container .row {
+        margin-top: 20px;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
@@ -100,6 +116,14 @@
         justify-content: center;
         margin-bottom: 20px;
     }
+
+    
+    .form-control {
+        border-radius: 20px;
+        padding: 10px;
+    }
+
+    
 </style>
 
 <div class="banner">
@@ -110,22 +134,16 @@
 <!-- Barra de búsqueda -->
 <div class="container">
     <form method="GET" class="search-bar">
-        <!-- Barra de búsqueda por nombre de la empresa -->
         <div class="form-group">
-            <input type="text" name="q" class="form-control" placeholder="Search by company name, city..." value="{{ request.GET.q }}">
+            {{ form.keyword }}
         </div>
-        <!-- Filtro por país -->
         <div class="form-group">
-            <select name="country" class="form-control">
-                <option value="">{% trans "Country" %}</option>
-                {% for country in countries %}
-                    <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
-                {% endfor %}
-            </select>
+            {{ form.country }}
         </div>
         <button type="submit" class="btn btn-primary">{% trans "Find Client" %}</button>
     </form>
 </div>
+
 
 <!-- Resultados de Clientes -->
 <div class="container">
@@ -144,7 +162,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ client.company_name }}</h5>
                             <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ client.country }}</p>
-                            <a href="{% url 'client_profile' client.id %}" class="btn btn-primary">{% trans "View Profile" %}</a>
+                            <a href="{% url 'client_profile' client.id %}" class="btn btn-primary btn-view-profile">{% trans "View Profile" %}</a>
                         </div>
                     </div>
                 </div>
@@ -154,4 +172,20 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Script para establecer "Country" como opción predeterminada en el selector -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const countrySelect = document.querySelector('select[name="country"]');
+        if (countrySelect) {
+            // Si la selección de país está vacía, muestra "Country" como el texto de la opción vacía
+            const firstOption = countrySelect.querySelector('option[value=""]');
+            if (firstOption) {
+                firstOption.textContent = "Select Country";
+            }
+        }
+    });
+</script>
+
+
 {% endblock %}
