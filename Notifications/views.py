@@ -73,7 +73,7 @@ def create_notification(request):
             return redirect('notification_list')
     else:
         form = NotificationForm()
-    return render(request, 'notifications/create_notification.html', {'form': form})
+    return render(request, 'notifications/list_client.html', {'form': form})
 
 @login_required
 def notification_list_freelancer(request):

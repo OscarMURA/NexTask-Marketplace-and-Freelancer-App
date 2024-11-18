@@ -42,5 +42,6 @@ pytest
 mixer
 pytest-cov
 djangorestframework>=3.12.0
+mercadopago
 reportlab
 selenium

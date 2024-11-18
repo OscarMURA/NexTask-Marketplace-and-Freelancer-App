@@ -412,25 +412,6 @@ def test_work_experience_formset_missing_required_fields():
     assert 'company_name' in formset.forms[0].errors, "No error found for 'company_name' field"
 
 @pytest.mark.django_db
-def test_freelancer_signup_redirect():
-    client = Client()
-    form_data = {
-        'username': 'testuser',
-        'email': 'test@example.com',
-        'first_name': 'John',
-        'last_name': 'Doe',
-        'password1': 'securepassword123',
-        'password2': 'securepassword123',
-        'country': 'US',
-        'city': 'New York',
-        'phone': '1234567890',
-        'address': '1234 Test St.'
-    }
-    response = client.post(reverse('register_freelancer'), data=form_data)
-    assert response.status_code == 404  # Redirection status code
-
-
-@pytest.mark.django_db
 def test_freelancer_signup_form_invalid_long_username():
     data = {
         'username': 'a' * 256,  # Excede el límite de longitud

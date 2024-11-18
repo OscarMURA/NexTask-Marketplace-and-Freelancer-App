@@ -20,6 +20,17 @@ User = get_user_model()
 
 @login_required
 def client_chat(request, conversation_id=None):
+    """
+    Renders the client chat interface, loading all users, conversations, and messages for a specific conversation if provided.
+
+    Args:
+        request (HttpRequest): The incoming request object.
+        conversation_id (int, optional): ID of a specific conversation to load. Defaults to None.
+
+    Returns:
+        HttpResponse: Renders the 'client_chat.html' template with context containing users, conversations, conversation, and messages.
+    """
+     
     users = User.objects.exclude(id=request.user.id)
     conversations = Conversation.objects.filter(participants=request.user)
 
@@ -40,6 +51,16 @@ def client_chat(request, conversation_id=None):
 
 @login_required
 def freelancer_chat(request, conversation_id=None):
+    """
+    Renders the freelancer chat interface, loading all active conversations for the current user and available users for new conversations.
+
+    Args:
+        request (HttpRequest): The incoming request object.
+        conversation_id (int, optional): ID of a specific conversation to load. Defaults to None.
+
+    Returns:
+        HttpResponse: Renders the 'freelancer_chat.html' template with context containing users, conversations, conversation, and messages.
+    """
     current_user = request.user  # Usuario actual
 
     # Obtener todas las conversaciones activas del usuario actual
@@ -71,6 +92,16 @@ def freelancer_chat(request, conversation_id=None):
 
 @login_required
 def start_conversation(request, user_id):
+    """
+    Starts a new conversation with another user if it doesn't already exist, and sends a notification to that user.
+
+    Args:
+        request (HttpRequest): The incoming request object.
+        user_id (int): ID of the user with whom to start a conversation.
+
+    Returns:
+        HttpResponseRedirect: Redirects to the client chat view with the new conversation's ID.
+    """
     other_user = get_object_or_404(User, id=user_id)
     # Busca si ya existe una conversación entre los dos usuarios
     conversation = Conversation.objects.filter(participants=request.user).filter(participants=other_user).first()
@@ -93,6 +124,16 @@ def start_conversation(request, user_id):
 # API para obtener y enviar mensajes
 @api_view(['GET'])
 def get_conversation_messages(request, conversation_id):
+    """
+    API view to retrieve messages from a specific conversation if the user is a participant.
+
+    Args:
+        request (HttpRequest): The incoming request object.
+        conversation_id (int): ID of the conversation.
+
+    Returns:
+        Response: JSON response with serialized messages or error if the conversation is not found.
+    """
     try:
         conversation = Conversation.objects.get(id=conversation_id, participants=request.user)
     except Conversation.DoesNotExist:
@@ -104,6 +145,17 @@ def get_conversation_messages(request, conversation_id):
 
 @api_view(['POST'])
 def send_message(request, conversation_id):
+    """
+    API view to send a message in a specific conversation if the user is a participant.
+    Sends a notification to the other participant.
+
+    Args:
+        request (HttpRequest): The incoming request object with message content.
+        conversation_id (int): ID of the conversation.
+
+    Returns:
+        Response: JSON response with the new message or error if the content is empty or conversation is not found.
+    """
     try:
         conversation = Conversation.objects.get(id=conversation_id, participants=request.user)
     except Conversation.DoesNotExist:
@@ -139,6 +191,13 @@ def send_message(request, conversation_id):
 
 # API Views
 class MessageListCreateView(generics.ListCreateAPIView):
+    """
+    API view for listing and creating messages in a conversation.
+    Allows authenticated users to retrieve and send messages in a specific conversation.
+
+    Attributes:
+        serializer_class (Serializer): Serializer for Message model.
+    """
     serializer_class = MessageSerializer
 
     def get_queryset(self):
@@ -149,10 +208,27 @@ class MessageListCreateView(generics.ListCreateAPIView):
         serializer.save(sender=self.request.user)
 
 class ConversationDetailView(generics.RetrieveAPIView):
+    """
+    API view to retrieve details of a specific conversation.
+    
+    Attributes:
+        queryset (QuerySet): Queryset for retrieving Conversation model instances.
+        serializer_class (Serializer): Serializer for Conversation model.
+    """
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     
 def get_messages(request, conversation_id):
+    """
+    API view to retrieve messages in a conversation as JSON, ordered by timestamp.
+
+    Args:
+        request (HttpRequest): The incoming request object.
+        conversation_id (int): ID of the conversation.
+
+    Returns:
+        JsonResponse: JSON response with a list of serialized messages.
+    """
     if request.method == 'GET':
         messages = Message.objects.filter(conversation_id=conversation_id).order_by('timestamp')
         message_list = [{
@@ -164,6 +240,16 @@ def get_messages(request, conversation_id):
 
 @login_required
 def search_users(request):
+    """
+    Searches for users by username starting with a query string (case insensitive).
+    Excludes the current user from the results.
+
+    Args:
+        request (HttpRequest): The incoming request object containing a search query.
+
+    Returns:
+        JsonResponse: JSON response with a list of matching users or an empty list if no query is provided.
+    """
     query = request.GET.get('q', '').strip()
     if query:
         # Filtrar los usuarios cuyo nombre de usuario comienza con la cadena ingresada (case insensitive)
@@ -185,6 +271,16 @@ def search_users(request):
 
 
 def check_conversation(request, user_id):
+    """
+    Checks if a conversation exists between the current user and another specified user.
+
+    Args:
+        request (HttpRequest): The incoming request object.
+        user_id (int): ID of the other user.
+
+    Returns:
+        JsonResponse: JSON response indicating if the conversation exists and its ID if so.
+    """
     current_user = request.user
     other_user = get_object_or_404(User, id=user_id)
 
