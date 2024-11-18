@@ -63,13 +63,13 @@
                                 <!-- Restore Project -->
                                 <form action="{% url 'restore_project' project.id %}" method="post" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-success btn-sm">{% trans "Restore" %}</button>
+                                    <button type="submit" class="btn btn-success btn-sm" id="restore-btn-{{ project.id }}">{% trans "Restore" %}</button>
                                 </form>
                                 
                                 <!-- Delete Permanently -->
                                 <form action="{% url 'permanent_delete_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('{% trans "Are you sure you want to permanently delete this project?" %}');">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm">{% trans "Delete Permanently" %}</button>
+                                    <button type="submit" class="btn btn-danger btn-sm"  id="delete-permanently-btn-{{ project.id }}">{% trans "Delete Permanently" %}</button>
                                 </form>
                             </div>
                         </td>

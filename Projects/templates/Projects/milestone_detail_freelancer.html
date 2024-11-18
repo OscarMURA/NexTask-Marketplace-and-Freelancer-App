@@ -124,7 +124,7 @@
                 {% for task in tasks %}
                 <tr>
                     <!-- Título de la tarea -->
-                    <td onclick="window.location.href='{% url 'task_detail_freelancer' task.id %}'" style="cursor: pointer;">
+                    <td onclick="window.location.href='{% url 'task_detail_freelancer' task.id %}'" style="cursor: pointer;" id="task_detail_on_click">
                         <div class="d-flex gap-3 align-items-center project-name">
                             <div>
                                 <p class="text-dark-200">{{ task.title }}</p>

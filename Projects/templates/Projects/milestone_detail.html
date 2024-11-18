@@ -247,7 +247,7 @@
                     <!-- Acciones (Editar y Eliminar) -->
                     <td>
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
+                            <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm" id="edit_task_btt">{% trans "Edit" %}</a>
                             <form action="{% url 'delete_task' task.id %}" method="POST" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger btn-sm">{% trans "Delete" %}</button>

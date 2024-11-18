@@ -96,10 +96,11 @@
                                 <form method="post" class="d-inline-block">
                                     {% csrf_token %}
                                     <input type="hidden" name="application_id" value="{{ application.id }}">
-                                    <button type="submit" name="action" value="accept" class="button button-accept">
+
+                                    <button type="submit" name="action" value="accept" class="dashboard-action-btn" id="accetp_applFreelancer_btt">
                                         {% trans "Accept" %}
                                     </button>
-                                    <button type="submit" name="action" value="reject" class="button button-cancel">
+                                    <button type="submit" name="action" value="reject" class="dashboard-action-btn" id="denied_applFreelancer_btt">
                                         {% trans "Reject" %}
                                     </button>
                                 </form>

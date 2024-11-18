@@ -93,11 +93,13 @@
   </div>
   <div> 
     <div class="button-group">
-    <a href="{% url 'createProject' %}" class="w-btn-secondary-lg">
-      {% trans "Create Project" %}</a>
-      <a href="{% url 'deleted_projects' %}" class="w-btn-secondary-lg">
-        {% trans "See deleted projects" %}</a>
-    </div>
+      <a href="{% url 'createProject' %}" class="w-btn-secondary-lg" id="create-project-btn">
+        {% trans "Create Project" %}
+      </a>
+      <a href="{% url 'deleted_projects' %}" class="w-btn-secondary-lg" id="deleted-projects-btn">
+        {% trans "See deleted projects" %}
+      </a>
+  </div>  
   </div>
 </div>
 
@@ -208,7 +210,7 @@
             <div class="button-group">
               
               <a href="{% url 'project_detail' project.id %}">
-              <button class="dashboard-action-btn">
+              <button class="dashboard-action-btn" id="view_project_btt">
                 <!-- Icono de acción view -->
                 <svg
                 width="26"
@@ -233,7 +235,7 @@
               </button>
               </a>
               <a href="{% url 'edit_project' project.id %}">
-              <button class="dashboard-action-btn">
+              <button class="dashboard-action-btn" id="edit_project_btt">
                 <!-- Icono de acción Edit -->
                 <svg
                 width="20"
@@ -256,7 +258,8 @@
               <button class="dashboard-action-btn"
                       type="button"
                       data-bs-toggle="modal"
-                      data-bs-target="#RemoveModal{{ project.id }}">
+                      data-bs-target="#RemoveModal{{ project.id }}"
+                      id="delete-project-{{ project.id }}">
                   <!-- Icono de acción Remove -->
                   <svg width="26" height="19" viewBox="0 0 26 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M3 3L19 19M19 3L3 19" stroke="#5B5B5B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -283,7 +286,7 @@
                           <!-- Formulario para eliminar el proyecto -->
                           <form action="{% url 'delete_project' project.id %}" method="POST">
                             {% csrf_token %}
-                            <button type="submit" class="w-btn-secondary-lg">
+                            <button type="submit" class="w-btn-secondary-lg" id="remove-btn-{{ project.id }}">
                                 {% trans "Remove" %}
                             </button>
                           </form>
