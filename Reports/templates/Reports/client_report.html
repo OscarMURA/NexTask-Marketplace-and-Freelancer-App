@@ -1,0 +1,108 @@
+{% extends 'Users/baseClient.html' %} {% load i18n %} {% block content %}
+
+<style>
+  /* Estilo personalizado para el botón "View Report" */
+  .btn-view-report {
+    background-color: #635fd9;
+    border-color: #635fd9;
+    color: white;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    text-align: center;
+  }
+
+  .btn-view-report:hover {
+    background-color: #4743b3;
+    border-color: #4743b3;
+  }
+
+  /* Estilos para el contenedor de la tabla y la tabla */
+  .table-reports-container {
+    max-width: 90%; /* Aumenta el ancho máximo del contenedor */
+    margin: 0 auto;
+    margin-top: 1.5rem;
+  }
+
+  .table-reports {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .table-reports th,
+  .table-reports td {
+    padding: 15px 20px; /* Ajusta el padding para mayor visibilidad */
+    text-align: center;
+    border-bottom: 1px solid #e1e4e8;
+  }
+
+  .table-reports th {
+    background-color: #635fd9;
+    color: white;
+    font-weight: bold;
+  }
+
+  .table-reports td {
+    color: #34495e;
+  }
+
+  .table-reports tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+
+  .no-reports {
+    text-align: center;
+    color: #666;
+    font-size: 1rem;
+    padding: 15px;
+  }
+</style>
+
+<div class="projects-section container">
+  <div class="row justify-content-center">
+    <div class="gig-info-body bg-white">
+
+      <div class="container mt-5">
+    <h2 class="text-24 fw-bold text-dark-300 mb-4 text-center">{% trans "Generated Reports" %}</h2>
+
+    <!-- Contenedor de la tabla de reportes generados -->
+    <div class="table-reports-container">
+        <table class="table-reports">
+            <thead>
+                <tr>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Project" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ report.project.title }}</td>
+                        <td>
+                            <a href="{% url 'view_report_detail' report.id %}" class="btn btn-view-report btn-sm">
+                                {% trans "View Report" %}
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="no-reports">
+                            {% trans "No reports generated yet." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="height: 50px;"></div> <!-- Espaciado al final de la página -->
+</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

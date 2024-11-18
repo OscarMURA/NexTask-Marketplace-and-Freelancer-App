@@ -1,0 +1,114 @@
+{% extends 'Users/baseFreelancer.html' %} {% load static %} {% block content %} {% load i18n %}
+
+<title>{% trans "Freelancer Dashboard" %}</title>
+<!-- Page Header -->
+<div
+  class="d-flex gap-4 flex-column flex-md-row align-items-md-center justify-content-between"
+>
+  <div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Dashboard" %}</h3>
+    <ul class="d-flex align-items-center gap-2">
+      <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
+    </ul>
+  </div>
+  <div>
+    <a href="" class="w-btn-secondary-lg">
+      {% trans "Post a job" %}</a
+    >
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <!-- Total Projects Widget -->
+  <div class="col mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
+      <div>
+        <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ total_projects }}</h3>
+        <p class="text-18 text-dark-200">{% trans "Total Projects" %}</p>
+      </div>
+      <div class="dashboard-widget-icon">
+        <img src="{% static 'img/dashboard/icon/icon-2.png' %}" alt="" />
+      </div>
+    </div>
+  </div>
+  
+  <!-- Completed Payments Widget -->
+  <div class="col mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
+      <div>
+        <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ completed_payments_count }}</h3>
+        <p class="text-18 text-dark-200">{% trans "Completed Payments" %}</p>
+      </div>
+      <div class="dashboard-widget-icon">
+        <img src="{% static 'img/dashboard/icon/icon-3.png' %}" alt="" />
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pending Payments Widget -->
+  <div class="col mb-4">
+    <div class="p-4 d-flex align-items-center dashboard-widget justify-content-between bg-white rounded-4">
+      <div>
+        <h3 class="dashboard-widget-title fw-bold text-dark-300">{{ pending_payments_count }}</h3>
+        <p class="text-18 text-dark-200">{% trans "Pending Payments" %}</p>
+      </div>
+      <div class="dashboard-widget-icon">
+        <img src="{% static 'img/dashboard/icon/icon-4.png' %}" alt="" />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Content -->
+<div>
+  <div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Projects you participate in" %}</h3>
+    <div class="text mt-4">
+      <div class="button-group">
+        <a href="{% url 'manage_applications_freelancer' %}" class="w-btn-secondary-lg">{% trans "Project List for Accept" %}</a>
+        <a href="{% url 'search_projects' %}" class="w-btn-secondary-lg" id="id_search_project">{% trans "Search Projects" %}</a>
+      </div>
+      <p>.</p>
+      <p></p>
+    </div>
+  </div>
+  
+  <!-- Proyectos en formato de tarjetas -->
+  <div class="row justify-content-center" style="gap: 20px;">
+    {% for project in projects %}
+    <div 
+      class="col-md-4" 
+      style="max-width: 300px; flex-grow: 1; cursor: pointer;" 
+      class="text-dark-200"
+    >
+      <div class="card h-100">
+        <div onclick="window.location.href='{% url 'project_detail_freelancer' project.id %}'" class="position-relative">
+          <img src="{% static 'img/category/projects/' %}{{ project.category }}.png" class="recently-view-card-img w-100" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h4 class="card-title">{{ project.title }}</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Budget: ${{ project.budget }}</h6>
+          <p class="card-subtitle">{{ project.get_category_display }}</p>
+          <p class="card-text text-dark-200">Days until due: {{ project.days_until_due }}</p>
+
+          <div class="button-group">
+            <a href="{% url 'project_detail_freelancer' project.id %}">
+              <button id="view_project_btt" class="dashboard-action-btn" >
+                <!-- Icono de acción view -->
+                <svg width="26" height="19" viewBox="0 0 26 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.3187 6.66195C24.6716 8.08537 24.6716 10.248 23.3187 11.6714C21.0369 14.0721 17.1181 17.3333 12.6667 17.3333C8.21523 17.3333 4.29641 14.0721 2.01466 11.6714C0.661781 10.248 0.661781 8.08537 2.01466 6.66195C4.29641 4.26122 8.21523 1 12.6667 1C17.1181 1 21.0369 4.26122 23.3187 6.66195Z" stroke="#5B5B5B" stroke-width="1.5"/>
+                  <circle cx="12.667" cy="9.16699" r="3.5" stroke="#5B5B5B" stroke-width="1.5"/>
+                </svg>
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center w-100">{% trans "No projects available." %}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

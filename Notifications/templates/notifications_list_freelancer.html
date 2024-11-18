@@ -1,0 +1,97 @@
+{% extends 'Users/baseFreelancer.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">
+        {% trans "Unread Notifications" %} ({{ unread_notifications.count }})
+    </h3>
+    <form method="POST" action="{% url 'notification_list' %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="mark_all_as_read" class="btn btn-primary">{% trans "Mark All as Read" %}</button>
+    </form>
+    <div class="overflow-x-auto">
+        <table class="table table-striped table-hover dashboard-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="ps-4" style="width: 70%;">{% trans "Message" %}</th>
+                    <th scope="col" style="width: 20%;">{% trans "Date" %}</th>
+                    <th scope="col" class="text-end pe-5" style="width: 10%;">{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unotification in unread_notifications %}
+                <tr>
+                    <td>
+                        <p class="text-dark-200 mb-0">{{ unotification.message }}</p>
+                    </td>
+                    <td class="text-dark-200">{{ unotification.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                    <td>
+                        <div class="d-flex justify-content-end gap-2">
+                            <form method="POST" class="d-inline-block" action="{% url 'notification_list' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="notification_id" value="{{ unotification.id }}">
+                                <input type="hidden" name="action" value="mark_as_read">
+                                <button type="submit" class="btn btn-success">{% trans "Mark as Read" %}</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">{% trans "No notifications available." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">
+        {% trans "Read Notifications" %} ({{ notifications.count }})
+    </h3>
+    <form method="POST" action="{% url 'notification_list' %}">
+        {% csrf_token %}
+        <button type="submit" name="action" value="delete_read" class="btn btn-danger">{% trans "Delete All Read" %}</button>
+    </form>
+    <div class="overflow-x-auto">
+        <table class="table table-striped table-hover dashboard-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="ps-4" style="width: 70%;">{% trans "Message" %}</th>
+                    <th scope="col" style="width: 20%;">{% trans "Date" %}</th>
+                    <th scope="col" class="text-end pe-5" style="width: 10%;">{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in notifications %}
+                <tr>
+                    <td>
+                        <p class="text-dark-200 mb-0">{{ notification.message }}</p>
+                    </td>
+                    <td class="text-dark-200">{{ notification.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                    <td>
+                        <div class="d-flex justify-content-end gap-2">
+                            <form method="POST" class="d-inline-block" action="{% url 'notification_list' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="notification_id" value="{{ notification.id }}">
+                                <input type="hidden" name="action" value="delete">
+                                <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">{% trans "No notifications available." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

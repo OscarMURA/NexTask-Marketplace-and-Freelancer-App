@@ -1,0 +1,204 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">Edit Project: {{ project.title }}</h3>
+</div>
+
+<!-- Form Section -->
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+                            
+                <div class="d-flex flex-column gap-4">
+                    <!-- Project Info -->
+                    <div class="gig-info-card">
+                        <div class="gig-info-header">
+                            <h4 class="text-18 fw-semibold text-dark-300">{% trans "Project Info" %}</h4>
+                            <!-- .po: msgid "Project Info" -->
+                        </div>
+                        <div class="gig-info-body bg-white">
+                            <div class="row g-4">
+                                <!-- Título -->
+                                <div class="col-12">
+                                    <div class="form-container">
+                                        <label for="id_title" class="form-label">
+                                            {% trans "Project Title" %} <span class="text-lime-300">*</span>
+                                            <!-- .po: msgid "Project Title" -->
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control shadow-none" 
+                                            name="title" 
+                                            id="id_title" 
+                                            value="{{ form.title.value|default_if_none:'' }}" 
+                                            maxlength="50"
+                                            placeholder="{% trans 'Enter project title' %}" 
+                                        >
+                                        <!-- .po: msgid "Enter project title" -->
+                                        {% if form.title.errors %}
+                                            <div class="error text-danger">{{ form.title.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Fecha de inicio -->
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label for="id_start_date" class="form-label">{% trans "Start Date" %}</label>
+                                        <!-- .po: msgid "Start Date" -->
+                                        {{ form.start_date }}
+                                        <div id="start-date-error" class="error text-danger"></div>
+                                        {% if form.start_date.errors %}
+                                            <div class="error text-danger">{{ form.start_date.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Fecha de vencimiento -->
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label for="id_due_date" class="form-label">{% trans "Due Date" %}</label>
+                                        <!-- .po: msgid "Due Date" -->
+                                        {{ form.due_date }}
+                                        <div id="due-date-error" class="error text-danger"></div>
+                                        {% if form.due_date.errors %}
+                                            <div class="error text-danger">{{ form.due_date.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Presupuesto -->
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label for="id_budget" class="form-label">{% trans "Budget" %}</label>
+                                        <!-- .po: msgid "Budget" -->
+                                        <input 
+                                            type="text" 
+                                            class="form-control shadow-none" 
+                                            name="budget" 
+                                            id="id_budget" 
+                                            value="{{ form.budget.value|default_if_none:'' }}"
+                                            placeholder="{% trans 'Enter budget amount' %}" 
+                                        >
+                                        <!-- .po: msgid "Enter budget amount" -->
+                                        <div id="budget-error" class="error text-danger"></div>
+                                        {% if form.budget.errors %}
+                                            <div class="error text-danger">{{ form.budget.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Categoría  -->
+                                <div class="col-md-6">
+                                    <div class="form-container">
+                                        <label for="id_category" class="form-label">
+                                            {% trans "Category" %}<span class="text-lime-300">*</span>
+                                            <!-- .po: msgid "Category" -->
+                                        </label>
+                                        {{ form.category }} <!-- Esto cargará el <select> con la opción actual del proyecto -->
+                                        {% if form.category.errors %}
+                                            <div class="error text-danger">{{ form.category.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Descripción usando Quill -->
+                                <div class="col-12">
+                                    <label for="id_description" class="form-label">{% trans "Description" %}<span class="text-lime-300">*</span></label>
+                                    <!-- .po: msgid "Description" -->
+                                    {{ form.description }}  <!-- Renderiza el campo de Quill aquí -->
+                                    {% if form.description.errors %}
+                                        <div class="error text-danger">{{ form.description.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Botón de enviar -->
+                <div class="button-group">
+                    <button type="submit" class="w-btn-secondary-lg" id="save_changes_btt">
+                        {% trans "Save Changes" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg">
+                        {% trans "Cancel" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .ql-container {
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        min-height: 300px;
+        padding: 10px;
+    }
+
+    .ql-editor {
+        min-height: 280px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+    }
+</style>
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const startDate = new Date(document.getElementById('id_start_date').value);
+        const dueDate = new Date(document.getElementById('id_due_date').value);
+        const today = new Date();
+        const budget = parseFloat(document.getElementById('id_budget').value);
+
+        // Limpieza de mensajes previos
+        document.getElementById('start-date-error').textContent = '';
+        document.getElementById('due-date-error').textContent = '';
+        document.getElementById('budget-error').textContent = '';
+
+        let isValid = true;
+
+        // Validación de la fecha de inicio (no debe estar en el pasado)
+        if (startDate.getTime() < today.setHours(0, 0, 0, 0)) { // Compara solo la fecha, ignorando la hora
+            document.getElementById('start-date-error').textContent = 'The start date cannot be in the past.';
+            isValid = false;
+        }
+
+        // Validación de la fecha de vencimiento (debe ser al menos un mes después de la fecha de inicio)
+        const minDueDate = new Date(startDate);
+        minDueDate.setMonth(minDueDate.getMonth() + 1); // Incrementa un mes
+        if (dueDate.getTime() <= minDueDate.getTime()) {
+            document.getElementById('due-date-error').textContent = 'The due date must be at least one month after the start date.';
+            isValid = false;
+        }
+
+        // Validación del presupuesto (no puede ser negativo)
+        if (isNaN(budget) || budget < 0) {
+            document.getElementById('budget-error').textContent = 'The budget cannot be negative.';
+            isValid = false;
+        }
+
+        // Prevenir envío si hay errores
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>
+
+
+
+{% endblock %}

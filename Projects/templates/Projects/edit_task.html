@@ -1,0 +1,105 @@
+{% extends 'Users/baseClient.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+
+<!-- Page Header -->
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Edit Task:" %} {{ task.title }}</h3>
+    <ul class="d-flex align-items-center gap-2">
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
+        <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
+                <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </li>
+        <li class="text-lime-300 fs-6">{% trans "Edit Task" %}</li>
+    </ul>
+</div>
+
+<!-- Form Section -->
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="d-flex flex-column gap-4">
+                <!-- Task Info -->
+                
+                {% include 'Projects/task_info_edit.html' %} 
+
+                <!-- Button group -->
+                <div class="button-group">
+                    <button type="submit" class="w-btn-secondary-lg" id="saveChanges_btt">
+                        {% trans "Save Changes" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <a href="{% url 'milestone_detail' task.milestone.id %}" class="w-btn-danger-lg">
+                        {% trans "Cancel" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .ql-container {
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        min-height: 300px;
+        padding: 10px;
+    }
+
+    .ql-editor {
+        min-height: 280px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+    }
+</style>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const dueDate = new Date(document.getElementById('id_due_date').value);
+        const today = new Date();
+        const title = document.getElementById('id_title').value.trim();
+        const maxTitleLength = 50;
+
+        let isValid = true;
+
+        let titleError = document.getElementById('title-error');
+        if (!titleError) {
+            titleError = document.createElement('div');
+            titleError.id = 'title-error';
+            titleError.classList.add('error', 'text-danger');
+            document.getElementById('id_title').parentElement.appendChild(titleError);
+        }
+        titleError.textContent = '';
+
+        if (title.length > maxTitleLength) {
+            titleError.textContent = `The task title cannot exceed ${maxTitleLength} characters.`;
+            isValid = false;
+        }
+
+        if (dueDate < today) {
+            alert('The due date cannot be in the past.');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>
+
+{% endblock %}

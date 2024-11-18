@@ -1,0 +1,23 @@
+{% extends 'NextTask/base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{% trans "Search Projects" %}</h2>
+    <!-- Contenido específico para buscar proyectos -->
+    <!-- Puedes incluir un formulario de búsqueda y un listado de proyectos -->
+    <form method="GET" action="{% url 'search_projects' %}">
+        <input type="text" name="q" placeholder="{% trans "Search Projects" %}" value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+    </form>
+    
+    <ul class="project-list mt-4">
+        {% for project in projects %}
+            <li>
+                <a href="{% url 'view_project_search' project.id %}">{{ project.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

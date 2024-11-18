@@ -1,0 +1,59 @@
+{% extends 'Users/baseFreelancer.html' %}
+{% load i18n %}
+
+{% load static %}
+
+{% block content %}
+<div class="banner" style="background-color: #f7f7f7; padding: 40px 0; margin-bottom: 20px;">
+    <h1 class="text-center" style="font-size: 2.5rem; font-weight: bold; margin: 0;">{% trans "Project Results" %}</h1>
+
+
+<!-- Barra de búsqueda -->
+<div class="container mt-4">
+    <form method="GET" class="search-bar" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+        <input type="text" name="q" class="form-control" placeholder="{% trans 'Search by project title, description, client...' %}" value="{{ request.GET.q }}" style="flex: 1; max-width: 400px;" id="search_project_bar">
+        
+        <!-- Dropdown para la categoría -->
+        <select name="category" class="form-control" style="max-width: 200px;" id="category_selector">
+            <option value="all">{% trans "All Categories" %}</option>
+            {% for value, label in categories %}
+                <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="comment-form-btn" style="padding: 20px 20px; background-color: #635FD9; border: none;" id="search_project_button">{% trans "Find Projects" %}</button>
+    </form>
+</div>
+
+<!-- Resultados de Proyectos -->
+<div class="container mt-5">
+    <div class="row justify-content-center" style="gap: 20px;">
+        {% for project in projects %}
+        <div class="col-md-4" 
+        style="max-width: 300px; flex-grow: 1;" 
+        style="cursor: pointer;"
+        class="text-dark-200">
+            <div class="card h-100" onclick="window.location.href='{% url 'view_project_search' project.id %}'">
+                <div class="position-relative">
+                    <img src="{% static 'img/category/projects/' %}{{ project.category }}.png" class="recently-view-card-img w-100" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+                  </div>
+
+                <div class="card-body text-center" style="padding: 20px;" >
+                    <h5 class="card-title" style="color: #1A1773; font-weight: bold;">{{ project.title }}</h5>
+                    <!-- Se usa el filtro |safe para renderizar correctamente el contenido del campo Quill -->
+                    <p class="card-text" style="font-size: 0.9rem; color: #555;">{{ project.description|safe|slice:100 }}</p>
+
+                    <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Client:" %}</strong> {{ project.client.user.username }}</p>
+
+                    <p class="card-text" style="font-size: 0.9rem;"><strong>{% trans "Category:" %}</strong> {{ project.get_category_display }}</p>
+             
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center" style="font-size: 1.2rem; color: #888;">{% trans "No projects found." %}</p>
+        {% endfor %}
+    </div>
+</div>
+</div>
+{% endblock %}

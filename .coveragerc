@@ -1,0 +1,16 @@
+[run]
+# Ignora archivos o directorios específicos
+omit =
+    */migrations/*
+    */views.py
+    /test_views/
+    Reports/urls.py
+    Reports/forms.py
+    Payments/urls.py
+    Payments/tests/*
+    NextTask/wsgi.py
+    Messaging/routing.py
+    Messaging/forms.py
+    */seleniumTests/*
+    Users/seleniumTests/tests/*
+    */seleniumTests/tests/*

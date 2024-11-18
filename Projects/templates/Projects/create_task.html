@@ -1,0 +1,199 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block content %}
+<head>
+    <!-- django-quill-editor Media -->
+    {% include 'django_quill/media.html' %}
+</head>
+
+<!-- Page Header -->
+<div>
+    <h3 class="text-24 fw-bold text-dark-300 mb-2">{% trans "Create Task" %}</h3>
+    <ul class="d-flex align-items-center gap-2">
+        <li class="text-dark-200 fs-6">{% trans "Dashboard" %}</li>
+        <li>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="11" viewBox="0 0 5 11" fill="none">
+                <path d="M1 10L4 5.5L1 1" stroke="#5B5B5B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </li>
+        <li class="text-lime-300 fs-6">{% trans "Create Task" %}</li>
+    </ul>
+</div>
+
+<!-- Form Section -->
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <form method="post" enctype="multipart/form-data" id="create_task_form">
+            {% csrf_token %}
+            <div class="d-flex flex-column gap-4">
+                <!-- Task Info -->
+                <div class="gig-info-card">
+                    <div class="gig-info-header">
+                        <h4 class="text-18 fw-semibold text-dark-300">{% trans "Task Info" %}</h4>
+                    </div>
+                    <div class="gig-info-body bg-white">
+                        <div class="row g-4">
+                            <!-- Título de la tarea -->
+                            <div class="col-12">
+                                <div class="form-container">
+                                    <label for="id_title" class="form-label">Task Title <span class="text-lime-300">*</span></label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="error text-danger">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Start Date -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_start_date" class="form-label">{% trans "Start Date" %} <span class="text-lime-300">*</span></label>
+                                    {{ form.start_date }} <!-- Campo de la fecha de inicio -->
+                                    {% if form.start_date.errors %}
+                                        <div class="error text-danger">{{ form.start_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Fecha de vencimiento -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_due_date" class="form-label">{% trans "Due Date" %} <span class="text-lime-300">*</span></label>
+                                    {{ form.due_date }}
+                                    {% if form.due_date.errors %}
+                                        <div class="error text-danger">{{ form.due_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Prioridad -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_priority" class="form-label">{% trans "Priority" %} <span class="text-lime-300">*</span></label>
+                                    {{ form.priority }}
+                                    {% if form.priority.errors %}
+                                        <div class="error text-danger">{{ form.priority.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Estado -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_status" class="form-label">{% trans "Status" %} <span class="text-lime-300">*</span></label>
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                        <div class="error text-danger">{{ form.status.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Asignado a -->
+                            <div class="col-md-6">
+                                <div class="form-container">
+                                    <label for="id_assigned_to" class="form-label">{% trans "Assigned To" %}</label>
+                                    {{ form.assigned_to }}
+                                    {% if form.assigned_to.errors %}
+                                        <div class="error text-danger">{{ form.assigned_to.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Archivo -->
+                            <divclass="col-md-6">
+                                <label for="id_attachments" class="form-container">{% trans "File (optional)" %}</label>
+                                {{ form.attachments }}
+                                {% if form.attachments.errors %}
+                                    <div class="error text-danger">{{ form.attachments.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="col-12">
+                                <label for="id_description" class="form-label">{% trans "Description" %}</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="error text-danger">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="button-group">
+                    <button type="submit" class="w-btn-secondary-lg">
+                        {% trans "Create Task" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <a href="{% url 'milestone_detail' milestone.id  %}" class="w-btn-danger-lg">
+                        {% trans "Cancel" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="10" viewBox="0 0 14 10" fill="none">
+                            <path d="M9 9L13 5M13 5L9 1M13 5L1 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </form>
+    
+    </div>
+</div>
+
+<style>
+    .ql-container {
+        border: 2px solid #ccc; /* Borde personalizado */
+        border-radius: 10px;    /* Bordes redondeados */
+        min-height: 300px;      /* Ajustar altura del área de texto */
+        padding: 10px;          /* Espacio dentro del editor */
+    }
+
+    .ql-editor {
+        min-height: 280px;      /* Ajustar la altura del área de escritura */
+        font-size: 16px;        /* Tamaño de fuente dentro del editor */
+        border: 2px solid #ccc; /* Borde personalizado */
+        border-radius: 10px;    /* Bordes redondeados */
+    }
+</style>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const dueDate = new Date(document.getElementById('id_due_date').value);
+        const today = new Date();
+        const title = document.getElementById('id_title').value.trim();
+        const maxTitleLength = 50;
+        
+        // Crear espacio para errores si no existe
+        let titleError = document.getElementById('title-error');
+        if (!titleError) {
+            titleError = document.createElement('div');
+            titleError.id = 'title-error';
+            titleError.classList.add('error', 'text-danger');
+            document.getElementById('id_title').parentElement.appendChild(titleError);
+        }
+        titleError.textContent = '';
+
+        let isValid = true;
+
+        // Validación básica para la fecha de vencimiento
+        if (dueDate < today) {
+            alert('The due date cannot be in the past.');
+            event.preventDefault();
+            isValid = false;
+        }
+
+        // Validación del título de la tarea (no debe exceder 50 caracteres)
+        if (title.length > maxTitleLength) {
+            titleError.textContent = `The task title cannot exceed ${maxTitleLength} characters.`;
+            isValid = false;
+        }
+
+        // Si alguna validación falla, prevenir que el formulario se envíe
+        if (!isValid) {
+            event.preventDefault(); // Prevenir envío del formulario si hay errores
+        }
+    });
+</script>
+
+{% endblock %}

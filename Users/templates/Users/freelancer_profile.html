@@ -1,0 +1,27 @@
+{% extends 'NextTask/base.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+
+<div class="button-group" >
+    <a href="{% url 'search_freelancers' %}" class="btn btn-primary comment-form-btn ">&larr; {% trans "Back to Freelancer Search" %}</a>
+</div>
+
+<div class="container">
+
+    <!-- Encabezado del perfil -->
+    {% include 'Users/profile_header.html' %}
+
+    <!-- Detalles del perfil -->
+    {% include 'Users/freelancer_details.html' %}
+
+    <!-- Sección de Comentarios y Calificaciones -->
+    {% include 'Comments/freelancer_comments_section.html' %}
+    
+</div>
+
+<!-- Botón para regresar a la búsqueda de freelancers -->
+<div class="button-group">
+    <a href="{% url 'search_freelancers' %}" class="btn btn-primary comment-form-btn ">&larr; {% trans "Back to Freelancer Search" %}</a>
+</div>
+{% endblock %}

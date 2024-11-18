@@ -1,0 +1,23 @@
+{% extends 'NextTask/base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ project.title }}</h2>
+    <p>{{ project.description }}</p>
+    <p><strong>{% trans "Category:" %}</strong> {{ project.get_category_display }}</p>
+    <p><strong>{% trans "Client:" %}</strong> {{ project.client.user.username }}</p>
+    <p><strong>{% trans "Budget:" %}</strong> {{ project.budget }}</p>
+
+    <!-- Botón para aplicar al proyecto -->
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'apply_to_project' project.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">{% trans "Apply to this Project" %}</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Login to Apply" %}</a>
+    {% endif %}
+</div>
+{% endblock %}

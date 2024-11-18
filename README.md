@@ -4,7 +4,7 @@
 
 ## Descripción del Proyecto
 
-Este proyecto será una aplicación de freelancer que permitirá a los usuarios contratar y ofrecer servicios de manera sencilla y eficiente. La aplicación estará diseñada para facilitar la conexión entre freelancers y clientes, ofreciendo herramientas para la gestión de proyectos, seguimiento de tareas, y procesamiento de pagos.
+Este proyecto será una aplicación de freelancer que permitirá a los usuarios contratar y ofrecer servicios de manera sencilla y eficiente. La aplicación estará diseñada para facilitar la conexión entre freelancers y clientes, ofreciendo herramientas para la gestión de proyectos, seguimiento de tareas y procesamiento de pagos.
 
 ## Integrantes del Equipo SOPAS (Students Of Programing And Software)
 
@@ -18,7 +18,7 @@ Este proyecto será una aplicación de freelancer que permitirá a los usuarios 
 
 El proyecto se compondrá de los siguientes módulos principales:
 
-1. **Gestión de Usuarios**: Permitirá la creación y autenticación de cuentas de usuario, gestión de perfiles, y acceso a funcionalidades según el rol (freelancer o cliente).
+1. **Gestión de Usuarios**: Permitirá la creación y autenticación de cuentas de usuario, gestión de perfiles y acceso a funcionalidades según el rol (freelancer o cliente).
 2. **Gestión de Proyectos**: Ofrecerá herramientas para la creación, administración y seguimiento de proyectos. Incluirá funcionalidades como el establecimiento de hitos y la asignación de tareas.
 3. **Sistema de Pago**: Integrará métodos de pago para facilitar las transacciones entre clientes y freelancers.
 4. **Interfaz de Usuario**: Será diseñado de manera intuitiva y amigable para garantizar una buena experiencia de usuario tanto en dispositivos móviles como en escritorio.
@@ -52,6 +52,36 @@ El proyecto se compondrá de los siguientes módulos principales:
    cd 202402-proyecto-sopas
    ```
 
+3. Crear un entorno de desarrollo e instalar las dependencias:
+   ```bash
+   python -m venv env
+   source env/bin/activate  # En Linux/Mac
+   .\env\Scripts\activate   # En Windows
+   pip install -r requirements.txt
+   ```
+
+4. Ejecutar el comando para poblar los idiomas:
+   ```bash
+   python manage.py populate_languages
+   ```
+
+5. Ejecutar las migraciones para crear la base de datos:
+   ```bash
+   python manage.py migrate
+   ```
+
+6. Finalmente, ejecutar el servidor de desarrollo:
+   ```bash
+   python manage.py runserver
+   ```
+
+## Desarrollo
+
+El desarrollo del proyecto se está llevando a cabo en la rama `development`, correspondiente al sprint 1. Para trabajar en esta rama, utiliza el siguiente comando:
+
+```bash
+git checkout development
+```
 
 ## Uso
 
@@ -70,6 +100,7 @@ Las contribuciones serán bienvenidas. Para contribuir, por favor seguir estos p
 ## Licencia
 
 Este proyecto estará licenciado bajo la Universidad Icesi, eso esperamos xD.
+
 ## Contacto
 
 Si tiene alguna pregunta o comentario sobre el proyecto, podrá contactar a cualquiera de los integrantes del equipo a través de sus correos electrónicos.

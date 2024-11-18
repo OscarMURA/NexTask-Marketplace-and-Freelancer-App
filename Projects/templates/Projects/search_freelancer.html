@@ -1,0 +1,183 @@
+{% extends 'Users/baseClient.html' %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+
+
+<div class="text mt-4">
+    <a href="{% url 'project_detail' project.id %}" class="w-btn-danger-lg">{% trans "Back" %}</a>
+    
+    <h1 class="text-center">{% trans "Freelancer Results" %}</h1>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="container mt-4">
+    <form method="GET" class="search-bar">
+        <!-- Barra de búsqueda por palabra clave -->
+        <div class="form-group mx-2" style="flex: 2;">
+            <input type="text" name="q" class="form-control" placeholder="Search by username, skills, country, languages..." value="{{ request.GET.q }}" id="seacrh_bar_freelancer">
+        </div>
+
+        <div class="form-group mx-2">
+            <select name="skills" class="form-control">
+                
+                {% for skill in skills %}
+                    <option value="{{ skill.id }}" {% if request.GET.skills == skill.id %}selected{% endif %}>{{ skill.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mx-2">
+            <select name="languages" class="form-control">
+                <option value="">{% trans "Languages" %}</option>
+                {% for language in languages %}
+                    <option value="{{ language.id }}" {% if request.GET.languages == language.id %}selected{% endif %}>{{ language.language }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mx-2">
+            <select name="country" class="form-control">
+                <option value="">{% trans "Country" %}</option>
+                {% for country in countries %}
+                    <option value="{{ country }}" {% if request.GET.country == country %}selected{% endif %}>{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mx-2">{% trans "Find Freelancer" %}</button>
+    </form>
+</div>
+
+<!-- Resultados de Freelancers -->
+<div class="container mt-5">
+    <div class="row">
+        {% for freelancer in freelancers %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm text-center">
+                <!-- Mostrar avatar o imagen predeterminada -->
+                {% if freelancer.avatar %}
+                    <img src="{{ freelancer.avatar.url }}" alt="Profile Picture">
+                {% else %}
+                    <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="Default Avatar">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ freelancer.user.username }}</h5>
+                    <p class="card-text">{{ freelancer.user.first_name }} {{ freelancer.user.last_name }}</p>
+                    <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ freelancer.country }}</p>
+                   
+                    <a href="{% url 'freelancer_profile' project.id freelancer.user.id %}" class="btn btn-primary">{% trans "View freelancer profile" %}</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>{% trans "No freelancers found." %}</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- Estilos CSS incluidos directamente en el archivo HTML -->
+<style>
+    .banner {
+        background-color: #f7f7f7;
+        padding: 40px 0;
+        margin-bottom: 20px;
+    }
+
+    .banner h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .form-inline .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .search-bar {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .search-bar select,
+    .search-bar input {
+        margin-right: 10px;
+        width: 100%;
+    }
+
+    .search-bar button {
+        padding: 10px 20px;
+    }
+
+    .card {
+        padding: 20px; /* Espacio interno de la tarjeta */
+        border-radius: 10px;
+        text-align: center;
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 300px;
+        margin: 20px auto; /* Margen exterior superior e inferior de 20px */
+        gap: 15px; /* Espacio entre elementos internos */
+    }
+    
+
+    .card img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%; /* Asegura que la imagen sea un círculo */
+        margin-bottom: 15px;
+        object-fit: cover;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        border: 2px solid #ddd; /* Añade un borde para resaltar la imagen */
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .container .row {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around; /* Asegura un buen espaciado entre las tarjetas */
+    }
+
+    .col-md-4 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        width: 100%; /* Asegura que el botón ocupe todo el ancho dentro de la tarjeta */
+        max-width: 200px;
+        margin: 10px auto; /* Centra el botón */
+    }
+</style>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,191 @@
+{% extends 'NextTask/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% block content %}
+<!-- Estilos CSS incluidos directamente en el archivo HTML -->
+<style>
+    .banner {
+        background-color: #f7f7f7;
+        padding: 40px 0;
+        margin-bottom: 20px;
+    }
+
+    .banner h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .form-inline .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #635fd9;
+        border-color: #635fd9;
+        border-radius: 20px;
+        padding: 10px 20px;
+        color: white;
+        text-align: center;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .btn-primary:hover {
+        background-color: #635fd9;
+    }
+
+    .search-bar {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+
+    .search-bar .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .search-bar input, .search-bar select {
+        margin-right: 10px;
+        width: 100%;
+    }
+
+    .search-bar button {
+        padding: 10px 20px;
+    }
+
+    .container {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .no-results {
+        text-align: left;
+        padding: 20px;
+    }
+
+    .btn-view-profile {
+        margin-top: 15px;
+    }
+
+    .card {
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: 340px;
+        margin: auto;
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        border: 2px solid #ddd;
+    }
+
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .container .row {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .col-md-4 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    
+    .form-control {
+        border-radius: 20px;
+        padding: 10px;
+    }
+
+    
+</style>
+
+<div class="banner">
+    <!-- Cambia el título de Client Results a Search Clients y lo alineamos a la izquierda -->
+    <h1>{% trans "Search Clients" %}</h1>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="container">
+    <form method="GET" class="search-bar">
+        <div class="form-group">
+            {{ form.keyword }}
+        </div>
+        <div class="form-group">
+            {{ form.country }}
+        </div>
+        <button type="submit" class="btn btn-primary">{% trans "Find Client" %}</button>
+    </form>
+</div>
+
+
+<!-- Resultados de Clientes -->
+<div class="container">
+    <div class="row">
+        {% if clients %}
+            {% for client in clients %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm text-center">
+                        <!-- Mostrar avatar del cliente si existe, si no mostrar imagen por defecto -->
+                        {% if client.avatar %}
+                            <img src="{{ client.avatar.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img src="{% static 'img/defaultClientProfileImage.png' %}" alt="Default Avatar" class="img-thumbnail">
+
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ client.company_name }}</h5>
+                            <p class="card-text"><strong>{% trans "Country:" %}</strong> {{ client.country }}</p>
+                            <a href="{% url 'client_profile' client.id %}" class="btn btn-primary btn-view-profile">{% trans "View Profile" %}</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-results">{% trans "No clients found." %}</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Script para establecer "Country" como opción predeterminada en el selector -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const countrySelect = document.querySelector('select[name="country"]');
+        if (countrySelect) {
+            // Si la selección de país está vacía, muestra "Country" como el texto de la opción vacía
+            const firstOption = countrySelect.querySelector('option[value=""]');
+            if (firstOption) {
+                firstOption.textContent = "Select Country";
+            }
+        }
+    });
+</script>
+
+
+{% endblock %}

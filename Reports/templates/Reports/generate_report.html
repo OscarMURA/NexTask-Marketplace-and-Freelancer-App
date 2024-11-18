@@ -1,0 +1,151 @@
+{% extends 'Users/baseClient.html' %} {% load i18n %} {% block content %}
+
+<style>
+  .report-container {
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 20px; 
+  }
+  .form-card {
+    width: 100%;
+    max-width: 650px;
+    border: 1px solid #e1e4e8;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+  }
+  .form-label {
+    font-weight: bold;
+    color: #34495e;
+  }
+  .metrics-section .form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .metrics-section label {
+    margin-left: 5px;
+    font-weight: normal;
+  }
+  .btn-primary {
+    background-color: #635fd9;
+    border-color: #635fd9;
+    font-weight: bold;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  .btn-primary:hover {
+    background-color: #4743b3;
+    border-color: #635fd9;
+  }
+  .report-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e1e4e8;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+  }
+  .report-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  .list-group-item {
+    background-color: #f8f8f8;
+    border: none;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+  }
+  .list-group-item span:first-child {
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  .error-message {
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+</style>
+
+<div class="report-container mt-5">
+  <h2 class="text-24 fw-bold text-dark-300 mb-4 text-center">
+    {% trans "Generate Custom Report" %}
+  </h2>
+
+  <!-- Formulario para generar informe -->
+  <form method="get" class="form-card" id="custom-report-form">
+    <div class="mb-3">
+      <label for="start_date" class="form-label"
+        >{{ form.start_date.label }}</label
+      >
+      {{ form.start_date }} {% if form.start_date.errors %}
+      <div class="error-message">{{ form.start_date.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label for="end_date" class="form-label">{{ form.end_date.label }}</label>
+      {{ form.end_date }} {% if form.end_date.errors %}
+      <div class="error-message">{{ form.end_date.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3 metrics-section">
+      <label class="form-label">{{ form.metrics.label }}</label>
+      {% for checkbox in form.metrics %}
+      <div class="form-check">
+        {{ checkbox.tag }}
+        <label for="{{ checkbox.id_for_label }}"
+          >{{ checkbox.choice_label }}</label
+        >
+      </div>
+      {% endfor %} {% if form.metrics.errors %}
+      <div class="error-message">{{ form.metrics.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label for="project" class="form-label">{{ form.project.label }}</label>
+      {{ form.project }} {% if form.project.errors %}
+      <div class="error-message">{{ form.project.errors|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">
+      {% trans "Generate Report" %}
+    </button>
+  </form>
+
+  <div style="height: 50px"></div>
+  <!-- Ajusta el 'height' según el espacio deseado -->
+
+  <!-- Resultado del informe -->
+  {% if report %}
+  <div class="report-section mt-4">
+    <p class="text-muted mb-2">
+      {% trans "Generated for project:" %} <strong>{{ report.project }}</strong>
+    </p>
+    <ul class="list-group mt-3">
+      {% for metric, value in report.data.items %}
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        <span>{{ metric|title }}:</span>
+        <span>{{ value }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

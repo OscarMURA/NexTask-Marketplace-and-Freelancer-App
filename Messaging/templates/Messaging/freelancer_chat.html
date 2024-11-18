@@ -1,0 +1,556 @@
+{% extends 'Users/baseFreelancer.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block content %}
+<style>
+    .chat-layout {
+        display: flex;
+        height: 80vh;
+        border: 1px solid #ddd;
+    }
+
+    .conversation-list {
+        width: 30%;
+        background-color: #f9f9f9;
+        border-right: 1px solid #ccc;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .conversation-list input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .conversation-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .conversation-list li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .conversation-list a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.2s;
+        width: 100%;
+    }
+
+    .conversation-list a img {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+
+    .conversation-list a:hover {
+        background-color: #e6e6e6;
+    }
+
+    #chat-window {
+        width: 70%;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .messages {
+        height: 60vh;
+        overflow-y: auto;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .message-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Espacio entre mensajes */
+    }
+
+    .message {
+        max-width: 60%;
+        padding: 10px;
+        border-radius: 15px;
+        margin-bottom: 10px;
+        word-wrap: break-word;
+        width: fit-content;
+        display: inline-block;
+    }
+
+    /* Mensajes enviados (alineados a la derecha) */
+    .message.sent {
+        background-color: #dcf8c6;
+        margin-left: auto; /* Alinear a la derecha */
+        text-align: right;
+        border-radius: 15px 15px 0px 15px;
+    }
+
+    /* Mensajes recibidos (alineados a la izquierda) */
+    .message.received {
+        background-color: #ffffff;
+        text-align: left;
+        border: 1px solid #ccc;
+        border-radius: 15px 15px 15px 0px;
+    }
+
+    /* Diseño de la fecha centrada como burbuja */
+    .date-separator {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 0.85em;
+        color: gray;
+        position: relative;
+    }
+
+    .date-separator::before,
+    .date-separator::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 40%;
+        height: 1px;
+        background: #ccc;
+    }
+
+    .date-separator::before {
+        left: 0;
+    }
+
+    .date-separator::after {
+        right: 0;
+    }
+
+    #message-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #message-form button {
+        padding: 10px 20px;
+        background-color: #635FD9;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #message-form button:hover {
+        background-color: #6c15f8;
+    }
+
+    .custom-button {
+        background-color: #6c15f8;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .custom-button:hover {
+        background-color: #6c15f8;
+    }
+</style>
+
+<div class="chat-layout">
+    <!-- Lista de Usuarios Disponibles -->
+    <div class="conversation-list">
+        <input type="text" id="search" placeholder="{% trans 'Search chats or users.' %}">
+        <ul id="user-results">
+            <!-- Los resultados de la búsqueda de usuarios se mostrarán aquí dinámicamente -->
+        </ul>
+        <hr>
+        <h5>{% trans "Active conversations:" %}</h5>
+        <br>
+        <ul>
+            {% if conversations %}
+                {% for conversation in conversations %}
+                    {% for participant in conversation.participants.all %}
+                        {% if participant != request.user %}
+                            <li>
+                                <a href="#" class="conversation-link" data-conversation-id="{{ conversation.id }}">
+                                    {% if participant.profile_picture %}
+                                        <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}">
+                                    {% else %}
+                                        {% if participant.user_type == 'freelancer' %}
+                                            <img src="{% static 'img/defaultFreelancerProfileImage.jpg' %}" alt="{% trans 'Default Freelancer Profile Image' %}">
+                                        {% elif participant.user_type == 'client' %}
+                                            <img src="{% static 'img/defaultClientProfileImage.png' %}" alt="{% trans 'Default Client Profile Image' %}">
+                                        {% endif %}
+                                    {% endif %}
+                                    {{ participant.username }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p>{% trans "No active chats" %}</p>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Ventana del Chat -->
+    <div id="chat-window">
+        <p>{% trans "Select a conversation to start chatting." %}</p>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+        const userResults = document.getElementById('user-results');
+        const chatWindow = document.getElementById('chat-window');
+        let currentConversationId = null;
+        const currentUserId = parseInt('{{ request.user.id }}');  // Verifica que el ID del usuario sea correcto
+    
+        // Función para buscar usuarios y mostrar los resultados en el cuadro de búsqueda
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.trim();
+    
+            if (query.length > 0) {
+                fetch(`/messaging/search-users/?q=${query}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    userResults.innerHTML = '';
+    
+                    if (data.users.length > 0) {
+                        data.users.forEach(user => {
+                            const userElement = document.createElement('li');
+                            userElement.innerHTML = `
+                                <a href="#" class="conversation-link" data-user-id="${user.id}">
+                                    <img src="${user.profile_picture}" alt="${user.username}" width="40" height="40" style="border-radius: 50%;">
+                                    ${user.username}
+                                </a>
+                            `;
+                            userResults.appendChild(userElement);
+                        });
+                        // Añadir eventos de click para iniciar la conversación con los usuarios buscados
+                        addClickEventToSearchResults();  // Esta función se llama después de agregar los usuarios
+                    } else {
+                        userResults.innerHTML = '<li>{% trans "No users were found" %}</li>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching for users:', error);
+                });
+            } else {
+                userResults.innerHTML = '';  // Limpiar si el campo está vacío
+            }
+        });
+    
+        // Función para manejar el click en los usuarios del cuadro de búsqueda
+        function addClickEventToSearchResults() {
+            const searchResultsLinks = document.querySelectorAll('.conversation-link');
+    
+            searchResultsLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+    
+                    const userId = link.getAttribute('data-user-id');
+    
+                    // Validar si userId es válido
+                    if (userId && userId !== 'null') {
+                        // Verificar si la conversación ya existe o es nueva
+                        fetch(`/messaging/api/check-conversation/${userId}/`, { // Ruta para verificar si la conversación ya existe
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.conversation_exists) {
+                                // Si la conversación ya existe, cargarla
+                                loadExistingConversation(data.conversation_id);
+                            } else {
+                                // Si la conversación es nueva, crear una nueva conversación
+                                startNewConversation(userId);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error verifying conversation:', error);
+                        });
+                    } else {
+                        console.error('Error: userId is not valid:', userId);
+                    }
+                });
+            });
+        }
+    
+        // Función para manejar el click en las conversaciones activas
+        const conversationLinks = document.querySelectorAll('.conversation-link');
+        conversationLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+    
+                const conversationId = link.getAttribute('data-conversation-id');
+                const userId = link.getAttribute('data-user-id');
+
+                if (conversationId) {
+                    loadExistingConversation(conversationId);  // Cargar los mensajes de la conversación activa
+                }
+            });
+        });
+    
+        // Función para cargar una conversación existente y actualizar el currentConversationId
+        function loadExistingConversation(conversationId) {
+            currentConversationId = conversationId;  // Actualizar la conversación activa
+            fetch(`/messaging/api/conversation/${conversationId}/`, {  // Ruta para obtener los mensajes de la conversación activa
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                renderChatWindow(data, conversationId);  // Renderizar los mensajes de la conversación
+                startAutoRefresh();  // Reiniciar el polling para esta conversación
+            })
+            .catch(error => {
+                console.error('Error getting chat messages:', error);
+            });
+        }
+    
+        // Función para iniciar una nueva conversación
+        function startNewConversation(userId) {
+            // Realizar la solicitud para crear una nueva conversación
+            fetch(`/messaging/start/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.conversation_id) {
+                    // Cargar la conversación recién creada
+                    loadExistingConversation(data.conversation_id);
+                } else {
+                    console.error('Error when starting a new conversation:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error starting a new conversation:', error);
+            });
+        }
+
+        function renderEmptyChatWindow(userId) {
+            chatWindow.innerHTML = '<p>{% trans "Select a conversation to start chatting or search for a user to start a new conversation." %}</p>';
+        }
+    
+        // Función para renderizar la ventana de chat
+        function renderChatWindow(data, conversationId) {
+            chatWindow.innerHTML = '';  // Limpiar la ventana de chat
+    
+            let lastDate = null;
+            let messagesHtml = '<div class="messages message-container" id="message-container">';
+            data.forEach(message => {
+                const currentDate = new Date(message.timestamp);
+                const dateLabel = getDateLabel(currentDate);
+    
+                if (lastDate !== dateLabel) {
+                    messagesHtml += `<div class="date-separator">${dateLabel}</div>`;  // Agregar un separador de fecha si cambia el día
+                    lastDate = dateLabel;
+                }
+    
+                const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
+                const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
+                const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+                messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
+            });
+            messagesHtml += '</div>';
+    
+            // Agregar el formulario para enviar mensajes
+            messagesHtml += `
+                <form id="message-form" method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <input type="text" id="message-input" placeholder="{% trans 'Type a message...' %}" autocomplete="off">
+                    <button type="submit" class="custom-button">{% trans 'Send' %}</button>
+                </form>
+            `;
+    
+            chatWindow.innerHTML = messagesHtml;
+    
+            // Añadir el evento de envío del formulario de mensajes
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const messageContainer = document.getElementById('message-container');
+    
+            messageForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                sendMessage(conversationId, messageInput, messageForm, messageContainer);
+            });
+
+            messageInput.addEventListener('keydown', function(event) {
+                if (event.key === ' ') {
+                    event.preventDefault();  // Prevenir el comportamiento predeterminado del espacio (scroll)
+                    messageInput.value += ' ';  // Añadir el espacio al campo de texto
+                    }
+                });
+        }
+    
+        // Función para enviar el mensaje sin recargar la página
+        function sendMessage(conversationId, messageInput, messageForm, messageContainer) {
+            const message = messageInput.value.trim();
+    
+            if (message !== '') {
+                const submitButton = messageForm.querySelector('button');
+                submitButton.disabled = true;
+    
+                fetch(`/messaging/api/conversation/${conversationId}/send/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessageToChat(data, conversationId);
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                })
+                .finally(() => {
+                    messageInput.value = '';
+                    submitButton.disabled = false;
+                });
+            }
+        }
+    
+        // Función para añadir el mensaje al chat actual
+        function appendMessageToChat(data, conversationId) {
+            const messageContainer = document.getElementById('message-container');
+            const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.scrollTop === messageContainer.clientHeight;
+            const currentDate = new Date(data.timestamp);
+            const newMessageClass = (parseInt(data.sender) === currentUserId) ? 'sent' : 'received';
+            const newSenderName = (parseInt(data.sender) === currentUserId) ? 'You' : data.sender_name;
+            const newMessageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const newDateLabel = getDateLabel(currentDate);
+    
+            const lastDateSeparator = document.querySelectorAll('.date-separator');
+            const lastDate = lastDateSeparator.length > 0 ? lastDateSeparator[lastDateSeparator.length - 1].textContent : null;
+    
+            if (newDateLabel !== lastDate) {
+                messageContainer.innerHTML += `<div class="date-separator">${newDateLabel}</div>`;
+            }
+    
+            messageContainer.innerHTML += `<div class="message ${newMessageClass}"><strong>${newSenderName}</strong>: ${data.content} <span style="font-size:0.75em; color:gray;">${newMessageTime}</span></div>`;
+
+            if (isScrolledToBottom) {
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        }
+    
+        // Función para obtener la etiqueta de fecha (Today, Yesterday, o fecha completa)
+        function getDateLabel(date) {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+    
+            if (date.toDateString() === today.toDateString()) {
+                return '{% trans "Today" %}';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return '{% trans "Yesterday" %}';
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+    
+        // Función para refrescar los mensajes cada segundo
+        function startAutoRefresh() {
+            setInterval(function () {
+                if (currentConversationId) {
+                    loadMessages(currentConversationId);
+                }
+            }, 1000);  // Refrescar cada segundo
+        }
+    
+        // Función para cargar mensajes en tiempo real
+        function loadMessages(conversationId) {
+            fetch(`/messaging/api/conversation/${conversationId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageContainer = document.getElementById('message-container');
+                if (messageContainer) {
+
+                    const isScrolledToBottom = messageContainer.scrollHeight - messageContainer.scrollTop === messageContainer.clientHeight;
+
+                    let lastDate = null;
+                    let messagesHtml = '';
+    
+                    data.forEach(message => {
+                        const currentDate = new Date(message.timestamp);
+                        const dateLabel = getDateLabel(currentDate);
+    
+                        if (lastDate !== dateLabel) {
+                            messagesHtml += `<div class="date-separator">${dateLabel}</div>`;
+                            lastDate = dateLabel;
+                        }
+    
+                        const messageClass = (parseInt(message.sender) === currentUserId) ? 'sent' : 'received';
+                        const senderName = (parseInt(message.sender) === currentUserId) ? 'You' : message.sender_name;
+                        const messageTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+                        messagesHtml += `<div class="message ${messageClass}"><strong>${senderName}</strong>: ${message.content} <span style="font-size:0.75em; color:gray;">${messageTime}</span></div>`;
+                    });
+    
+                    messageContainer.innerHTML = messagesHtml;
+                    // Solo hacer scroll automático si el usuario estaba al final antes de cargar los nuevos mensajes
+                    if (isScrolledToBottom) {
+                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error getting chat messages:', error);
+            });
+        }
+    
+        // Iniciar la auto-actualización cuando se carga la página
+        startAutoRefresh();
+    });
+    
+    
+
+</script>
+
+{% endblock %}
