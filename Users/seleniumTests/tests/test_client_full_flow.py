@@ -1,9 +1,10 @@
 import pytest
+from selenium.webdriver.common.by import By
 from pages.client_signup_page import ClientSignUpPage
 from pages.profile_settings_page import ProfileSettingsPage
-@pytest.mark.selenium
+
 @pytest.mark.usefixtures("setup")
-class TestClientProfileFlow:
+class TestClientFullFlow:
     
     def test_register_and_update_profile(self):
         # Registro del cliente
@@ -14,7 +15,7 @@ class TestClientProfileFlow:
             email="client123@example.com",
             first_name="Test",
             last_name="Client",
-            password="SecurePassword123",
+            password="SecurePassword123",  
             country="USA",
             city="Los Angeles",
             phone="123456789",
@@ -23,7 +24,7 @@ class TestClientProfileFlow:
         )
         signup_page.submit_form()
         assert signup_page.is_redirected_to_client_home(), "User registration failed"
-
+        
         # Actualización del perfil
         profile_settings_page = ProfileSettingsPage(self.driver)
         profile_settings_page.go_to_profile_settings()

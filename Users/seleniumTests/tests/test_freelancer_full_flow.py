@@ -18,7 +18,8 @@ class TestFreelancerFullFlow:
             email="freelancerflow@example.com",
             first_name="Test",
             last_name="Flow",
-            password="SecurePassword123",
+            password1="SecurePassword123",
+            password2="SecurePassword123",
             country="USA",
             city="New York",
             address="123 Main St",
@@ -30,14 +31,16 @@ class TestFreelancerFullFlow:
         assert work_experience_page.is_on_work_experience_page()
 
         work_experience_page.fill_work_experience_form(
-            job_title="Software Engineer",
-            company_name="Tech Corp",
-            city="San Francisco",
-            country="USA",
-            description="Worked on various software projects",
+            title="Software Engineer",
+            company="Tech Corp",
+            location="San Francisco",
             start_date="2020-01-01",
-            end_date="2022-01-01"
+            end_date="2022-01-01",
+            description="Worked on various software projects"
         )
+
+        
+
         work_experience_page.submit_form()
         assert work_experience_page.is_experience_saved()
 
