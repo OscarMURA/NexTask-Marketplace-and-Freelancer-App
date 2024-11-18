@@ -7,6 +7,7 @@ from pages.home_freelancer_page import HomeFreelancerPage
 from pages.search_projects_page import SearchProjectsPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestSearchProjectByCategory:
     @pytest.mark.run(order=9)
     def test_search_project_by_category(self):    

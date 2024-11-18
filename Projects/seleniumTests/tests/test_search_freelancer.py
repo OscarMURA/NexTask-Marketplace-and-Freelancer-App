@@ -7,6 +7,7 @@ from pages.home_client_page import HomeClientPage
 from pages.search_freelancer_page import SearchFreelancerPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestSearchFreelancer:
     @pytest.mark.run(order=7)
     def test_search_freelancer_from_home(self):

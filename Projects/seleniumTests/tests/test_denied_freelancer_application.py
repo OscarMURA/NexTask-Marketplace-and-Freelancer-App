@@ -11,6 +11,7 @@ from pages.home_client_page import HomeClientPage
 from pages.applications_page import ApplicationsPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestDeniedFreelancerApplication:
     @pytest.mark.run(order=1)
     def test_denied_freelancer_application(self):

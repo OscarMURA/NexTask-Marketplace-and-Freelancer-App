@@ -7,6 +7,7 @@ from pages.task_detail_freelancer_page import TaskDetailFreelancerPage
 from pages.login_page import LoginPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestFreelancerNavigation:
     @pytest.mark.run(order=10)
     def test_project_milestone_task_navigation(self):

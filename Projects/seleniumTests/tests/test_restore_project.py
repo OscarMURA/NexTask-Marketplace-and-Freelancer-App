@@ -11,6 +11,7 @@ from pages.deleted_projects_page import DeletedProjectsPage
 
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestRestoreProject:
     @pytest.mark.run(order=3)
     def test_restore_project(self):

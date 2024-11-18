@@ -5,6 +5,7 @@ from pages.project_detail_client import ProjectDetailClientPage
 from pages.milestone_edit_page import MilestoneEditPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestMilestoneEdit:
     @pytest.mark.run(order=13)
     def test_edit_milestone(self):

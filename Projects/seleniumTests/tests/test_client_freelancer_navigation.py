@@ -7,6 +7,7 @@ from pages.home_client_page import HomeClientPage
 from pages.project_detail_client import ProjectDetailClientPage
 from pages.freelancers_in_project_page import FreelancersInProjectPage
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestClientFreelancerNavigation:
     @pytest.mark.run(order=11)
     def test_client_freelancer_navigation(self):

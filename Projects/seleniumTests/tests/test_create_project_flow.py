@@ -8,6 +8,7 @@ from pages.milestone_creation_page import MilestoneCreationPage
 from pages.task_creation_page import TaskCreationPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestProjectMilestoneTask:
     @pytest.mark.run(order=1)
     def test_create_project_milestone_and_task(self):

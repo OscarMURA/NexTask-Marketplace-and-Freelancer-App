@@ -13,6 +13,7 @@ from pages.deleted_projects_page import DeletedProjectsPage
 
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestDeleteProject:
     @pytest.mark.run(order=2)
     def test_delete_project(self):

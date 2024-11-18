@@ -8,6 +8,7 @@ from pages.search_projects_page import SearchProjectsPage
 from pages.project_detail_page import ProjectDetailPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestFreelancerProjectApplication:
     @pytest.mark.run(order=4)
     def test_register_freelancer_and_redirect_to_home(self):

@@ -6,6 +6,7 @@ from pages.project_edit_page import ProjectEditPage
 from pages.project_detail_client import ProjectDetailClientPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestProjectEdit:
     @pytest.mark.run(order=12)
     def test_edit_project(self):

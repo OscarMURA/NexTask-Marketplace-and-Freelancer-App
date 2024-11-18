@@ -8,6 +8,7 @@ from pages.applications_page import ApplicationsPage
 from pages.project_detail_page import ProjectDetailPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestAcceptFreelancerApplication:
     @pytest.mark.run(order=5)
     def test_accept_freelancer_application(self):

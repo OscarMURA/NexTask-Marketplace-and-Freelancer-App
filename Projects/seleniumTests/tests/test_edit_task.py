@@ -6,6 +6,7 @@ from pages.project_detail_page import ProjectDetailPage  # Importación corregid
 from pages.task_edit_page import TaskEditPage
 
 @pytest.mark.usefixtures("setup")
+@pytest.mark.selenium
 class TestEditTask:
     @pytest.mark.run(order=14)
     def test_edit_task(self):

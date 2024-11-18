@@ -18,32 +18,26 @@
                 {% endif %}
             </div>
             </div>
-            <!-- Fecha de inicio -->
+            <!-- Start Date -->
             <div class="col-md-6">
                 <div class="form-container">
-                    <label for="id_start_date" class="form-label">{% trans "Start Date" %}</label>
-                    <!-- Campo de fecha de inicio con el filtro de fecha -->
-                    <input type="date" class="form-control shadow-none" name="start_date" id="id_start_date" value="{{ form.start_date.value|date:'Y-m-d' }}">
-                    <div id="start-date-error" class="error text-danger"></div>
+                    <label for="id_start_date" class="form-label">{% trans "Start Date" %} <span class="text-lime-300">*</span></label>
+                    {{ form.start_date }} <!-- Campo de la fecha de inicio -->
                     {% if form.start_date.errors %}
-                        <div class="error text-danger">{{ form.start_date.errors }}</div>
+                    <div class="error text-danger">{{ form.start_date.errors }}</div>
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Fecha de vencimiento -->
+            <!-- Due Date -->
             <div class="col-md-6">
-                <div class="form-container">
-                    <label for="id_due_date" class="form-label">{% trans "Due Date" %}</label>
-                    <!-- Campo de fecha de vencimiento con el filtro de fecha -->
-                    <input type="date" class="form-control shadow-none" name="due_date" id="id_due_date" value="{{ form.due_date.value|date:'Y-m-d' }}">
-                    <div id="due-date-error" class="error text-danger"></div>
-                    {% if form.due_date.errors %}
-                        <div class="error text-danger">{{ form.due_date.errors }}</div>
-                    {% endif %}
-                </div>
+            <div class="form-container">
+                <label for="id_due_date" class="form-label">{% trans "Due Date" %} <span class="text-lime-300">*</span></label>
+                {{ form.due_date }} <!-- Campo de la fecha de vencimiento -->
+                {% if form.due_date.errors %}
+                <div class="error text-danger">{{ form.due_date.errors }}</div>
+                {% endif %}
             </div>
-
+            </div>
             <!-- Priority -->
             <div class="col-md-6">
             <div class="form-container">

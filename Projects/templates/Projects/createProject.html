@@ -134,7 +134,7 @@
 </style>
 
 <script>
-    document.getElementById('buyer_create_job_post').addEventListener('submit', function(event) {
+    document.querySelector('form').addEventListener('submit', function(event) {
         const startDate = new Date(document.getElementById('id_start_date').value);
         const dueDate = new Date(document.getElementById('id_due_date').value);
         const today = new Date();
@@ -160,13 +160,11 @@
         let isValid = true;
 
         // Validación de la fecha de inicio (no debe ser en el pasado)
-        console.log("La fecha de inicio es después de hoy: ", startDate < today);
         if (startDate < today) {
             document.getElementById('start-date-error').textContent = 'The start date cannot be in the past.';
             isValid = false;
         }
 
-        console.log("La fecha de vencimiento es después de la fecha de inicio: ", dueDate < startDate);
         // Validación de la fecha de vencimiento (al menos un mes después de la fecha de inicio)
         const minDueDate = new Date(startDate);
         minDueDate.setMonth(minDueDate.getMonth() + 1);
@@ -175,14 +173,12 @@
             isValid = false;
         }
 
-        console.log("El presupuesto es positivo: ", budget >= 0);
         // Validación del presupuesto (no debe ser negativo)
         if (isNaN(budget) || budget < 0) {
             document.getElementById('budget-error').textContent = 'The budget cannot be negative or empty.';
             isValid = false;
         }
 
-        console.log("El título no está vacío: ", title.length > 0);
         // Validación del título (no debe exceder 75 caracteres)
         if (title.length > maxTitleLength) {
             titleError.textContent = `The title cannot exceed ${maxTitleLength} characters.`;

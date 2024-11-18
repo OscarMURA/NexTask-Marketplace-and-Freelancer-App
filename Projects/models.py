@@ -108,11 +108,6 @@ class Milestone(models.Model):
     file = models.FileField(upload_to='milestone_files/', null=True, blank=True)  # Optional file associated with the milestone
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='development')
 
-    def get_progress(self):
-        total_tasks = self.tasks.count()
-        completed_tasks = self.tasks.filter(status='completed').count()
-        return (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
-
     def __str__(self):
         return f"{self.title} - {self.project.title}"
 
