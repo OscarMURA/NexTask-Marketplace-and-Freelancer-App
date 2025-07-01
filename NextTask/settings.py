@@ -29,7 +29,12 @@ SECRET_KEY = 'django-insecure-e7e-2oympk165@m#&m=2cqv2c#@w_ee-yz7s09=z^p89-v-5t%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'nextask-skm5.onrender.com',        # Dominio de Render
+    'nextask.oscar-munoz.me',           # Tu subdominio personalizado (si lo estás usando)
+    'localhost',                        # Para pruebas locales
+    '127.0.0.1',                        # Para pruebas locales
+]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
